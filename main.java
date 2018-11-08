@@ -49,17 +49,18 @@ public class main
 
                 if(editOption == 2) //needs to be finished with other tables
                 {
-                    int jobId;
-                    String jobTitle;
-                    String industry;
-                    String description;
-                    int companyId;
-                    int managerId;
-                    String type;
                     boolean validInput = true;
 
                     try
                     {
+                        int jobId;
+                        String jobTitle;
+                        String industry;
+                        String description;
+                        int companyId;
+                        int managerId;
+                        String type;
+
                         System.out.println("Enter the Job's ID");
                         jobId = scan.nextInt();
                         scan.nextLine();
@@ -91,15 +92,86 @@ public class main
                             System.out.println("The Description needs to be 100 characters or less. Please try again.");
                             validInput = false;
                         }
-                        if (type.length() > 1)
+                        if (type.length() > 1 || (type != "I" && type != "F"))
                         {
-                            System.out.println("Type needs to be 1 character only. Please try again.");
+                            System.out.println("Type needs to be 1 character only, I or F. Please try again.");
                             validInput = false;
                         }
                         if(jobTitle == "" || industry == "" || description == "" || type == "")
                         {
                             System.out.println("All fields must be entered.");
                             validInput = false;
+                        }
+
+                        if(validInput == false)
+                        {
+                            System.out.println("Please enter this information again.");
+                            continue;
+                        }
+
+                        String companyName;
+                        int numEmployees;
+                        float yearlyRevenue;
+                        float stockPrice;
+
+                        System.out.println("Enter the Company's Name (length 100)");
+                        companyName = scan.nextLine();
+                        System.out.println("Enter the Company's Number of Employees");
+                        numEmployees = scan.nextInt();
+                        scan.nextLine();
+                        System.out.println("Enter the Company's Yearly Revenue");
+                        yearlyRevenue = scan.nextFloat();
+                        scan.nextLine();
+                        System.out.println("Enter the Company's Stock Price");
+                        stockPrice = scan.nextFloat();
+                        scan.nextLine();
+
+                        if (companyName.length() > 100 || companyName == "")
+                        {
+                            System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
+                            validInput = false;
+                        }
+
+                        if(validInput == false)
+                        {
+                            System.out.println("Please enter this information again.");
+                            continue;
+                        }
+
+                        int numOpenSpots;
+                        int numApplicants;
+
+                        System.out.println("Enter the Job's Number of Open Spots");
+                        numOpenSpots = scan.nextInt();
+                        scan.nextLine();
+                        System.out.println("Enter the Job's Number of Applicants");
+                        numApplicants = scan.nextInt();
+                        scan.nextLine();
+
+                        int stockOptions = 0;
+                        float signingBonus = 0;
+                        String payPeriod = "";
+                        float salary = 0;
+                        String season = "";
+
+                        if(type == "F") //ADD SALARY TO FULL TIME
+                        {
+                            System.out.println("Enter the Job's Number of Stock Options");
+                            stockOptions = scan.nextInt();
+                            scan.nextLine();
+                            System.out.println("Enter the Job's Signing Bonus");
+                            signingBonus = scan.nextFloat();
+                            scan.nextLine();
+                        }
+                        if(type == "I")
+                        {
+                            System.out.println("Enter the Job's Pay Period (length 10)");
+                            payPeriod = scan.nextLine();
+                            System.out.println("Enter the Job's salary");
+                            salary = scan.nextFloat();
+                            scan.nextLine();
+                            System.out.println("Enter the Job's Season (length 10)");
+                            season = scan.nextLine();
                         }
 
                         if(validInput)
@@ -116,6 +188,50 @@ public class main
 
                             pst2.executeUpdate();
                             System.out.println("The Job has been created.");
+
+                            PreparedStatement pstc = con.prepareStatement("INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?,?)");
+                            pstc.clearParameters();
+                            pstc.setInt(1, companyId);
+                            pstc.setString(2, companyName);
+                            pstc.setInt(3, numEmployees);
+                            pstc.setFloat(4, yearlyRevenue);
+                            pstc.setFloat(5, stockPrice);
+
+                            pst2.executeUpdate();
+                            System.out.println("The Company has been created.");
+
+                            PreparedStatement psta = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?)");
+                            psta.clearParameters();
+                            psta.setInt(1, jobId);
+                            psta.setInt(2, numOpenSpots);
+                            psta.setInt(3, numApplicants);
+
+                            pst2.executeUpdate();
+                            System.out.println("The Competition has been created.");
+
+                            if(type == "F")
+                            {
+                                PreparedStatement pstb = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus) VALUES(?,?,?)");
+                                pstb.clearParameters();
+                                pstb.setInt(1, jobId);
+                                pstb.setInt(2, stockOptions);
+                                pstb.setFloat(3, signingBonus);
+
+                                pst2.executeUpdate();
+                                System.out.println("The Full Time Position has been created.");
+                            }
+                            if (type == "I")
+                            {
+                                PreparedStatement pstd = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES(?,?,?,?)");
+                                pstd.clearParameters();
+                                pstd.setInt(1, jobId);
+                                pstd.setString(2, payPeriod);
+                                pstd.setFloat(3, salary);
+                                pstd.setString(4, season);
+
+                                pst2.executeUpdate();
+                                System.out.println("The Internship has been created.");
+                            }
                         }
 
                         //add to all other tables!!
@@ -389,3 +505,4 @@ public class main
         catch(Exception e) { System.out.println(e); }
     }
 }
+
