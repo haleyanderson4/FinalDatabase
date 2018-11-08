@@ -10,8 +10,8 @@ public class Config
         try
         {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://localhost:3306/cpsc408?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST"; //url based off database
-            mySqlConnection = DriverManager.getConnection(connectionUrl, "root", "dia84monD!$*"); //mysql connection
+            String connectionUrl = "jdbc:mysql://localhost:3306//*databaseName*/?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST"; //url based off database
+            mySqlConnection = DriverManager.getConnection(connectionUrl, "root", "/*password*/); //mysql connection
         }
         catch (Exception e)
         {
