@@ -9,11 +9,12 @@ public class main
     {
         Connection con; //database connection
         Scanner scan = new Scanner(System.in);
+        int editOption = 0;
 
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job \n3. Update a Job Posting \n4. Remove a Job \n5. Search by field \n6. Quit\n");
+            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Quit\n");
 
 
             while(loop)
@@ -46,7 +47,7 @@ public class main
                     System.out.println("");
                 }
 
-                if(editOption == 2)
+                if(editOption == 2) //needs to be finished with other tables
                 {
                     int jobId;
                     String jobTitle;
@@ -109,13 +110,15 @@ public class main
                             pst2.setString(2, jobTitle);
                             pst2.setString(3, industry);
                             pst2.setString(4, description);
-                            pst2.setString(5, companyId);
-                            pst2.setString(6, managerId);
+                            pst2.setInt(5, companyId);
+                            pst2.setInt(6, managerId);
                             pst2.setString(7, type);
 
                             pst2.executeUpdate();
                             System.out.println("The Job has been created.");
                         }
+                        
+                        //add to all other tables!!
                     }
                     catch (Exception e)
                     {
@@ -123,7 +126,7 @@ public class main
                     }
                 }
 
-                if(editOption == 3)
+                if(editOption == 3) //this needs to be done
                 {
                     int studentId = 0;
                     String major = "";
@@ -184,7 +187,7 @@ public class main
                     System.out.println("The Student has been updated.");
                 }
 
-                if(editOption == 4)
+                if(editOption == 4) //this should be done
                 {
                     int jobId;
 
@@ -290,76 +293,76 @@ public class main
                     }
                 }
 
-                if(editOption == 5)
+                if(editOption == 5) //probably not fully done
                 {
                     int searchOption;
 
                     try
                     {
-                        System.out.println("What would you like to search by? \n1. Major \n2. GPA \n3. Faculty Advisor");
+                        System.out.println("What would you like to search by? \n1. Location \n2. Company \n3. Type");
 
                         searchOption = scan.nextInt();
                         scan.nextLine();
 
                         if(searchOption == 1)
                         {
-                            System.out.println("Please enter the Major you want to search for");
-                            String major = scan.nextLine();
+                            System.out.println("Please enter the Location Area you want to search for");
+                            String location = scan.nextLine();
 
-                            if (major.length() > 10)
+                            if (location.length() > 25)
                             {
-                                System.out.println("Major needs to be 10 characters or less. Please try again.");
+                                System.out.println("Location Area needs to be 25 characters or less. Please try again.");
                             }
                             else
                             {
-                                System.out.println("The Student Database sorted by Major:\n");
-                                PreparedStatement pst8 = con.prepareStatement("select * from Student WHERE Major=?");
-                                pst8.setString(1, major);
+                                System.out.println("The Job Database in that Location Area:\n");
+                                PreparedStatement pst8 = con.prepareStatement("select * from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?");
+                                pst8.clearParameters();
+                                pst8.setString(1, location);
                                 ResultSet rs = pst8.executeQuery();
-                                while(rs.next())
+                                while (rs.next())
                                 {
-                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));                                    }
-                            }
-                        }
-                        else if(searchOption == 3)
-                        {
-                            System.out.println("Please enter the Faculty Advisor you want to search for");
-                            String advisor = scan.nextLine();
-
-                            if (advisor.length() > 25)
-                            {
-                                System.out.println("Faculty Advisor needs to be 25 characters or less. Please try again.");
-                            }
-                            else
-                            {
-                                System.out.println("The Student Database sorted by GPA:\n");
-                                PreparedStatement pst6 = con.prepareStatement("select * from Student WHERE FacultyAdvisor=?");
-                                pst6.setString(1, advisor);
-                                ResultSet rs = pst6.executeQuery();
-                                while(rs.next())
-                                {
-                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));                                    }
+                                    System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                }
                             }
                         }
                         else if(searchOption == 2)
                         {
+                            System.out.println("Please enter the ID of the Company you want to search for");
+                            int companyId = scan.nextInt();
+                            scan.nextLine();
 
-                            System.out.println("Please enter the GPA you want to search for");
-                            float gpa = scan.nextFloat();
-
-                            if (gpa > 4 || gpa < 0)
+                            System.out.println("The Job Database of that Company:\n");
+                            PreparedStatement pst6 = con.prepareStatement("select * from Job j, Company c, Location l WHERE j.companyId = c.companyId");
+                            pst6.clearParameters();
+                            pst6.setInt(1, companyId);
+                            ResultSet rs = pst6.executeQuery();
+                            while(rs.next())
                             {
-                                System.out.println("GPA needs to be between 0 and 4. Please try again.");
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+                        else if(searchOption == 3)
+                        {
+
+                            System.out.println("Please enter the Type of Job you want to search for (I/F)");
+                            String type = scan.nextLine();
+
+                            if (type.length() > 1)
+                            {
+                                System.out.println("Type needs to be of length 1. Please try again.");
                             }
                             else
                             {
-                                System.out.println("The Student Database sorted by GPA:\n");
-                                PreparedStatement pst7 = con.prepareStatement("select * from Student WHERE GPA=?");
-                                pst7.setFloat(1, gpa);
+                                System.out.println("The Job Database of that Type:\n");
+                                PreparedStatement pst7 = con.prepareStatement("select * from Job WHERE type=?");
+                                pst7.clearParameters();
+                                pst7.setString(1, type);
                                 ResultSet rs = pst7.executeQuery();
                                 while(rs.next())
                                 {
-                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));                                    }
+                                    System.out.println(rs.getInt(1) + " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getString(4) + " " + rs.getInt(5) + " " + rs.getInt(6) + " " + rs.getString(7));
+                                }
                             }
                         }
                         else
@@ -388,4 +391,3 @@ public class main
         catch(Exception e) { System.out.println(e); }
     }
 }
-
