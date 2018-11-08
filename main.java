@@ -117,7 +117,7 @@ public class main
                             pst2.executeUpdate();
                             System.out.println("The Job has been created.");
                         }
-                        
+
                         //add to all other tables!!
                     }
                     catch (Exception e)
@@ -316,7 +316,7 @@ public class main
                             else
                             {
                                 System.out.println("The Job Database in that Location Area:\n");
-                                PreparedStatement pst8 = con.prepareStatement("select * from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?");
+                                PreparedStatement pst8 = con.prepareStatement("select * from Job j, Company c, Location l WHERE j.companyId = l.companyId AND l.locationArea=?");
                                 pst8.clearParameters();
                                 pst8.setString(1, location);
                                 ResultSet rs = pst8.executeQuery();
@@ -334,8 +334,6 @@ public class main
 
                             System.out.println("The Job Database of that Company:\n");
                             PreparedStatement pst6 = con.prepareStatement("select * from Job j, Company c, Location l WHERE j.companyId = c.companyId");
-                            pst6.clearParameters();
-                            pst6.setInt(1, companyId);
                             ResultSet rs = pst6.executeQuery();
                             while(rs.next())
                             {
