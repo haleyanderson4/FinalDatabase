@@ -174,6 +174,88 @@ public class main
                             season = scan.nextLine();
                         }
 
+                        if(payPeriod.length() > 10 || season.length() > 10)
+                        {
+                            System.out.println("Pay Period and Season must be 10 characters or less. Please try again.");
+                            continue;
+                        }
+
+                        String locationArea;
+                        String street;
+                        String city;
+                        String state; //change to 2 chars
+
+                        System.out.println("Enter the Company's Location Area (length 25)");
+                        locationArea = scan.nextLine();
+                        System.out.println("Enter the Company's Street Address (length 100)");
+                        street = scan.nextLine();
+                        System.out.println("Enter the Company's City (length 25)");
+                        city = scan.nextLine();
+                        System.out.println("Enter the Company's State (length 25)");
+                        state = scan.nextLine();
+
+                        if(locationArea.length() > 25 || city.length() > 25 || state.length() > 25)
+                        {
+                            System.out.println("The Location Area, City and State must be 25 characters or less. Please try again.");
+                            validInput = false;
+                        }
+                        if(street.length() > 100)
+                        {
+                            System.out.println("The Street address must be 100 characters or less. Please try again.");
+                            validInput = false;
+                        }
+
+                        if(validInput == false)
+                        {
+                            continue;
+                        }
+
+                        String name;
+                        boolean techincalExperience;
+                        int yearsAtCompany;
+
+                        System.out.println("Enter the Manager's name (length 100)");
+                        name = scan.nextLine();
+                        System.out.println("Enter 'Y' if the Manager has technical experience");
+                        String temp = scan.nextLine();
+                        if(temp == "Y" || temp == "y")
+                        {
+                            techincalExperience = true;
+                        }
+                        else
+                        {
+                            techincalExperience = false;
+                        }
+                        System.out.println("Enter the Manager's Years at the Company");
+                        yearsAtCompany = scan.nextInt();
+                        scan.nextLine();
+
+                        if(name.length() > 100)
+                        {
+                            System.out.println("The Manager's name is 100 characters or less. Please try again.");
+                            continue;
+                        }
+
+                        System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
+                        String relatedMaybe = scan.nextLine();
+                        if(relatedMaybe == "Y" || relatedMaybe == "y")
+                        {
+                            System.out.println("How many? Enter a number between 1 and 5.");
+                            int numOfRelated = scan.nextInt();
+
+                            int related1 = 0;
+                            int related2 = 0;
+                            int related3 = 0;
+                            int related4 = 0;
+                            int related5 = 0;
+
+                            for(int i = 0; i < numOfRelated; i++)
+                            {
+                                System.out.println("What is the ID number of the related job");
+                                scan.nextInt();
+                            } // fix this 
+                        }
+
                         if(validInput)
                         {
                             PreparedStatement pst2 = con.prepareStatement("INSERT INTO Job(jobId, jobTitle, industry, description, companyId, managerId, type) VALUES(?,?,?,?,?,?,?)");
@@ -197,7 +279,7 @@ public class main
                             pstc.setFloat(4, yearlyRevenue);
                             pstc.setFloat(5, stockPrice);
 
-                            pst2.executeUpdate();
+                            pstc.executeUpdate();
                             System.out.println("The Company has been created.");
 
                             PreparedStatement psta = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?)");
@@ -206,7 +288,7 @@ public class main
                             psta.setInt(2, numOpenSpots);
                             psta.setInt(3, numApplicants);
 
-                            pst2.executeUpdate();
+                            psta.executeUpdate();
                             System.out.println("The Competition has been created.");
 
                             if(type == "F")
@@ -217,7 +299,7 @@ public class main
                                 pstb.setInt(2, stockOptions);
                                 pstb.setFloat(3, signingBonus);
 
-                                pst2.executeUpdate();
+                                pstb.executeUpdate();
                                 System.out.println("The Full Time Position has been created.");
                             }
                             if (type == "I")
@@ -229,9 +311,30 @@ public class main
                                 pstd.setFloat(3, salary);
                                 pstd.setString(4, season);
 
-                                pst2.executeUpdate();
+                                pstd.executeUpdate();
                                 System.out.println("The Internship has been created.");
                             }
+
+                            PreparedStatement pste = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?)");
+                            pste.clearParameters();
+                            pste.setInt(1, companyId);
+                            pste.setString(2, locationArea);
+                            pste.setString(3, street);
+                            pste.setString(4, city);
+                            pste.setString(5, state);
+
+                            pste.executeUpdate();
+                            System.out.println("The Location has been created.");
+
+                            PreparedStatement pstf = con.prepareStatement("INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?)");
+                            pstf.clearParameters();
+                            pstf.setInt(1, managerId);
+                            pstf.setString(2, name);
+                            pstf.setBoolean(3, techincalExperience);
+                            pstf.setInt(4, yearsAtCompany);
+
+                            pstf.executeUpdate();
+                            System.out.println("The Manager has been created.");
                         }
 
                         //add to all other tables!!
