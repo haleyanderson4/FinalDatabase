@@ -1,4 +1,4 @@
-CREATE TABLE Job(jobId INTEGER PRIMARY KEY, jobTitle VARCHAR(25), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER, managerId INTEGER, Type CHAR(1));
+CREATE TABLE Job(jobId INTEGER PRIMARY KEY, jobTitle VARCHAR(25), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER, managerId INTEGER, type CHAR(1));
 
 CREATE TABLE Company(companyId INTEGER PRIMARY KEY, companyName VARCHAR(100), numEmployees INTEGER, yearlyRevenue FLOAT, stockPrice FLOAT);
 
