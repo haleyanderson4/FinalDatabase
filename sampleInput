@@ -1,0 +1,14 @@
+INSERT INTO Job(jobId, jobTitle, industry, description, companyId, managerId, type) VALUES(1, 'SDE Intern', 'Software Eng', 'Come to Microsoft it will be super fun and you will learn lots!', 1, 1, 'I');
+INSERT INTO Job(jobId, jobTitle, industry, description, companyId, managerId, type) VALUES(2, 'SWE Intern', 'Software Eng', 'Come to Amazon we are significantly less cool than Microsoft', 2, 2, 2, 'I');
+INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(1, 'Microsoft', 10000, 1000000000, 300);
+INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(2, 'Amazon', 10005, 200000, 200);
+INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(1, 200, 4000);
+INSERT INTO Competition( jobId, numOpenSpots, numApplicants) VALUES(2, 4000, 5000);
+INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES (1, 'Monthly', 7650, 'Summer');
+INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES (2, 'Monthly', 7300, 'Summer');
+INSERT INTO Location(companyId, locationArea, street, city, state) VALUES (1, 'Northwest', '1300 Microsoft Ave', 'Redmond', 'WA');
+INSERT INTO Location(companyId, locationArea, street, city, state) VALUES (2, 'Bay Area', '1300 Amazon Ave', 'Mountain View', 'CA');
+INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES (1, 'Bill Gates', true, 40);
+INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES (2, 'Jeff Bezos', false, 40);
+INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES (1, 2, 0, 0, 0, 0);
+INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES (2, 1, 0, 0, 0, 0);
