@@ -14,7 +14,7 @@ public class main
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Quit\n");
+            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Quit\n");
 
 
             while(loop)
@@ -24,14 +24,14 @@ public class main
                     System.out.println("What would you like to do: \n");
                     editOption = scan.nextInt();
 
-                    if (editOption < 1 || editOption > 6)
+                    if (editOption < 1 || editOption > 8)
                     {
-                        System.out.println("Please enter a number between 1 and 6\n");
+                        System.out.println("Please enter a number between 1 and 8\n");
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 6\n");
+                    System.out.println("Please enter a number between 1 and 8\n");
                     scan.nextLine();
                 }
 
@@ -253,11 +253,14 @@ public class main
                             {
                                 System.out.println("What is the ID number of the related job");
                                 scan.nextInt();
-                            } // fix this 
+                            } // fix this
                         }
 
                         if(validInput)
                         {
+                            PreparedStatement pstStart = con.prepareStatement("START TRANSACTION");
+                            pstStart.execute();
+
                             PreparedStatement pst2 = con.prepareStatement("INSERT INTO Job(jobId, jobTitle, industry, description, companyId, managerId, type) VALUES(?,?,?,?,?,?,?)");
                             pst2.clearParameters();
                             pst2.setInt(1, jobId);
@@ -335,6 +338,11 @@ public class main
 
                             pstf.executeUpdate();
                             System.out.println("The Manager has been created.");
+
+                            //related jobs
+
+                            PreparedStatement pstEnd = con.prepareStatement("COMMIT");
+                            pstEnd.execute();
                         }
 
                         //add to all other tables!!
@@ -595,6 +603,144 @@ public class main
                 }
 
                 if(editOption == 6)
+                {
+                    try
+                    {
+                        System.out.println("What is the ID number of the job you are looking for?");
+                        int jobId = scan.nextInt();
+                        scan.nextLine();
+
+                        PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
+                        pstType.setInt(1, jobId);
+                        ResultSet rsType = pstType.executeQuery();
+                        String type = rsType.getString(1);
+
+                        if(type == "F")
+                        {
+                            PreparedStatement pstFullTime = con.prepareStatement("SELECT * FROM Job j, Company c, Competition c, ");
+                            pstFullTime.setInt(1, jobId);
+
+                            ResultSet rs = pstFullTime.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+                        if(type == "I")
+                        {
+                            PreparedStatement pstIntern = con.prepareStatement("SELECT * FROM Job j, Company c, Competition c, ");
+                            pstIntern.setInt(1, jobId);
+
+                            ResultSet rs = pstIntern.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        System.out.println("Please enter a valid Job ID.");
+                    }
+                }
+
+                if(editOption == 7)
+                {
+                    try
+                    {
+                        System.out.println("What is the ID number of the job you are looking for?");
+                        int jobId = scan.nextInt();
+                        scan.nextLine();
+
+                        System.out.println("What Information are you looking for?");
+                        System.out.println("1. Company Information \n2. Competition \n3. Type (Full Time / Internship) \n4. Core Job Info \n5. Location Information \n6. Manager Information \n7. Related Jobs");
+                        int selectOption = scan.nextInt();
+                        scan.nextLine();
+
+                        if(selectOption == 1)
+                        {
+                            PreparedStatement pst1 = con.prepareStatement("SELECT * FROM Job j, Company c WHERE j.companyId=c.companyId AND j.jobId=?");
+                            pst1.clearParameters();
+                            pst1.setInt(1, jobId);
+                            ResultSet rs = pst1.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+
+                        if(selectOption == 2)
+                        {
+                            PreparedStatement pst2 = con.prepareStatement("SELECT * FROM Job j, Competition c WHERE j.jobId=c.jobId AND j.jobId=?");
+                            pst2.clearParameters();
+                            pst2.setInt(1, jobId);
+                            ResultSet rs = pst2.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+
+                        if(selectOption == 3) //update for different types
+                        {
+
+                        }
+
+                        if(selectOption == 4)
+                        {
+                            PreparedStatement pst4 = con.prepareStatement("SELECT * FROM Job j WHERE j.jobId=?");
+                            pst4.clearParameters();
+                            pst4.setInt(1, jobId);
+                            ResultSet rs = pst4.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+
+                        if(selectOption == 5)
+                        {
+                            PreparedStatement pst5 = con.prepareStatement("SELECT * FROM Job j, Location l WHERE j.companyId=l.companyId AND j.jobId=?");
+                            pst5.clearParameters();
+                            pst5.setInt(1, jobId);
+                            ResultSet rs = pst5.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+
+                        if(selectOption == 6)
+                        {
+                            PreparedStatement pst6 = con.prepareStatement("SELECT * FROM Job j, Manager m WHERE j.managerId=m.managerId AND j.jobId=?");
+                            pst6.clearParameters();
+                            pst6.setInt(1, jobId);
+                            ResultSet rs = pst6.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+
+                        if(selectOption == 7)
+                        {
+                            PreparedStatement pst7 = con.prepareStatement("SELECT * FROM Job j, RelatedJobs r WHERE j.jobId=r.jobId AND j.jobId=?");
+                            pst7.clearParameters();
+                            pst7.setInt(1, jobId);
+                            ResultSet rs = pst7.executeQuery();
+                            while(rs.next()) //update
+                            {
+                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("Please enter a valid input.");
+                    }
+                }
+
+                if(editOption == 8)
                 {
                     loop = false;
                 }
