@@ -16,7 +16,6 @@ public class main
             boolean loop = true;
             System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Quit\n");
 
-
             while(loop)
             {
                 try
@@ -35,19 +34,20 @@ public class main
                     scan.nextLine();
                 }
 
-                if(editOption == 1)
+                if(editOption == 1) //prelim completed
                 {
                     System.out.println("The Job Database:");
                     PreparedStatement pst1 = con.prepareStatement("select * from Job");
                     ResultSet rs = pst1.executeQuery();
                     while(rs.next())
                     {
-                        System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                        System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                + " Type: " + rs.getString(7));
                     }
                     System.out.println("");
                 }
 
-                if(editOption == 2) //needs to be finished with other tables
+                if(editOption == 2) //prelim completed
                 {
                     boolean validInput = true;
 
@@ -211,7 +211,7 @@ public class main
                         }
 
                         String name;
-                        boolean techincalExperience;
+                        boolean technicalExperience;
                         int yearsAtCompany;
 
                         System.out.println("Enter the Manager's name (length 100)");
@@ -220,11 +220,11 @@ public class main
                         String temp = scan.nextLine();
                         if(temp == "Y" || temp == "y")
                         {
-                            techincalExperience = true;
+                            technicalExperience = true;
                         }
                         else
                         {
-                            techincalExperience = false;
+                            technicalExperience = false;
                         }
                         System.out.println("Enter the Manager's Years at the Company");
                         yearsAtCompany = scan.nextInt();
@@ -238,21 +238,44 @@ public class main
 
                         System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
                         String relatedMaybe = scan.nextLine();
+
+                        int related1 = 0;
+                        int related2 = 0;
+                        int related3 = 0;
+                        int related4 = 0;
+                        int related5 = 0;
+
                         if(relatedMaybe == "Y" || relatedMaybe == "y")
                         {
                             System.out.println("How many? Enter a number between 1 and 5.");
                             int numOfRelated = scan.nextInt();
 
-                            int related1 = 0;
-                            int related2 = 0;
-                            int related3 = 0;
-                            int related4 = 0;
-                            int related5 = 0;
-
                             for(int i = 0; i < numOfRelated; i++)
                             {
                                 System.out.println("What is the ID number of the related job");
-                                scan.nextInt();
+                                int tempRJ = scan.nextInt();
+                                scan.nextLine();
+
+                                if(i == 1)
+                                {
+                                    related1 = tempRJ;
+                                }
+                                else if(i == 2)
+                                {
+                                    related2 = tempRJ;
+                                }
+                                else if(i == 3)
+                                {
+                                    related3 = tempRJ;
+                                }
+                                else if(i == 4)
+                                {
+                                    related4 = tempRJ;
+                                }
+                                else if(i == 5)
+                                {
+                                    related5 = tempRJ;
+                                }
                             } // fix this
                         }
 
@@ -333,19 +356,30 @@ public class main
                             pstf.clearParameters();
                             pstf.setInt(1, managerId);
                             pstf.setString(2, name);
-                            pstf.setBoolean(3, techincalExperience);
+                            pstf.setBoolean(3, technicalExperience);
                             pstf.setInt(4, yearsAtCompany);
 
                             pstf.executeUpdate();
                             System.out.println("The Manager has been created.");
 
-                            //related jobs
+                            if(relatedMaybe == "Y" || relatedMaybe == "y")
+                            {
+                                PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
+                                pstg.clearParameters();
+                                pstg.setInt(1, jobId);
+                                pstg.setInt(2, related1);
+                                pstg.setInt(3, related2);
+                                pstg.setInt(4, related3);
+                                pstg.setInt(5, related4);
+                                pstg.setInt(6, related5);
+
+                                pstg.executeUpdate();
+                                System.out.println("The Related Job Posting has been created.");
+                            }
 
                             PreparedStatement pstEnd = con.prepareStatement("COMMIT");
                             pstEnd.execute();
                         }
-
-                        //add to all other tables!!
                     }
                     catch (Exception e)
                     {
@@ -353,68 +387,471 @@ public class main
                     }
                 }
 
-                if(editOption == 3) //this needs to be done
+                if(editOption == 3) //need to add input checks
                 {
-                    int studentId = 0;
-                    String major = "";
-                    String advisor = "";
-
                     try
                     {
-                        try {
-                            System.out.println("A Student's Major and Faculty Advisor can be updated.");
-                            System.out.println("If you don't want to update that field, leave it blank.");
+                        System.out.println("What would you like to update?");
+                        System.out.println("1.Company Information \n2. Competition Information \n3. Full Time Information \n4. Internship Information \n5. Job Information \n6. Location Information \n7. Manager Information \n8. Related Job Information");
+                        int selectOption = scan.nextInt();
+                        scan.nextLine();
 
-                            System.out.println("Please enter the Student's ID");
-                            studentId = scan.nextInt();
+                        if(selectOption == 1)
+                        {
+                            System.out.println("What is the ID of the Company you would like to update?");
+                            int companyId = scan.nextInt();
                             scan.nextLine();
 
-                            System.out.println("Enter the Student's new Major");
-                            major = scan.nextLine();
-                            System.out.println("Enter the Student's new Faculty Advisor");
-                            advisor = scan.nextLine();
-
-                            if (advisor.length() > 25)
+                            System.out.println("The current information for this Company is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, companyId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
                             {
-                                System.out.println("Faculty Advisor needs to be 25 characters or less. Please try again.");
-                            }
-                            if (major.length() > 10)
-                            {
-                                System.out.println("Major needs to be 10 characters or less. Please try again.");
+                                System.out.println("Company ID: " + rs.getInt(1) + " Company Name: " + rs.getString(2) + " Number of Employees: " + rs.getInt(3) + " Yearly Revenue: " + rs.getFloat(4) + " Stock Price: " + rs.getFloat(5));
                             }
 
-                        }
-                        catch(Exception e)
-                        {
-                            System.out.println("Please enter the variables in the correct format.");
-                        }
+                            System.out.println("Which field would you like to update? \n1. Company Name \n2. Number of Employees \n3. Yearly Revenue \n4. Stock Price");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
 
-                        if (major.length() != 0)
-                        {
-                            PreparedStatement pst3 = con.prepareStatement("UPDATE Student SET Major=? WHERE StudentId=?");
-                            pst3.clearParameters();
-                            pst3.setString(1, major);
-                            pst3.setInt(2, studentId);
-                            pst3.executeUpdate();
+                            if(updateId < 1 || updateId > 4)
+                            {
+                                System.out.println("Please enter a number between 1 and 4.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "companyName";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "numEmployees";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "yearlyRevenue";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "stockPrice";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?");
+                            pstJ.clearParameters();
+                            pstJ.setString(1, field);
+                            pstJ.setString(2, answer);
+                            pstJ.setInt(3, companyId);
+                            pstJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
                         }
-                        if (advisor.length() != 0)
+                        else if(selectOption == 2)
                         {
-                            PreparedStatement pst4 = con.prepareStatement("UPDATE Student SET FacultyAdvisor=? WHERE StudentId =?");
-                            pst4.clearParameters();
-                            pst4.setString(1, advisor);
-                            pst4.setInt(2, studentId);
-                            pst4.executeUpdate();
+                            System.out.println("What is the ID of the Job you would like to update the Competition to?");
+                            int jobId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Job's Competition is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, jobId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3));
+                            }
+
+                            System.out.println("Which field would you like to update? \n1. Number of Open Spots \n2. Number of Applicants ");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 2)
+                            {
+                                System.out.println("Please enter a number between 1 and 2.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "numOpenSpots";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "numApplicants";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?");
+                            pstJ.clearParameters();
+                            pstJ.setString(1, field);
+                            pstJ.setString(2, answer);
+                            pstJ.setInt(3, jobId);
+                            pstJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 3)
+                        {
+                            System.out.println("What is the ID of the Full Time Job you would like to update?");
+                            int jobId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Job is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM FullTime WHERE jobId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, jobId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Full Time Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3));
+                            }
+
+                            System.out.println("Which field would you like to update? \n1. Number of Stock Options \n2. Signing Bonus ");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 2)
+                            {
+                                System.out.println("Please enter a number between 1 and 2.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "numStockOptions";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "signingBonus";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?");
+                            pstJ.clearParameters();
+                            pstJ.setString(1, field);
+                            pstJ.setString(2, answer);
+                            pstJ.setInt(3, jobId);
+                            pstJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 4)
+                        {
+                            System.out.println("What is the ID of the Job you would like to update?");
+                            int jobId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Job is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, jobId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Job ID: " + rs.getInt(1)+ "Internship Pay Period: " + rs.getString(2) + " Salary: " + rs.getFloat(3) + " Season: " + rs.getString(4));
+
+                            }
+
+                            System.out.println("Which field would you like to update? \n1. Pay Period \n2. Salary \n3. Season");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 3)
+                            {
+                                System.out.println("Please enter a number between 1 and 3.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "payPeriod";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "salary";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 3)
+                            {
+                                field = "season";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?");
+                            pstJ.clearParameters();
+                            pstJ.setString(1, field);
+                            pstJ.setString(2, answer);
+                            pstJ.setInt(3, jobId);
+                            pstJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 5)
+                        {
+                            System.out.println("What is the ID of the Job you would like to update?");
+                            int jobId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Job is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, jobId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7));
+                            }
+
+                            System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. Type");
+                            System.out.println("Company ID and Manager ID are not an update-able field.");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 4)
+                            {
+                                System.out.println("Please enter a number between 1 and 4.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "jobTitle";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "description";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 3)
+                            {
+                                field = "industry";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 4)
+                            {
+                                field = "type";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?");
+                            pstJ.clearParameters();
+                            pstJ.setString(1, field);
+                            pstJ.setString(2, answer);
+                            pstJ.setInt(3, jobId);
+                            pstJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 6)
+                        {
+                            System.out.println("What is the ID of the Company you would like to update the Location of?");
+                            int companyId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Company's Location is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, companyId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Company ID: " + rs.getInt(1)+ "Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + "\n");
+                            }
+
+                            System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 4)
+                            {
+                                System.out.println("Please enter a number between 1 and 4.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "locationArea";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                field = "street";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 3)
+                            {
+                                field = "city";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 4)
+                            {
+                                field = "state";
+                                answer = scan.nextLine();
+                            }
+
+                            PreparedStatement pstL = con.prepareStatement("UPDATE Manager SET ?=? WHERE companyId=?");
+                            pstL.clearParameters();
+                            pstL.setString(1, field);
+                            pstL.setString(2, answer);
+                            pstL.setInt(3, companyId);
+                            pstL.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 7)
+                        {
+                            System.out.println("What is the ID of the Manager you would like to update?");
+                            int managerId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Manager is: ");
+                            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Manager WHERE managerId=?");
+                            pstM.clearParameters();
+                            pstM.setInt(1, managerId);
+                            ResultSet rs = pstM.executeQuery();
+                            while(rs.next())
+                            {
+                                String techBool = "No";
+                                if(rs.getBoolean(4))
+                                {
+                                    techBool = "Yes";
+                                }
+                                System.out.println("Manager ID:" + rs.getInt(1) + " Manager's Name: " + rs.getString(2) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(4));
+                            }
+
+                            System.out.println("Which field would you like to update? \n1.Manager's Name \n2. Technical Experience \n3. Years at Company");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+
+                            if(updateId < 1 || updateId > 3)
+                            {
+                                System.out.println("Please enter a number between 1 and 3.");
+                                continue;
+                            }
+
+                            String field = "";
+                            String answer = "";
+
+                            System.out.println("What would you like this field to up updated to?");
+                            if(updateId == 1)
+                            {
+                                field = "name";
+                                answer = scan.nextLine();
+                            }
+                            else if(updateId == 2)
+                            {
+                                answer = "false";
+                                System.out.println("Enter 'Y' for yes");
+                                if(scan.nextLine() == "Y" || scan.nextLine() == "y")
+                                {
+                                    answer = "true";
+                                }
+                                field = "technicalExperience";
+                            }
+                            else if(updateId == 3)
+                            {
+                                field = "yearsAtCompany";
+                                answer = "" + scan.nextInt();
+                                scan.nextLine();
+                            }
+
+                            PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET ?=? WHERE managerId=?");
+                            pstRJ.clearParameters();
+                            pstRJ.setString(1, field);
+                            pstRJ.setString(2, answer);
+                            pstRJ.setInt(3, managerId);
+                            pstRJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else if(selectOption == 8)
+                        {
+                            System.out.println("What is the ID of the Job's Related Jobs you would like to update?");
+                            int jobId = scan.nextInt();
+                            scan.nextLine();
+
+                            System.out.println("The current information for this Job is: ");
+                            PreparedStatement pst7 = con.prepareStatement("SELECT * FROM RelatedJobs WHERE jobId=?");
+                            pst7.clearParameters();
+                            pst7.setInt(1, jobId);
+                            ResultSet rs = pst7.executeQuery();
+                            while(rs.next())
+                            {
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Related Job 1: " + rs.getInt(2) + "Related Job 2: " + rs.getInt(3) + "Related Job 3: " + rs.getInt(4) + "Related Job 4: " + rs.getInt(5) + "Related Job 5: " + rs.getInt(6));
+                            }
+
+                            System.out.println("Which Field would you like to update? \n1. Related Job 1 \n2. Related Job 2 \n3. Related Job 3 \n4. Related Job 4 \n5. Related Job 5");
+                            int updateId = scan.nextInt();
+                            scan.nextLine();
+                            String updateString = "related" + updateId;
+
+                            if(updateId < 1 || updateId > 5)
+                            {
+                                System.out.println("Please enter a number between 1 and 5.");
+                                continue;
+                            }
+
+                            System.out.println("What would you like this field to up updated to?");
+                            int relatedJob = scan.nextInt();
+                            scan.nextLine();
+
+                            PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?");
+                            pstRJ.clearParameters();
+                            pstRJ.setString(1, updateString);
+                            pstRJ.setInt(2, relatedJob);
+                            pstRJ.setInt(3, jobId);
+                            pstRJ.executeUpdate();
+
+                            System.out.println("The record has been updated.");
+                        }
+                        else
+                        {
+                            System.out.println("Please enter a number between 1 and 8.");
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        System.out.println("Please enter the variables in the correct format.");
+                        System.out.println("Please enter a valid input.");
                     }
-
-                    System.out.println("The Student has been updated.");
                 }
 
-                if(editOption == 4) //this should be done
+                if(editOption == 4) //prelim completed
                 {
                     int jobId;
 
@@ -520,7 +957,7 @@ public class main
                     }
                 }
 
-                if(editOption == 5) //probably not fully done
+                if(editOption == 5) //prelim done
                 {
                     int searchOption;
 
@@ -560,11 +997,14 @@ public class main
                             scan.nextLine();
 
                             System.out.println("The Job Database of that Company:\n");
-                            PreparedStatement pst6 = con.prepareStatement("select * from Job j, Company c, Location l WHERE j.companyId = c.companyId");
+                            PreparedStatement pst6 = con.prepareStatement("select * from Job WHERE companyId =?");
+                            pst6.clearParameters();
+                            pst6.setInt(1, companyId);
                             ResultSet rs = pst6.executeQuery();
                             while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7));
                             }
                         }
                         else if(searchOption == 3)
@@ -573,9 +1013,9 @@ public class main
                             System.out.println("Please enter the Type of Job you want to search for (I/F)");
                             String type = scan.nextLine();
 
-                            if (type.length() > 1)
+                            if (type.length() > 1 || (type != "I" && type != "F"))
                             {
-                                System.out.println("Type needs to be of length 1. Please try again.");
+                                System.out.println("Type needs to be of length 1 (I or F). Please try again.");
                             }
                             else
                             {
@@ -586,7 +1026,8 @@ public class main
                                 ResultSet rs = pst7.executeQuery();
                                 while(rs.next())
                                 {
-                                    System.out.println(rs.getInt(1) + " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getString(4) + " " + rs.getInt(5) + " " + rs.getInt(6) + " " + rs.getString(7));
+                                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                            + " Type: " + rs.getString(7));
                                 }
                             }
                         }
@@ -602,7 +1043,7 @@ public class main
 
                 }
 
-                if(editOption == 6)
+                if(editOption == 6) //prelim completed
                 {
                     try
                     {
@@ -615,36 +1056,57 @@ public class main
                         ResultSet rsType = pstType.executeQuery();
                         String type = rsType.getString(1);
 
-                        if(type == "F")
+                        if (type == "F")
                         {
-                            PreparedStatement pstFullTime = con.prepareStatement("SELECT * FROM Job j, Company c, Competition c, ");
-                            pstFullTime.setInt(1, jobId);
-
-                            ResultSet rs = pstFullTime.executeQuery();
-                            while(rs.next()) //update
+                            PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, Manager m, FullTime f, RelatedJobs r WHERE j.jobId=r.jobId AND j.jobId=?");
+                            pst8F.clearParameters();
+                            pst8F.setInt(1, jobId);
+                            ResultSet rs = pst8F.executeQuery();
+                            while (rs.next()) //update
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                String techBool = "No";
+                                if (rs.getBoolean(19))
+                                {
+                                    techBool = "Yes";
+                                }
+
+                                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7)
+                                        + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12)
+                                        + "\nLocation Area: " + rs.getString(14) + " Address: " + rs.getString(15) + " " + rs.getString(16)
+                                        + "\nManager's Name: " + rs.getString(18) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(20)
+                                        + "\n Full Time Salary: N/A" + "\nNumber of Stock Options: " + rs.getInt(22) + " Signing Bonus: " + rs.getFloat(23)
+                                        + "\nRelated Job 1: " + rs.getInt(25) + "Related Job 2: " + rs.getInt(26) + "Related Job 3: " + rs.getInt(27) + "Related Job 4: " + rs.getInt(28) + "Related Job 5: " + rs.getInt(29));
                             }
                         }
-                        if(type == "I")
-                        {
-                            PreparedStatement pstIntern = con.prepareStatement("SELECT * FROM Job j, Company c, Competition c, ");
-                            pstIntern.setInt(1, jobId);
+                        if (type == "I") {
+                            PreparedStatement pst8I = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, Manager m, Internship i, RelatedJobs r WHERE j.jobId=r.jobId AND j.jobId=?");
+                            pst8I.clearParameters();
+                            pst8I.setInt(1, jobId);
+                            ResultSet rs = pst8I.executeQuery();
+                            while (rs.next()) {
+                                String techBool = "No";
+                                if (rs.getBoolean(19)) {
+                                    techBool = "Yes";
+                                }
 
-                            ResultSet rs = pstIntern.executeQuery();
-                            while(rs.next()) //update
-                            {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7)
+                                        + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12)
+                                        + "\nLocation Area: " + rs.getString(14) + " Address: " + rs.getString(15) + " " + rs.getString(16)
+                                        + "\nManager's Name: " + rs.getString(18) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(20)
+                                        + "\nInternship Pay Period: " + rs.getString(22) + " Salary: " + rs.getFloat(23) + " Season: " + rs.getString(24)
+                                        + "\nRelated Job 1: " + rs.getInt(26) + "Related Job 2: " + rs.getInt(27) + "Related Job 3: " + rs.getInt(28) + "Related Job 4: " + rs.getInt(29) + "Related Job 5: " + rs.getInt(30));
                             }
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        System.out.println("Please enter a valid Job ID.");
+                        System.out.println("Please enter a valid ID number. Try again.");
                     }
                 }
 
-                if(editOption == 7)
+                if(editOption == 7) //prelim completed
                 {
                     try
                     {
@@ -663,9 +1125,10 @@ public class main
                             pst1.clearParameters();
                             pst1.setInt(1, jobId);
                             ResultSet rs = pst1.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7) + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12) + "\n");
                             }
                         }
 
@@ -675,28 +1138,30 @@ public class main
                             pst2.clearParameters();
                             pst2.setInt(1, jobId);
                             ResultSet rs = pst2.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                + " Type: " + rs.getString(7) + "\nNumber of Open Spots: " + rs.getInt(9) + " Number of Applicants: " + rs.getInt(10) + "\n");
                             }
                         }
 
-                        if(selectOption == 3) //update for different types
+                        if(selectOption == 3)
                         {
                             PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
                             pstType.setInt(1, jobId);
                             ResultSet rsType = pstType.executeQuery();
                             String type = rsType.getString(1);
 
-                            if(type == "F")
+                            if(type == "F") //add salary
                             {
                                 PreparedStatement pstFullTime = con.prepareStatement("SELECT * FROM Job j, FullTime f WHERE f.jobId=j.jobId AND j.jobId=?");
                                 pstFullTime.setInt(1, jobId);
 
                                 ResultSet rs = pstFullTime.executeQuery();
-                                while(rs.next()) //update
+                                while(rs.next())
                                 {
-                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                            + " Type: " + rs.getString(7) + "\n Full Time Salary: N/A" + "\nNumber of Stock Options: " + rs.getInt(9) + " Signing Bonus: " + rs.getFloat(10) + "\n");
                                 }
                             }
                             if(type == "I")
@@ -705,9 +1170,10 @@ public class main
                                 pstIntern.setInt(1, jobId);
 
                                 ResultSet rs = pstIntern.executeQuery();
-                                while(rs.next()) //update
+                                while(rs.next())
                                 {
-                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                            + " Type: " + rs.getString(7) + "\nInternship Pay Period: " + rs.getString(9) + " Salary: " + rs.getFloat(10) + " Season: " + rs.getString(11) + "\n");
                                 }
                             }
                         }
@@ -718,9 +1184,10 @@ public class main
                             pst4.clearParameters();
                             pst4.setInt(1, jobId);
                             ResultSet rs = pst4.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7) + "\n");
                             }
                         }
 
@@ -730,9 +1197,10 @@ public class main
                             pst5.clearParameters();
                             pst5.setInt(1, jobId);
                             ResultSet rs = pst5.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7) + "\nLocation Area: " + rs.getString(9) + " Address: " + rs.getString(10) + " " + rs.getString(11) + "\n");
                             }
                         }
 
@@ -742,9 +1210,15 @@ public class main
                             pst6.clearParameters();
                             pst6.setInt(1, jobId);
                             ResultSet rs = pst6.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                String techBool = "No";
+                                if(rs.getBoolean(10))
+                                {
+                                    techBool = "Yes";
+                                }
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                        + " Type: " + rs.getString(7) + "\nManager's Name: " + rs.getString(9) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(11) + "\n");
                             }
                         }
 
@@ -754,9 +1228,10 @@ public class main
                             pst7.clearParameters();
                             pst7.setInt(1, jobId);
                             ResultSet rs = pst7.executeQuery();
-                            while(rs.next()) //update
+                            while(rs.next())
                             {
-                                System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                                + " Type: " + rs.getString(7) + "\nRelated Job 1: " + rs.getInt(9) + "Related Job 2: " + rs.getInt(10) + "Related Job 3: " + rs.getInt(11) + "Related Job 4: " + rs.getInt(12) + "Related Job 5: " + rs.getInt(13) + "\n");
                             }
                         }
                     }
@@ -766,7 +1241,7 @@ public class main
                     }
                 }
 
-                if(editOption == 8)
+                if(editOption == 8) //done lol
                 {
                     loop = false;
                 }
