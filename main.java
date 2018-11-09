@@ -683,7 +683,33 @@ public class main
 
                         if(selectOption == 3) //update for different types
                         {
+                            PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
+                            pstType.setInt(1, jobId);
+                            ResultSet rsType = pstType.executeQuery();
+                            String type = rsType.getString(1);
 
+                            if(type == "F")
+                            {
+                                PreparedStatement pstFullTime = con.prepareStatement("SELECT * FROM Job j, FullTime f WHERE f.jobId=j.jobId AND j.jobId=?");
+                                pstFullTime.setInt(1, jobId);
+
+                                ResultSet rs = pstFullTime.executeQuery();
+                                while(rs.next()) //update
+                                {
+                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                }
+                            }
+                            if(type == "I")
+                            {
+                                PreparedStatement pstIntern = con.prepareStatement("SELECT * FROM Job j, Internship i WHERE i.jobId=j.jobId AND j.jobId=?");
+                                pstIntern.setInt(1, jobId);
+
+                                ResultSet rs = pstIntern.executeQuery();
+                                while(rs.next()) //update
+                                {
+                                    System.out.println(rs.getInt(1)+ " " + rs.getString(2) + " "+ rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
+                                }
+                            }
                         }
 
                         if(selectOption == 4)
