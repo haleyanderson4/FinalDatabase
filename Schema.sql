@@ -12,4 +12,4 @@ CREATE TABLE Location(companyId INTEGER PRIMARY KEY, locationArea VARCHAR (25), 
 
 CREATE TABLE Internship(jobId INTEGER PRIMARY KEY, payPeriod VARCHAR(10), salary FLOAT, season VARCHAR(10));
 
-CREATE TABLE FullTime(jobId INTEGER PRIMARY KEY, numStockOptions INTEGER, signingBonus FLOAT); 
+CREATE TABLE FullTime(jobId INTEGER PRIMARY KEY, salary FLOAT, numStockOptions INTEGER, signingBonus FLOAT); 
