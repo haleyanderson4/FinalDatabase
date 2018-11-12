@@ -1,6 +1,7 @@
+//@TODO add method for updating to save on code reuse
+//Possibly make separate class
+
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.*;
 
 public class main
@@ -424,33 +425,47 @@ public class main
 
                             String field = "";
                             String answer = "";
+                            int intAnswer = -1;
+                            float floatAnswer = -1;
 
                             System.out.println("What would you like this field to up updated to?");
                             if(updateId == 1)
                             {
                                 field = "companyName";
                                 answer = scan.nextLine();
+                                if (!inputCheck(answer, 25)){ continue; }
                             }
                             else if(updateId == 2)
                             {
                                 field = "numEmployees";
-                                answer = scan.nextLine();
+                                intAnswer = scan.nextInt();
                             }
-                            else if(updateId == 2)
+                            else if(updateId == 3)
                             {
                                 field = "yearlyRevenue";
-                                answer = scan.nextLine();
+                                floatAnswer = scan.nextFloat();
                             }
-                            else if(updateId == 2)
+                            else if(updateId == 4)
                             {
                                 field = "stockPrice";
-                                answer = scan.nextLine();
+                                floatAnswer = scan.nextFloat();
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?");
                             pstJ.clearParameters();
                             pstJ.setString(1, field);
-                            pstJ.setString(2, answer);
+                            if (!answer.equals(""))
+                            {
+                              pstJ.setString(2, answer);
+                            }
+                            else if (intAnswer != -1)
+                            {
+                              pstJ.setInt(2, intAnswer);
+                            }
+                            else if (floatAnswer != -1)
+                            {
+                              pstJ.setFloat(2, floatAnswer);
+                            }
                             pstJ.setInt(3, companyId);
                             pstJ.executeUpdate();
 
@@ -483,30 +498,30 @@ public class main
                             }
 
                             String field = "";
-                            String answer = "";
+                            int answer = -1;
 
                             System.out.println("What would you like this field to up updated to?");
                             if(updateId == 1)
                             {
                                 field = "numOpenSpots";
-                                answer = scan.nextLine();
+                                answer = scan.nextInt();
                             }
                             else if(updateId == 2)
                             {
                                 field = "numApplicants";
-                                answer = scan.nextLine();
+                                answer = scan.nextInt();
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?");
                             pstJ.clearParameters();
                             pstJ.setString(1, field);
-                            pstJ.setString(2, answer);
+                            pstJ.setInt(2, answer);
                             pstJ.setInt(3, jobId);
                             pstJ.executeUpdate();
 
                             System.out.println("The record has been updated.");
                         }
-                        else if(selectOption == 3)
+                        else if(selectOption == 3) //@TODO update answer to be int/float
                         {
                             System.out.println("What is the ID of the Full Time Job you would like to update?");
                             int jobId = scan.nextInt();
@@ -556,7 +571,7 @@ public class main
 
                             System.out.println("The record has been updated.");
                         }
-                        else if(selectOption == 4)
+                        else if(selectOption == 4) //@TODO update answer to int/float
                         {
                             System.out.println("What is the ID of the Job you would like to update?");
                             int jobId = scan.nextInt();
@@ -1254,5 +1269,13 @@ public class main
         }
         catch(Exception e) { System.out.println(e); }
     }
-}
 
+    public static boolean inputCheck(String str, int length)
+    {
+      if (str.length() < length) return true;
+      else {
+        System.out.println("Must be less than " + length + " characters. Try again.");
+        return false;
+      }
+    }
+}
