@@ -548,24 +548,32 @@ public class main
                             }
 
                             String field = "";
-                            String answer = "";
+                            int intAnswer = -1;
+                            float floatAnswer = -1;
 
                             System.out.println("What would you like this field to up updated to?");
                             if(updateId == 1)
                             {
                                 field = "numStockOptions";
-                                answer = scan.nextLine();
+                                intAnswer = scan.nextInt();
                             }
                             else if(updateId == 2)
                             {
                                 field = "signingBonus";
-                                answer = scan.nextLine();
+                                floatAnswer = scan.nextFloat();
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?");
                             pstJ.clearParameters();
                             pstJ.setString(1, field);
-                            pstJ.setString(2, answer);
+                            if (intAnswer != -1)
+                            {
+                              pstJ.setInt(2, intAnswer);
+                            }
+                            else
+                            {
+                              pstJ.setFloat(2, floatAnswer);
+                            }
                             pstJ.setInt(3, jobId);
                             pstJ.executeUpdate();
 
@@ -645,7 +653,7 @@ public class main
                             }
 
                             System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. Type");
-                            System.out.println("Company ID and Manager ID are not an update-able field.");
+                            System.out.println("Company ID and Manager ID are not an updatable field.");
                             int updateId = scan.nextInt();
                             scan.nextLine();
 
@@ -903,6 +911,7 @@ public class main
 
 
                         PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
+                        //@TODO should be modified to use deleteEntry method
                         pst5.clearParameters();
                         pst5.setString(1, "Company");
                         pst5.setString(2, "companyId");
@@ -1270,11 +1279,42 @@ public class main
         catch(Exception e) { System.out.println(e); }
     }
 
+    /**
+    * Used to check if a given string str is less than a given length characters.
+    * @return true if it is less than or equal to, false if it's more
+    */
     public static boolean inputCheck(String str, int length)
     {
-      if (str.length() < length) return true;
+      if (str.length() <= length) return true;
       else {
         System.out.println("Must be less than " + length + " characters. Try again.");
+        return false;
+      }
+    }
+
+    /**
+    * Can be called to delete an entry from a specific table.
+    * @param pst the prepared statement
+    * @param tableName the name of the table we're deleting from
+    * @param idName the primary key associated with this table
+    * @param id the id of the entry we're deleting
+    * @return true if the delete is successful, false otherwise
+    */
+    public static boolean deleteEntry(PreparedStatement pst, String tableName, String idName, int id)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setString(1, tableName);
+        pst.setString(2, idName);
+        pst.setInt(3, id);
+        pst.executeUpdate();
+        System.out.println("The record has been deleted from " + tableName + ".");
+        return true;
+      }
+      catch (Exception e)
+      {
+        System.out.println("There was an error deleting. Error: " + e);
         return false;
       }
     }
