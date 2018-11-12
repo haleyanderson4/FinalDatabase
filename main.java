@@ -452,24 +452,12 @@ public class main
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?");
-                            pstJ.clearParameters();
-                            pstJ.setString(1, field);
                             if (!answer.equals(""))
-                            {
-                              pstJ.setString(2, answer);
-                            }
+                              updateStringField(pstJ, field, answer, companyId);
                             else if (intAnswer != -1)
-                            {
-                              pstJ.setInt(2, intAnswer);
-                            }
+                              updateIntField(pstJ, field, intAnswer, companyId);
                             else if (floatAnswer != -1)
-                            {
-                              pstJ.setFloat(2, floatAnswer);
-                            }
-                            pstJ.setInt(3, companyId);
-                            pstJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                              updateFloatField(pstJ, field, floatAnswer, companyId);
                         }
                         else if(selectOption == 2)
                         {
@@ -513,15 +501,9 @@ public class main
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?");
-                            pstJ.clearParameters();
-                            pstJ.setString(1, field);
-                            pstJ.setInt(2, answer);
-                            pstJ.setInt(3, jobId);
-                            pstJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            updateIntField(pstJ, field, answer, jobId);
                         }
-                        else if(selectOption == 3) //@TODO update answer to be int/float
+                        else if(selectOption == 3)
                         {
                             System.out.println("What is the ID of the Full Time Job you would like to update?");
                             int jobId = scan.nextInt();
@@ -564,20 +546,10 @@ public class main
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?");
-                            pstJ.clearParameters();
-                            pstJ.setString(1, field);
                             if (intAnswer != -1)
-                            {
-                              pstJ.setInt(2, intAnswer);
-                            }
-                            else
-                            {
-                              pstJ.setFloat(2, floatAnswer);
-                            }
-                            pstJ.setInt(3, jobId);
-                            pstJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                              updateIntField(pstJ, field, intAnswer, jobId);
+                            if (floatAnswer != -1)
+                              updateFloatField(pstJ, field, floatAnswer, jobId);
                         }
                         else if(selectOption == 4) //@TODO update answer to int/float
                         {
@@ -608,6 +580,7 @@ public class main
 
                             String field = "";
                             String answer = "";
+                            float floatAnswer = -1;
 
                             System.out.println("What would you like this field to up updated to?");
                             if(updateId == 1)
@@ -618,7 +591,7 @@ public class main
                             else if(updateId == 2)
                             {
                                 field = "salary";
-                                answer = scan.nextLine();
+                                floatAnswer = scan.nextFloat();
                             }
                             else if(updateId == 3)
                             {
@@ -627,13 +600,10 @@ public class main
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?");
-                            pstJ.clearParameters();
-                            pstJ.setString(1, field);
-                            pstJ.setString(2, answer);
-                            pstJ.setInt(3, jobId);
-                            pstJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            if (!answer.equals(""))
+                              updateStringField(pstJ, field, answer, jobId);
+                            else if (floatAnswer != -1)
+                              updateFloatField(pstJ, field, floatAnswer, jobId);
                         }
                         else if(selectOption == 5)
                         {
@@ -689,13 +659,7 @@ public class main
                             }
 
                             PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?");
-                            pstJ.clearParameters();
-                            pstJ.setString(1, field);
-                            pstJ.setString(2, answer);
-                            pstJ.setInt(3, jobId);
-                            pstJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            updateStringField(pstJ, field, answer, jobId);
                         }
                         else if(selectOption == 6)
                         {
@@ -749,13 +713,7 @@ public class main
                             }
 
                             PreparedStatement pstL = con.prepareStatement("UPDATE Manager SET ?=? WHERE companyId=?");
-                            pstL.clearParameters();
-                            pstL.setString(1, field);
-                            pstL.setString(2, answer);
-                            pstL.setInt(3, companyId);
-                            pstL.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            updateStringField(pstL, field, answer, companyId);
                         }
                         else if(selectOption == 7)
                         {
@@ -815,13 +773,7 @@ public class main
                             }
 
                             PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET ?=? WHERE managerId=?");
-                            pstRJ.clearParameters();
-                            pstRJ.setString(1, field);
-                            pstRJ.setString(2, answer);
-                            pstRJ.setInt(3, managerId);
-                            pstRJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            updateStringField(pstRJ, field, answer, managerId);
                         }
                         else if(selectOption == 8)
                         {
@@ -855,13 +807,7 @@ public class main
                             scan.nextLine();
 
                             PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?");
-                            pstRJ.clearParameters();
-                            pstRJ.setString(1, updateString);
-                            pstRJ.setInt(2, relatedJob);
-                            pstRJ.setInt(3, jobId);
-                            pstRJ.executeUpdate();
-
-                            System.out.println("The record has been updated.");
+                            updateIntField(pstRJ, updateString, relatedJob, jobId);
                         }
                         else
                         {
@@ -1315,6 +1261,63 @@ public class main
       catch (Exception e)
       {
         System.out.println("There was an error deleting. Error: " + e);
+        return false;
+      }
+    }
+
+    public static boolean updateStringField(PreparedStatement pst, String field, String answer, int id)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setString(1, field);
+        pst.setString(2, answer);
+        pst.setInt(3, id);
+        pst.executeUpdate();
+        System.out.println("The record has been updated.");
+        return true;
+      }
+      catch (Exception e)
+      {
+        System.out.println("Error updating: " + e);
+        return false;
+      }
+    }
+
+    public static boolean updateIntField(PreparedStatement pst, String field, int answer, int id)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setString(1, field);
+        pst.setInt(2, answer);
+        pst.setInt(3, id);
+        pst.executeUpdate();
+        System.out.println("The record has been updated.");
+        return true;
+      }
+      catch (Exception e)
+      {
+        System.out.println("Error updating: " + e);
+        return false;
+      }
+    }
+
+    public static boolean updateFloatField(PreparedStatement pst, String field, float answer, int id)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setString(1, field);
+        pst.setFloat(2, answer);
+        pst.setInt(3, id);
+        pst.executeUpdate();
+        System.out.println("The record has been updated.");
+        return true;
+      }
+      catch (Exception e)
+      {
+        System.out.println("Error updating: " + e);
         return false;
       }
     }
