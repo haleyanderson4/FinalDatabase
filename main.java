@@ -1,5 +1,16 @@
-//@TODO add method for updating to save on code reuse
-//Possibly make separate class
+/**
+* Currently functioning:
+* Essentially the whole crud lab, updated for our schema (still needs testing). Nice!
+* Sorry @haleyanderson4, I'm having trouble testing. Will keep working.
+*
+* @TODO
+* Since we want a different format, should have minimal functionality in main method - most work done in helper methods
+* Maybe even different classes?
+* Front-end stuff
+* Populate our db with actual data (low priority)
+* Testing!!!
+* ??? More, what else
+*/
 
 import java.sql.*;
 import java.util.*;
@@ -822,6 +833,7 @@ public class main
 
                 if(editOption == 4) //prelim completed
                 {
+                  //@TODO should be updated to use deleteEntry method
                     int jobId;
 
                     try
@@ -1265,6 +1277,10 @@ public class main
       }
     }
 
+    /**
+    * Updates an entry, where the field we are updating wants a STRING.
+    * @return true if the update was successful, false otherwise
+    */
     public static boolean updateStringField(PreparedStatement pst, String field, String answer, int id)
     {
       try
@@ -1284,6 +1300,10 @@ public class main
       }
     }
 
+    /**
+    * Updates an entry, where the field we are updating wants an INT.
+    * @return true if the update was successful, false otherwise
+    */
     public static boolean updateIntField(PreparedStatement pst, String field, int answer, int id)
     {
       try
@@ -1303,6 +1323,10 @@ public class main
       }
     }
 
+    /**
+    * Updates an entry, where the field we are updating wants a FLOAT.
+    * @return true if the update was successful, false otherwise
+    */
     public static boolean updateFloatField(PreparedStatement pst, String field, float answer, int id)
     {
       try
