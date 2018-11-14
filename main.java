@@ -1193,7 +1193,7 @@ public class main
             name = scan.nextLine();
             System.out.println("Enter 'Y' if the Manager has technical experience");
             String temp = scan.nextLine();
-            if(temp == "Y" || temp == "y")
+            if(temp.toLowerCase().equals("y"))
             {
                 technicalExperience = true;
             }
@@ -1220,7 +1220,7 @@ public class main
             int related4 = 0;
             int related5 = 0;
 
-            if(relatedMaybe == "Y" || relatedMaybe == "y")
+            if(relatedMaybe.toLowerCase().equals("y"))
             {
                 System.out.println("How many? Enter a number between 1 and 5.");
                 int numOfRelated = scan.nextInt();
@@ -1251,7 +1251,7 @@ public class main
                     {
                         related5 = tempRJ;
                     }
-                } // fix this
+                } // @TODO fix this
             }
 
             if(validInput)
@@ -1292,7 +1292,7 @@ public class main
                 psta.executeUpdate();
                 System.out.println("The Competition has been created.");
 
-                if(type == "F")
+                if(type.equals("F"))
                 {
                     PreparedStatement pstb = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus) VALUES(?,?,?)");
                     pstb.clearParameters();
@@ -1303,7 +1303,7 @@ public class main
                     pstb.executeUpdate();
                     System.out.println("The Full Time Position has been created.");
                 }
-                if (type == "I")
+                if (type.equals("I"))
                 {
                     PreparedStatement pstd = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES(?,?,?,?)");
                     pstd.clearParameters();
@@ -1337,7 +1337,7 @@ public class main
                 pstf.executeUpdate();
                 System.out.println("The Manager has been created.");
 
-                if(relatedMaybe == "Y" || relatedMaybe == "y")
+                if(relatedMaybe.toLowerCase().equals("y"))
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
