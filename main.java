@@ -182,7 +182,7 @@ public class main
                             // pst5.executeUpdate();
                             // System.out.println("The record has been deleted from Internship.");
                         }
-                        else if(type == "F")
+                        else if(type.equals("F"))
                         {
                           deleteEntry(pst5, "FullTime", "jobId", jobId);
                             // pst5.clearParameters();
@@ -591,7 +591,7 @@ public class main
             int related4 = 0;
             int related5 = 0;
 
-            if(relatedMaybe == "Y" || relatedMaybe == "y")
+            if(relatedMaybe.toLowerCase().equals("y"))
             {
                 System.out.println("How many? Enter a number between 1 and 5.");
                 int numOfRelated = scan.nextInt();
@@ -714,7 +714,7 @@ public class main
                     System.out.println("The Internship has been created.");
                 }
 
-                if(relatedMaybe.equals("Y") || relatedMaybe.equals("y"))
+                if(relatedMaybe.toLowerCase().equals("y"))
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
