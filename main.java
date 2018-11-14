@@ -443,7 +443,7 @@ public class main
                             {
                                 answer = "false";
                                 System.out.println("Enter 'Y' for yes");
-                                if(scan.nextLine() == "Y" || scan.nextLine() == "y")
+                                if(scan.nextLine().toLowerCase().equals(("y")))
                                 {
                                     answer = "true";
                                 }
@@ -1055,7 +1055,7 @@ public class main
             System.out.println("Enter the Job's Type (I/F)");
             type = scan.nextLine();
 
-            if (jobTitle.length() > 25 || industry.length() > 25)
+            if (!inputCheck(jobTitle, 25) || !inputCheck(jobTitle, 25))
             {
                 System.out.println("Job Title and Industry need to be 25 characters or less. Please try again.");
                 validInput = false;
@@ -1065,7 +1065,7 @@ public class main
                 System.out.println("The Description needs to be 100 characters or less. Please try again.");
                 validInput = false;
             }
-            if (type.length() > 1 || (!type.equals("I") && !type.equals("F")))
+            if (!type.equals("I") && !type.equals("F"))
             {
                 System.out.println("Type needs to be 1 character only, I or F. Please try again.");
                 validInput = false;
