@@ -61,7 +61,7 @@ public class main
 
                 if(editOption == 2) //prelim completed
                 {
-                    boolean result = createNewPosting();
+                    boolean result = createNewPosting(con, scan);
                     if(result)
                     {
                         System.out.println("The new Posting was successfully added to the Job Board.");
@@ -1018,9 +1018,9 @@ public class main
             return false;
         }
     }
-    
-    
-    public static boolean createNewPosting()
+
+
+    public static boolean createNewPosting(Connection con, Scanner scan)
     {
         boolean validInput = true;
 
@@ -1065,12 +1065,12 @@ public class main
                 System.out.println("The Description needs to be 100 characters or less. Please try again.");
                 validInput = false;
             }
-            if (type.length() > 1 || (type != "I" && type != "F"))
+            if (type.length() > 1 || (!type.equals("I") && !type.equals("F")))
             {
                 System.out.println("Type needs to be 1 character only, I or F. Please try again.");
                 validInput = false;
             }
-            if(jobTitle == "" || industry == "" || description == "" || type == "")
+            if(jobTitle.equals("") || industry.equals("") || description.equals("") || type.equals(""))
             {
                 System.out.println("All fields must be entered.");
                 validInput = false;
@@ -1081,6 +1081,8 @@ public class main
                 System.out.println("Please enter this information again.");
                 continue;
             }
+
+            PreparedStatement companyExist = con.prepareStatement();
 
             String companyName;
             int numEmployees;
@@ -1127,7 +1129,7 @@ public class main
             float salary = 0;
             String season = "";
 
-            if(type == "F") //ADD SALARY TO FULL TIME
+            if(type.equals("F")) //ADD SALARY TO FULL TIME
             {
                 System.out.println("Enter the Job's Number of Stock Options");
                 stockOptions = scan.nextInt();
@@ -1136,7 +1138,7 @@ public class main
                 signingBonus = scan.nextFloat();
                 scan.nextLine();
             }
-            if(type == "I")
+            if(type.equals("I"))
             {
                 System.out.println("Enter the Job's Pay Period (length 10)");
                 payPeriod = scan.nextLine();
