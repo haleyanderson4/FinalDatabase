@@ -182,7 +182,7 @@ public class main
                             // pst5.executeUpdate();
                             // System.out.println("The record has been deleted from Internship.");
                         }
-                        else if(type == "F")
+                        else if(type.equals("F"))
                         {
                           deleteEntry(pst5, "FullTime", "jobId", jobId);
                             // pst5.clearParameters();
@@ -714,7 +714,7 @@ public class main
                     System.out.println("The Internship has been created.");
                 }
 
-                if(relatedMaybe.toLowerCase()equals("y"))
+                if(relatedMaybe.toLowerCase().equals("y"))
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
