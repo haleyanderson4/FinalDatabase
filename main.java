@@ -26,7 +26,7 @@ public class main
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Quit\n");
+            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Undo \n9. Redo \n10. Quit\n");
 
             while(loop)
             {
@@ -35,14 +35,14 @@ public class main
                     System.out.println("What would you like to do: \n");
                     editOption = scan.nextInt();
 
-                    if (editOption < 1 || editOption > 8)
+                    if (editOption < 1 || editOption > 10)
                     {
-                        System.out.println("Please enter a number between 1 and 8\n");
+                        System.out.println("Please enter a number between 1 and 10\n");
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 8\n");
+                    System.out.println("Please enter a number between 1 and 10\n");
                     scan.nextLine();
                 }
 
@@ -443,7 +443,7 @@ public class main
                             {
                                 answer = "false";
                                 System.out.println("Enter 'Y' for yes");
-                                if(scan.nextLine().toLowerCase().equals(("y")))
+                                if(scan.nextLine() == "Y" || scan.nextLine() == "y")
                                 {
                                     answer = "true";
                                 }
@@ -896,7 +896,17 @@ public class main
                     }
                 }
 
-                if(editOption == 8) //done lol
+                if(editOption == 8)
+                {
+                    //undo
+                }
+
+                if(editOption == 9)
+                {
+                    //redo
+                }
+
+                if(editOption == 10) //done lol
                 {
                     loop = false;
                 }
@@ -1055,7 +1065,7 @@ public class main
             System.out.println("Enter the Job's Type (I/F)");
             type = scan.nextLine();
 
-            if (!inputCheck(jobTitle, 25) || !inputCheck(jobTitle, 25))
+            if (jobTitle.length() > 25 || industry.length() > 25)
             {
                 System.out.println("Job Title and Industry need to be 25 characters or less. Please try again.");
                 validInput = false;
@@ -1065,7 +1075,7 @@ public class main
                 System.out.println("The Description needs to be 100 characters or less. Please try again.");
                 validInput = false;
             }
-            if (!type.equals("I") && !type.equals("F"))
+            if (type.length() > 1 || (!type.equals("I") && !type.equals("F")))
             {
                 System.out.println("Type needs to be 1 character only, I or F. Please try again.");
                 validInput = false;
@@ -1076,41 +1086,123 @@ public class main
                 validInput = false;
             }
 
-            if(validInput == false)
+            if(!validInput)
             {
                 System.out.println("Please enter this information again.");
-                continue;
+                return false;
             }
 
-            PreparedStatement companyExist = con.prepareStatement();
+            String companyName = "";
+            int numEmployees = 0;
+            float yearlyRevenue = 0;
+            float stockPrice = 0;
 
-            String companyName;
-            int numEmployees;
-            float yearlyRevenue;
-            float stockPrice;
+            String locationArea = "";
+            String street = "";
+            String city = "";
+            String state = ""; //change to 2 chars
 
-            System.out.println("Enter the Company's Name (length 100)");
-            companyName = scan.nextLine();
-            System.out.println("Enter the Company's Number of Employees");
-            numEmployees = scan.nextInt();
-            scan.nextLine();
-            System.out.println("Enter the Company's Yearly Revenue");
-            yearlyRevenue = scan.nextFloat();
-            scan.nextLine();
-            System.out.println("Enter the Company's Stock Price");
-            stockPrice = scan.nextFloat();
-            scan.nextLine();
+            PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?");
+            companyExist.clearParameters();
+            companyExist.setInt(1, companyId);
+            ResultSet setC = companyExist.executeQuery();
 
-            if (companyName.length() > 100 || companyName == "")
+            int existingCompany = setC.getInt(1);
+            boolean createCompany = false;
+
+            if(existingCompany == 0)
             {
-                System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
-                validInput = false;
+                createCompany = true;
+
+                //company creation
+                System.out.println("Enter the Company's Name (length 100)");
+                companyName = scan.nextLine();
+                System.out.println("Enter the Company's Number of Employees");
+                numEmployees = scan.nextInt();
+                scan.nextLine();
+                System.out.println("Enter the Company's Yearly Revenue");
+                yearlyRevenue = scan.nextFloat();
+                scan.nextLine();
+                System.out.println("Enter the Company's Stock Price");
+                stockPrice = scan.nextFloat();
+                scan.nextLine();
+
+                if (companyName.length() > 100 || companyName == "")
+                {
+                    System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
+                    validInput = false;
+                }
+
+                if(!validInput)
+                {
+                    System.out.println("Please enter this information again.");
+                    return false;
+                }
+
+                //Location creation
+                System.out.println("Enter the Company's Location Area (length 25)");
+                locationArea = scan.nextLine();
+                System.out.println("Enter the Company's Street Address (length 100)");
+                street = scan.nextLine();
+                System.out.println("Enter the Company's City (length 25)");
+                city = scan.nextLine();
+                System.out.println("Enter the Company's State (length 25)");
+                state = scan.nextLine();
+
+                if(locationArea.length() > 25 || city.length() > 25 || state.length() > 25)
+                {
+                    System.out.println("The Location Area, City and State must be 25 characters or less. Please try again.");
+                    validInput = false;
+                }
+                if(street.length() > 100)
+                {
+                    System.out.println("The Street address must be 100 characters or less. Please try again.");
+                    validInput = false;
+                }
+
+                if(validInput == false)
+                {
+                    return false;
+                }
             }
 
-            if(validInput == false)
+            String name = "";
+            boolean technicalExperience = false;
+            int yearsAtCompany = 0 ;
+
+            PreparedStatement managerExist = con.prepareStatement("SELECT COUNT(*) FROM Manager WHERE managerId=?");
+            managerExist.clearParameters();
+            managerExist.setInt(1, managerId);
+            ResultSet setM = managerExist.executeQuery();
+
+            int existingManager = setM.getInt(1);
+            boolean createManager = false;
+
+            if(existingManager == 0)
             {
-                System.out.println("Please enter this information again.");
-                continue;
+                createManager = true;
+
+                System.out.println("Enter the Manager's name (length 100)");
+                name = scan.nextLine();
+                System.out.println("Enter 'Y' if the Manager has technical experience");
+                String temp = scan.nextLine();
+                if (temp.equals("Y") || temp.equals("y"))
+                {
+                    technicalExperience = true;
+                }
+                else
+                {
+                    technicalExperience = false;
+                }
+                System.out.println("Enter the Manager's Years at the Company");
+                yearsAtCompany = scan.nextInt();
+                scan.nextLine();
+
+                if (name.length() > 100)
+                {
+                    System.out.println("The Manager's name is 100 characters or less. Please try again.");
+                    return false;
+                }
             }
 
             int numOpenSpots;
@@ -1152,63 +1244,7 @@ public class main
             if(payPeriod.length() > 10 || season.length() > 10)
             {
                 System.out.println("Pay Period and Season must be 10 characters or less. Please try again.");
-                continue;
-            }
-
-            String locationArea;
-            String street;
-            String city;
-            String state; //change to 2 chars
-
-            System.out.println("Enter the Company's Location Area (length 25)");
-            locationArea = scan.nextLine();
-            System.out.println("Enter the Company's Street Address (length 100)");
-            street = scan.nextLine();
-            System.out.println("Enter the Company's City (length 25)");
-            city = scan.nextLine();
-            System.out.println("Enter the Company's State (length 25)");
-            state = scan.nextLine();
-
-            if(locationArea.length() > 25 || city.length() > 25 || state.length() > 25)
-            {
-                System.out.println("The Location Area, City and State must be 25 characters or less. Please try again.");
-                validInput = false;
-            }
-            if(street.length() > 100)
-            {
-                System.out.println("The Street address must be 100 characters or less. Please try again.");
-                validInput = false;
-            }
-
-            if(validInput == false)
-            {
-                continue;
-            }
-
-            String name;
-            boolean technicalExperience;
-            int yearsAtCompany;
-
-            System.out.println("Enter the Manager's name (length 100)");
-            name = scan.nextLine();
-            System.out.println("Enter 'Y' if the Manager has technical experience");
-            String temp = scan.nextLine();
-            if(temp.toLowerCase().equals("y"))
-            {
-                technicalExperience = true;
-            }
-            else
-            {
-                technicalExperience = false;
-            }
-            System.out.println("Enter the Manager's Years at the Company");
-            yearsAtCompany = scan.nextInt();
-            scan.nextLine();
-
-            if(name.length() > 100)
-            {
-                System.out.println("The Manager's name is 100 characters or less. Please try again.");
-                continue;
+                return false;
             }
 
             System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
@@ -1220,7 +1256,7 @@ public class main
             int related4 = 0;
             int related5 = 0;
 
-            if(relatedMaybe.toLowerCase().equals("y"))
+            if(relatedMaybe == "Y" || relatedMaybe == "y")
             {
                 System.out.println("How many? Enter a number between 1 and 5.");
                 int numOfRelated = scan.nextInt();
@@ -1251,7 +1287,7 @@ public class main
                     {
                         related5 = tempRJ;
                     }
-                } // @TODO fix this
+                } // fix this
             }
 
             if(validInput)
@@ -1272,16 +1308,43 @@ public class main
                 pst2.executeUpdate();
                 System.out.println("The Job has been created.");
 
-                PreparedStatement pstc = con.prepareStatement("INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?,?)");
-                pstc.clearParameters();
-                pstc.setInt(1, companyId);
-                pstc.setString(2, companyName);
-                pstc.setInt(3, numEmployees);
-                pstc.setFloat(4, yearlyRevenue);
-                pstc.setFloat(5, stockPrice);
+                if(createCompany)
+                {
+                    PreparedStatement pstc = con.prepareStatement("INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?,?)");
+                    pstc.clearParameters();
+                    pstc.setInt(1, companyId);
+                    pstc.setString(2, companyName);
+                    pstc.setInt(3, numEmployees);
+                    pstc.setFloat(4, yearlyRevenue);
+                    pstc.setFloat(5, stockPrice);
 
-                pstc.executeUpdate();
-                System.out.println("The Company has been created.");
+                    pstc.executeUpdate();
+                    System.out.println("The Company has been created.");
+
+                    PreparedStatement pste = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?)");
+                    pste.clearParameters();
+                    pste.setInt(1, companyId);
+                    pste.setString(2, locationArea);
+                    pste.setString(3, street);
+                    pste.setString(4, city);
+                    pste.setString(5, state);
+
+                    pste.executeUpdate();
+                    System.out.println("The Location has been created.");
+                }
+
+                if(createManager)
+                {
+                    PreparedStatement pstf = con.prepareStatement("INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?)");
+                    pstf.clearParameters();
+                    pstf.setInt(1, managerId);
+                    pstf.setString(2, name);
+                    pstf.setBoolean(3, technicalExperience);
+                    pstf.setInt(4, yearsAtCompany);
+
+                    pstf.executeUpdate();
+                    System.out.println("The Manager has been created.");
+                }
 
                 PreparedStatement psta = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?)");
                 psta.clearParameters();
@@ -1316,28 +1379,7 @@ public class main
                     System.out.println("The Internship has been created.");
                 }
 
-                PreparedStatement pste = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?)");
-                pste.clearParameters();
-                pste.setInt(1, companyId);
-                pste.setString(2, locationArea);
-                pste.setString(3, street);
-                pste.setString(4, city);
-                pste.setString(5, state);
-
-                pste.executeUpdate();
-                System.out.println("The Location has been created.");
-
-                PreparedStatement pstf = con.prepareStatement("INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?)");
-                pstf.clearParameters();
-                pstf.setInt(1, managerId);
-                pstf.setString(2, name);
-                pstf.setBoolean(3, technicalExperience);
-                pstf.setInt(4, yearsAtCompany);
-
-                pstf.executeUpdate();
-                System.out.println("The Manager has been created.");
-
-                if(relatedMaybe.toLowerCase().equals("y"))
+                if(relatedMaybe == "Y" || relatedMaybe == "y")
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
