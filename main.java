@@ -410,7 +410,7 @@ public class main
                 System.out.println("The Description needs to be 100 characters or less. Please try again.");
                 validInput = false;
             }
-            if (type.length() > 1 || (!type.equals("I") && !type.equals("F")))
+            if (type.length() > 1 || (!type.toUpperCase().equals("I") && !type.toUpperCase().equals("F")))
             {
                 System.out.println("Type needs to be 1 character only, I or F. Please try again.");
                 validInput = false;
@@ -462,7 +462,7 @@ public class main
                 stockPrice = scan.nextFloat();
                 scan.nextLine();
 
-                if (companyName.length() > 100 || companyName == "")
+                if (companyName.length() > 100 || companyName.equals(""))
                 {
                     System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
                     validInput = false;
@@ -521,7 +521,7 @@ public class main
                 name = scan.nextLine();
                 System.out.println("Enter 'Y' if the Manager has technical experience");
                 String temp = scan.nextLine();
-                if (temp.equals("Y") || temp.equals("y"))
+                if (temp.toLowerCase().equals("y"))
                 {
                     technicalExperience = true;
                 }
