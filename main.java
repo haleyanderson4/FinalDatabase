@@ -1379,7 +1379,7 @@ public class main
                     System.out.println("The Internship has been created.");
                 }
 
-                if(relatedMaybe == "Y" || relatedMaybe == "y")
+                if(relatedMaybe.equals("Y") || relatedMaybe.equals("y"))
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
