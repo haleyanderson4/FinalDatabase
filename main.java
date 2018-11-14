@@ -543,65 +543,73 @@ public class main
 
                         PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
                         //@TODO should be modified to use deleteEntry method
-                        pst5.clearParameters();
-                        pst5.setString(1, "Company");
-                        pst5.setString(2, "companyId");
-                        pst5.setInt(3, companyId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Company.");
+                        deleteEntry(pst5, "Company", "companyId", companyId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "Company");
+                        // pst5.setString(2, "companyId");
+                        // pst5.setInt(3, companyId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Company.");
 
-                        pst5.clearParameters();
-                        pst5.setString(1, "Competition");
-                        pst5.setString(2, "jobId");
-                        pst5.setInt(3, jobId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Competition.");
+                        deleteEntry(pst5, "Competition", "jobId", jobId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "Competition");
+                        // pst5.setString(2, "jobId");
+                        // pst5.setInt(3, jobId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Competition.");
 
-                        pst5.clearParameters();
-                        pst5.setString(1, "Job");
-                        pst5.setString(2, "jobId");
-                        pst5.setInt(3, jobId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Job.");
+                        deleteEntry(pst5, "Job", "jobId", jobId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "Job");
+                        // pst5.setString(2, "jobId");
+                        // pst5.setInt(3, jobId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Job.");
 
-                        pst5.clearParameters();
-                        pst5.setString(1, "Location");
-                        pst5.setString(2, "companyId");
-                        pst5.setInt(3, companyId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Location.");
+                        deleteEntry(pst5, "Location", "companyId", companyId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "Location");
+                        // pst5.setString(2, "companyId");
+                        // pst5.setInt(3, companyId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Location.");
 
-                        pst5.clearParameters();
-                        pst5.setString(1, "Manager");
-                        pst5.setString(2, "managerId");
-                        pst5.setInt(3, managerId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Manager.");
+                        deleteEntry(pst5, "Manager", "managerId", managerId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "Manager");
+                        // pst5.setString(2, "managerId");
+                        // pst5.setInt(3, managerId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Manager.");
 
-                        pst5.clearParameters();
-                        pst5.setString(1, "RelatedJobs");
-                        pst5.setString(2, "jobId");
-                        pst5.setInt(3, jobId);
-                        pst5.executeUpdate();
-                        System.out.println("The record has been deleted from Related Jobs.");
+                        deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
+                        // pst5.clearParameters();
+                        // pst5.setString(1, "RelatedJobs");
+                        // pst5.setString(2, "jobId");
+                        // pst5.setInt(3, jobId);
+                        // pst5.executeUpdate();
+                        // System.out.println("The record has been deleted from Related Jobs.");
 
-                        if(type == "I")
+                        if(type.equals("I"))
                         {
-                            pst5.clearParameters();
-                            pst5.setString(1, "Internship");
-                            pst5.setString(2, "jobId");
-                            pst5.setInt(3, jobId);
-                            pst5.executeUpdate();
-                            System.out.println("The record has been deleted from Internship.");
+                          deleteEntry(pst5, "Internship", "jobId", jobId);
+                            // pst5.clearParameters();
+                            // pst5.setString(1, "Internship");
+                            // pst5.setString(2, "jobId");
+                            // pst5.setInt(3, jobId);
+                            // pst5.executeUpdate();
+                            // System.out.println("The record has been deleted from Internship.");
                         }
                         else if(type == "F")
                         {
-                            pst5.clearParameters();
-                            pst5.setString(1, "FullTime");
-                            pst5.setString(2, "jobId");
-                            pst5.setInt(3, jobId);
-                            pst5.executeUpdate();
-                            System.out.println("The record has been deleted from Full Time.");
+                          deleteEntry(pst5, "FullTime", "jobId", jobId);
+                            // pst5.clearParameters();
+                            // pst5.setString(1, "FullTime");
+                            // pst5.setString(2, "jobId");
+                            // pst5.setInt(3, jobId);
+                            // pst5.executeUpdate();
+                            // System.out.println("The record has been deleted from Full Time.");
                         }
 
                         System.out.println("The record has been completely deleted.");
