@@ -628,7 +628,7 @@ public class main
                     System.out.println("The Internship has been created.");
                 }
 
-                if(relatedMaybe.toLowerCase()equals("y"))
+                if(relatedMaybe.toLowerCase().equals("y"))
                 {
                     PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
                     pstg.clearParameters();
