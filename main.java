@@ -48,21 +48,17 @@ public class main
 
                 if(editOption == 1) //prelim completed
                 {
-                    System.out.println("The Job Database:");
-                    PreparedStatement pst1 = con.prepareStatement("select * from Job");
-                    ResultSet rs = pst1.executeQuery();
-                    while(rs.next())
+                    boolean success = queryMethod(con, scan);
+                    if(!success)
                     {
-                        System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                                + " Type: " + rs.getString(7));
+                        System.out.println("The Query failed. Please try again.");
                     }
-                    System.out.println("");
                 }
 
                 if(editOption == 2) //prelim completed
                 {
-                    boolean result = createNewPosting(con, scan);
-                    if(result)
+                    boolean success = createNewPosting(con, scan);
+                    if(success)
                     {
                         System.out.println("The new Posting was successfully added to the Job Board.");
                     }
@@ -87,117 +83,14 @@ public class main
 
                 if(editOption == 4) //prelim completed
                 {
-                    //@TODO should be updated to use deleteEntry method
-                    int jobId;
-
-                    try
+                    boolean success = deleteCall(con, scan);
+                    if(success)
                     {
-                        System.out.println("Please enter the Job's Id");
-                        jobId = scan.nextInt();
-                        scan.nextLine();
-
-                        PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM ? WHERE ?=?");
-                        pstCall.clearParameters();
-                        pstCall.setString(1, "companyId");
-                        pstCall.setString(2, "Job");
-                        pstCall.setString(3, "jobId");
-                        pstCall.setInt(4, jobId);
-                        ResultSet rs = pstCall.executeQuery();
-                        int companyId = rs.getInt(1);
-
-                        pstCall.clearParameters();
-                        pstCall.setString(1, "managerId");
-                        pstCall.setString(2, "Job");
-                        pstCall.setString(3, "jobId");
-                        pstCall.setInt(4, jobId);
-                        rs = pstCall.executeQuery();
-                        int managerId = rs.getInt(1);
-
-                        pstCall.clearParameters();
-                        pstCall.setString(1, "type");
-                        pstCall.setString(2, "Job");
-                        pstCall.setString(3, "jobId");
-                        pstCall.setInt(4, jobId);
-                        rs = pstCall.executeQuery();
-                        String type = rs.getString(1);
-
-
-                        PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
-                        //@TODO should be modified to use deleteEntry method
-                        deleteEntry(pst5, "Company", "companyId", companyId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "Company");
-                        // pst5.setString(2, "companyId");
-                        // pst5.setInt(3, companyId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Company.");
-
-                        deleteEntry(pst5, "Competition", "jobId", jobId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "Competition");
-                        // pst5.setString(2, "jobId");
-                        // pst5.setInt(3, jobId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Competition.");
-
-                        deleteEntry(pst5, "Job", "jobId", jobId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "Job");
-                        // pst5.setString(2, "jobId");
-                        // pst5.setInt(3, jobId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Job.");
-
-                        deleteEntry(pst5, "Location", "companyId", companyId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "Location");
-                        // pst5.setString(2, "companyId");
-                        // pst5.setInt(3, companyId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Location.");
-
-                        deleteEntry(pst5, "Manager", "managerId", managerId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "Manager");
-                        // pst5.setString(2, "managerId");
-                        // pst5.setInt(3, managerId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Manager.");
-
-                        deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
-                        // pst5.clearParameters();
-                        // pst5.setString(1, "RelatedJobs");
-                        // pst5.setString(2, "jobId");
-                        // pst5.setInt(3, jobId);
-                        // pst5.executeUpdate();
-                        // System.out.println("The record has been deleted from Related Jobs.");
-
-                        if(type.equals("I"))
-                        {
-                          deleteEntry(pst5, "Internship", "jobId", jobId);
-                            // pst5.clearParameters();
-                            // pst5.setString(1, "Internship");
-                            // pst5.setString(2, "jobId");
-                            // pst5.setInt(3, jobId);
-                            // pst5.executeUpdate();
-                            // System.out.println("The record has been deleted from Internship.");
-                        }
-                        else if(type == "F")
-                        {
-                          deleteEntry(pst5, "FullTime", "jobId", jobId);
-                            // pst5.clearParameters();
-                            // pst5.setString(1, "FullTime");
-                            // pst5.setString(2, "jobId");
-                            // pst5.setInt(3, jobId);
-                            // pst5.executeUpdate();
-                            // System.out.println("The record has been deleted from Full Time.");
-                        }
-
-                        System.out.println("The record has been completely deleted.");
+                        System.out.println("The entry was successfully deleted.");
                     }
-                    catch (Exception e)
+                    else
                     {
-                        System.out.println("Please enter a valid input.");
+                        System.out.println("Process failed. The entry was not deleted. Please try again.");
                     }
                 }
 
@@ -364,6 +257,27 @@ public class main
         }
     }
 
+    public static boolean queryMethod(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("The Job Database:");
+            PreparedStatement pst1 = con.prepareStatement("select * from Job");
+            ResultSet rs = pst1.executeQuery();
+            while (rs.next())
+            {
+                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                        + " Type: " + rs.getString(7));
+            }
+            System.out.println("");
+            return true;
+        }
+        catch(Exception e)
+        {
+            System.out.println("Please enter a valid input. Try again.");
+        }
+        return false;
+    }
 
     public static boolean createNewPosting(Connection con, Scanner scan)
     {
@@ -1472,6 +1386,124 @@ public class main
                             + " Type: " + rs.getString(7) + "\nRelated Job 1: " + rs.getInt(9) + "Related Job 2: " + rs.getInt(10) + "Related Job 3: " + rs.getInt(11) + "Related Job 4: " + rs.getInt(12) + "Related Job 5: " + rs.getInt(13) + "\n");
                 }
             }
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
+    }
+
+    public static boolean deleteCall(Connection con, Scanner scan)
+    {
+        //@TODO should be updated to use deleteEntry method
+        int jobId;
+
+        try
+        {
+            System.out.println("Please enter the Job's Id");
+            jobId = scan.nextInt();
+            scan.nextLine();
+
+            PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM ? WHERE ?=?");
+            pstCall.clearParameters();
+            pstCall.setString(1, "companyId");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            ResultSet rs = pstCall.executeQuery();
+            int companyId = rs.getInt(1);
+
+            pstCall.clearParameters();
+            pstCall.setString(1, "managerId");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            rs = pstCall.executeQuery();
+            int managerId = rs.getInt(1);
+
+            pstCall.clearParameters();
+            pstCall.setString(1, "type");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            rs = pstCall.executeQuery();
+            String type = rs.getString(1);
+
+
+            PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
+            //@TODO should be modified to use deleteEntry method
+            deleteEntry(pst5, "Company", "companyId", companyId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Company");
+            // pst5.setString(2, "companyId");
+            // pst5.setInt(3, companyId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Company.");
+
+            deleteEntry(pst5, "Competition", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Competition");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Competition.");
+
+            deleteEntry(pst5, "Job", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Job");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Job.");
+
+            deleteEntry(pst5, "Location", "companyId", companyId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Location");
+            // pst5.setString(2, "companyId");
+            // pst5.setInt(3, companyId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Location.");
+
+            deleteEntry(pst5, "Manager", "managerId", managerId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Manager");
+            // pst5.setString(2, "managerId");
+            // pst5.setInt(3, managerId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Manager.");
+
+            deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "RelatedJobs");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Related Jobs.");
+
+            if(type.equals("I"))
+            {
+                deleteEntry(pst5, "Internship", "jobId", jobId);
+                // pst5.clearParameters();
+                // pst5.setString(1, "Internship");
+                // pst5.setString(2, "jobId");
+                // pst5.setInt(3, jobId);
+                // pst5.executeUpdate();
+                // System.out.println("The record has been deleted from Internship.");
+            }
+            else if(type == "F")
+            {
+                deleteEntry(pst5, "FullTime", "jobId", jobId);
+                // pst5.clearParameters();
+                // pst5.setString(1, "FullTime");
+                // pst5.setString(2, "jobId");
+                // pst5.setInt(3, jobId);
+                // pst5.executeUpdate();
+                // System.out.println("The record has been deleted from Full Time.");
+            }
+
+            System.out.println("The record has been completely deleted.");
             return true;
         }
         catch (Exception e)
