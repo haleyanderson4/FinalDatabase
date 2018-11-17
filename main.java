@@ -96,7 +96,7 @@ public class main
 
                 if(editOption == 5) //prelim done
                 {
-                    boolean success = search(con, scan);
+                    boolean success = searchBy(con, scan);
 
                     if(!success)
                     {
@@ -725,7 +725,14 @@ public class main
         return false;
     }
 
-    public static boolean update(Connection con, Scanner scan)
+    //prelim completed
+    /**
+     * Searchs for information from certain tables. Also gives several statistics for the group searched.
+     * Parent method to search tables.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean searchBy(Connection con, Scanner scan)
     {
         int searchOption;
 
@@ -738,68 +745,18 @@ public class main
 
             if(searchOption == 1)
             {
-                System.out.println("Please enter the Location Area you want to search for");
-                String location = scan.nextLine();
-
-                if (location.length() > 25)
-                {
-                    System.out.println("Location Area needs to be 25 characters or less. Please try again.");
-                }
-                else
-                {
-                    System.out.println("The Job Database in that Location Area:\n");
-                    PreparedStatement pst8 = con.prepareStatement("select * from Job j, Company c, Location l WHERE j.companyId = l.companyId AND l.locationArea=?");
-                    pst8.clearParameters();
-                    pst8.setString(1, location);
-                    ResultSet rs = pst8.executeQuery();
-                    while (rs.next())
-                    {
-                        System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getFloat(4) + " " + rs.getString(5) + " " + rs.getString(6));
-                    }
-                }
+                boolean success = searchLocation(con,scan);
+                return success;
             }
             else if(searchOption == 2)
             {
-                System.out.println("Please enter the ID of the Company you want to search for");
-                int companyId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The Job Database of that Company:\n");
-                PreparedStatement pst6 = con.prepareStatement("select * from Job WHERE companyId =?");
-                pst6.clearParameters();
-                pst6.setInt(1, companyId);
-                ResultSet rs = pst6.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                            + " Type: " + rs.getString(7));
-                }
+                boolean success = searchCompany(con,scan);
+                return success;
             }
             else if(searchOption == 3)
             {
-
-                System.out.println("Please enter the Type of Job you want to search for (I/F)");
-                String type = scan.nextLine();
-
-                if (type.length() > 1 || (type != "I" && type != "F"))
-                {
-                    System.out.println("Type needs to be of length 1 (I or F). Please try again.");
-                }
-                else
-                {
-                    System.out.println("The Job Database of that Type:\n");
-                    PreparedStatement pst7 = con.prepareStatement("select * from Job WHERE type=?");
-                    pst7.clearParameters();
-                    pst7.setString(1, type);
-                    ResultSet rs = pst7.executeQuery();
-                    while(rs.next())
-                    {
-                        System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                                + " Type: " + rs.getString(7));
-                    }
-                }
-
-                return true;
+                boolean success = searchType(con,scan);
+                return success;
             }
             else
             {
@@ -818,7 +775,7 @@ public class main
     /**
      * Selects all relevant job information across all tables in the database.
      * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
-     * @return true if the update was successful, false otherwise
+     * @return true if there were no issues, false otherwise
      */
     public static boolean jobInfo(Connection con, Scanner scan)
     {
@@ -1643,5 +1600,197 @@ public class main
             return false;
         }
         return true;
+    }
+
+    //search tables
+    /**
+     * Searchs a table, where the user selected LOCATION.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean searchLocation(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("Please enter the Location Area you want to search for");
+            String location = scan.nextLine();
+
+            if (location.length() > 25)
+            {
+                System.out.println("Location Area needs to be 25 characters or less. Please try again.");
+                return false;
+            }
+            else
+            {
+                System.out.println("The Job Database in that Location Area:\n");
+                PreparedStatement pst8 = con.prepareStatement("select j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?");
+                pst8.clearParameters();
+                pst8.setString(1, location);
+                ResultSet rs = pst8.executeQuery();
+
+                boolean whichType = true;
+                float averageSalary = 0;
+                while (rs.next())
+                {
+                    String type = "Full Time";
+                    whichType = rs.getBoolean(7);
+                    if(whichType)
+                    {
+                        type = "Internship";
+                    }
+                    System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                            + " Type: " + type);
+                    averageSalary = rs.getFloat(8);
+                }
+
+                System.out.println("Some Statistics for that Location Area:\n");
+                PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l");
+                ResultSet rs8Stat = pst8Stat.executeQuery();
+                while (rs8Stat.next())
+                {
+                    System.out.println("Number of Companies in the Area: " + rs8Stat.getInt(1) + " Avergae Salary: " + averageSalary);
+                }
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please Enter a valid Input.");
+        }
+        return false;
+    }
+
+    /**
+     * Searchs a table, where the user selected COMPANY.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean searchCompany(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("Please enter the ID of the Company you want to search for");
+            int companyId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The Job Database of that Company:\n");
+            PreparedStatement pst6N = con.prepareStatement("select companyName from Company WHERE companyId =?");
+            pst6N.clearParameters();
+            pst6N.setInt(1, companyId);
+            ResultSet rs6N = pst6N.executeQuery();
+            String name = "";
+            while(rs6N.next())
+            {
+                name = rs6N.getString(1);
+            }
+
+            System.out.println("The Job Database of " + name + ":\n");
+            PreparedStatement pst6 = con.prepareStatement("select * from Job WHERE companyId =?");
+            pst6.clearParameters();
+            pst6.setInt(1, companyId);
+            ResultSet rs = pst6.executeQuery();
+            while(rs.next())
+            {
+                String type = "Full Time";
+                if(rs.getBoolean(7))
+                {
+                    type = "Internship";
+                }
+                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                        + " Type: " + type);
+            }
+
+            System.out.println("Some Statistics from " + name + ":");
+            PreparedStatement pst6Stat = con.prepareStatement("select COUNT(*), AVG(c.numApplicants) from Job j, Competition c WHERE j.companyId =? AND c.jobId = j.jobId");
+            pst6Stat.clearParameters();
+            pst6Stat.setInt(1, companyId);
+            ResultSet rs6Stat = pst6Stat.executeQuery();
+            while(rs6Stat.next())
+            {
+                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " Average number of Applications to each Job: " + rs6Stat.getFloat(2));
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please Enter a valid Input.");
+        }
+        return false;
+    }
+
+    /**
+     * Searchs a table, where the user selected TYPE.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean searchType(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("Please enter the Type of Job you want to search for (I/F)");
+            String type = scan.nextLine();
+            boolean search = true;
+
+            if (type.length() > 1 || (!type.toLowerCase().equals("i") && !type.toLowerCase().equals("f")))
+            {
+                System.out.println("Type needs to be of length 1 (I or F). Please try again.");
+                return false;
+            }
+            else
+            {
+                if(type.equals("f"))
+                {
+                    search = false;
+                }
+
+                System.out.println("The Job Database of that Type:\n");
+                PreparedStatement pst7 = con.prepareStatement("SELECT * FROM Job WHERE type=?");
+                pst7.clearParameters();
+                pst7.setString(1, type);
+                ResultSet rs = pst7.executeQuery();
+                while(rs.next())
+                {
+                    String type = "Full Time";
+                    if(rs.getBoolean(7))
+                    {
+                        type = "Internship";
+                    }
+                    System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                            + " Type: " + type);
+                }
+
+                if(search)
+                {
+                    System.out.println("\nSome Statistics on Full Time Jobs:");
+                    PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG (salary), Max (salary), AVG (signingBonus) FROM FullTime");
+                    ResultSet rsFTypeStat = pstFTypeStat.executeQuery();
+                    while (rsFTypeStat.next())
+                    {
+                        System.out.println("Average Salary: " + rsFTypeStat.getFloat(1) + " Highest Salary: " + rsFTypeStat.getFloat(2) + " Average SigningBonus: " + rsFTypeStat.getFloat(3));
+                    }
+                }
+                else if(!search)
+                {
+                    System.out.println("\nSome Statistics on Internships:");
+                    PreparedStatement pstI1TypeStat = con.prepareStatement("SELECT AVG (salary), MAX (salary) FROM Internship");
+                    ResultSet rsI1TypeStat = pstI1TypeStat.executeQuery();
+                    PreparedStatement pstI2TypeStat = con.prepareStatement("SELECT COUNT(*) FROM Internship WHERE salary = 0");
+                    ResultSet rsI2TypeStat = pstI2TypeStat.executeQuery();
+                    while (rsI1TypeStat.next() || rsI2TypeStat.next())
+                    {
+                        System.out.println("Average Salary: " + rsI1TypeStat.getFloat(1) + " Highest Salary: " + rsI1TypeStat.getFloat(2) + " Number of Unpaid Internships: " + rsI2TypeStat.getInt(1));
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please Enter a valid Input.");
+        }
+        return false;
     }
 }
