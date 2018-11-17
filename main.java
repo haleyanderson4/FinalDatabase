@@ -257,6 +257,7 @@ public class main
         }
     }
 
+    //prelim completed
     public static boolean queryMethod(Connection con, Scanner scan)
     {
         try
@@ -655,6 +656,13 @@ public class main
         return false;
     }
 
+    //prelim completed
+    /**
+     * Parent method to update database tables, where the user selected UPDATE INFORMATION.
+     * Method calls updateTable methods to execute the requested updates.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if the update was successful, false otherwise
+     */
     public static boolean updateField(Connection con, Scanner scan)
     {
         try
@@ -666,427 +674,43 @@ public class main
 
             if(selectOption == 1)
             {
-                System.out.println("What is the ID of the Company you would like to update?");
-                int companyId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Company is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, companyId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Company ID: " + rs.getInt(1) + " Company Name: " + rs.getString(2) + " Number of Employees: " + rs.getInt(3) + " Yearly Revenue: " + rs.getFloat(4) + " Stock Price: " + rs.getFloat(5));
-                }
-
-                System.out.println("Which field would you like to update? \n1. Company Name \n2. Number of Employees \n3. Yearly Revenue \n4. Stock Price");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 4)
-                {
-                    System.out.println("Please enter a number between 1 and 4.");
-                    return false;
-                }
-
-                String field = "";
-                String answer = "";
-                int intAnswer = -1;
-                float floatAnswer = -1;
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "companyName";
-                    answer = scan.nextLine();
-                    if (!inputCheck(answer, 25)){ return false; }
-                }
-                else if(updateId == 2)
-                {
-                    field = "numEmployees";
-                    intAnswer = scan.nextInt();
-                }
-                else if(updateId == 3)
-                {
-                    field = "yearlyRevenue";
-                    floatAnswer = scan.nextFloat();
-                }
-                else if(updateId == 4)
-                {
-                    field = "stockPrice";
-                    floatAnswer = scan.nextFloat();
-                }
-
-                PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?");
-                if (!answer.equals("")) {
-                    updateStringField(pstJ, field, answer, companyId);
-                }
-                else if (intAnswer != -1) {
-                    updateIntField(pstJ, field, intAnswer, companyId);
-                }
-                else if (floatAnswer != -1) {
-                    updateFloatField(pstJ, field, floatAnswer, companyId);
-                }
+                boolean success = updateCompany(con, scan);
+                return success;
             }
             else if(selectOption == 2)
             {
-                System.out.println("What is the ID of the Job you would like to update the Competition to?");
-                int jobId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Job's Competition is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, jobId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3));
-                }
-
-                System.out.println("Which field would you like to update? \n1. Number of Open Spots \n2. Number of Applicants ");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 2)
-                {
-                    System.out.println("Please enter a number between 1 and 2.");
-                    return false;
-                }
-
-                String field = "";
-                int answer = -1;
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "numOpenSpots";
-                    answer = scan.nextInt();
-                }
-                else if(updateId == 2)
-                {
-                    field = "numApplicants";
-                    answer = scan.nextInt();
-                }
-
-                PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?");
-                updateIntField(pstJ, field, answer, jobId);
+                boolean success = updateCompetition(con, scan);
+                return success;
             }
             else if(selectOption == 3)
             {
-                System.out.println("What is the ID of the Full Time Job you would like to update?");
-                int jobId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Job is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM FullTime WHERE jobId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, jobId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Full Time Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3));
-                }
-
-                System.out.println("Which field would you like to update? \n1. Number of Stock Options \n2. Signing Bonus ");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 2)
-                {
-                    System.out.println("Please enter a number between 1 and 2.");
-                    return false;
-                }
-
-                String field = "";
-                int intAnswer = -1;
-                float floatAnswer = -1;
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "numStockOptions";
-                    intAnswer = scan.nextInt();
-                }
-                else if(updateId == 2)
-                {
-                    field = "signingBonus";
-                    floatAnswer = scan.nextFloat();
-                }
-
-                PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?");
-                if (intAnswer != -1)
-                {
-                    updateIntField(pstJ, field, intAnswer, jobId);
-                }
-                if (floatAnswer != -1)
-                {
-                    updateFloatField(pstJ, field, floatAnswer, jobId);
-                }
+                boolean success = updateFullTime(con, scan);
+                return success;
             }
             else if(selectOption == 4) //@TODO update answer to int/float
             {
-                System.out.println("What is the ID of the Job you would like to update?");
-                int jobId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Job is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, jobId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1)+ "Internship Pay Period: " + rs.getString(2) + " Salary: " + rs.getFloat(3) + " Season: " + rs.getString(4));
-
-                }
-
-                System.out.println("Which field would you like to update? \n1. Pay Period \n2. Salary \n3. Season");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 3)
-                {
-                    System.out.println("Please enter a number between 1 and 3.");
-                    return false;
-                }
-
-                String field = "";
-                String answer = "";
-                float floatAnswer = -1;
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "payPeriod";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 2)
-                {
-                    field = "salary";
-                    floatAnswer = scan.nextFloat();
-                }
-                else if(updateId == 3)
-                {
-                    field = "season";
-                    answer = scan.nextLine();
-                }
-
-                PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?");
-                if (!answer.equals(""))
-                {
-                    updateStringField(pstJ, field, answer, jobId);
-                }
-                else if (floatAnswer != -1)
-                {
-                    updateFloatField(pstJ, field, floatAnswer, jobId);
-                }
+                boolean success = updateInternship(con, scan);
+                return success;
             }
             else if(selectOption == 5)
             {
-                System.out.println("What is the ID of the Job you would like to update?");
-                int jobId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Job is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, jobId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                            + " Type: " + rs.getString(7));
-                }
-
-                System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. Type");
-                System.out.println("Company ID and Manager ID are not an updatable field.");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 4)
-                {
-                    System.out.println("Please enter a number between 1 and 4.");
-                    return false;
-                }
-
-                String field = "";
-                String answer = "";
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "jobTitle";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 2)
-                {
-                    field = "description";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 3)
-                {
-                    field = "industry";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 4)
-                {
-                    field = "type";
-                    answer = scan.nextLine();
-                }
-
-                PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?");
-                updateStringField(pstJ, field, answer, jobId);
+                boolean success = updateJob(con, scan);
+                return success;
             }
             else if(selectOption == 6)
             {
-                System.out.println("What is the ID of the Company you would like to update the Location of?");
-                int companyId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Company's Location is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, companyId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Company ID: " + rs.getInt(1)+ "Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + "\n");
-                }
-
-                System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 4)
-                {
-                    System.out.println("Please enter a number between 1 and 4.");
-                    return false;
-                }
-
-                String field = "";
-                String answer = "";
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "locationArea";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 2)
-                {
-                    field = "street";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 3)
-                {
-                    field = "city";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 4)
-                {
-                    field = "state";
-                    answer = scan.nextLine();
-                }
-
-                PreparedStatement pstL = con.prepareStatement("UPDATE Manager SET ?=? WHERE companyId=?");
-                updateStringField(pstL, field, answer, companyId);
+                boolean success = updateLocation(con, scan);
+                return success;
             }
             else if(selectOption == 7)
             {
-                System.out.println("What is the ID of the Manager you would like to update?");
-                int managerId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Manager is: ");
-                PreparedStatement pstM = con.prepareStatement("SELECT * FROM Manager WHERE managerId=?");
-                pstM.clearParameters();
-                pstM.setInt(1, managerId);
-                ResultSet rs = pstM.executeQuery();
-                while(rs.next())
-                {
-                    String techBool = "No";
-                    if(rs.getBoolean(4))
-                    {
-                        techBool = "Yes";
-                    }
-                    System.out.println("Manager ID:" + rs.getInt(1) + " Manager's Name: " + rs.getString(2) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(4));
-                }
-
-                System.out.println("Which field would you like to update? \n1.Manager's Name \n2. Technical Experience \n3. Years at Company");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-
-                if(updateId < 1 || updateId > 3)
-                {
-                    System.out.println("Please enter a number between 1 and 3.");
-                    return false;
-                }
-
-                String field = "";
-                String answer = "";
-
-                System.out.println("What would you like this field to up updated to?");
-                if(updateId == 1)
-                {
-                    field = "name";
-                    answer = scan.nextLine();
-                }
-                else if(updateId == 2)
-                {
-                    answer = "false";
-                    System.out.println("Enter 'Y' for yes");
-                    if(scan.nextLine() == "Y" || scan.nextLine() == "y")
-                    {
-                        answer = "true";
-                    }
-                    field = "technicalExperience";
-                }
-                else if(updateId == 3)
-                {
-                    field = "yearsAtCompany";
-                    answer = "" + scan.nextInt();
-                    scan.nextLine();
-                }
-
-                PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET ?=? WHERE managerId=?");
-                updateStringField(pstRJ, field, answer, managerId);
+                boolean success = updateManager(con, scan);
+                return success;
             }
             else if(selectOption == 8)
             {
-                System.out.println("What is the ID of the Job's Related Jobs you would like to update?");
-                int jobId = scan.nextInt();
-                scan.nextLine();
-
-                System.out.println("The current information for this Job is: ");
-                PreparedStatement pst7 = con.prepareStatement("SELECT * FROM RelatedJobs WHERE jobId=?");
-                pst7.clearParameters();
-                pst7.setInt(1, jobId);
-                ResultSet rs = pst7.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Related Job 1: " + rs.getInt(2) + "Related Job 2: " + rs.getInt(3) + "Related Job 3: " + rs.getInt(4) + "Related Job 4: " + rs.getInt(5) + "Related Job 5: " + rs.getInt(6));
-                }
-
-                System.out.println("Which Field would you like to update? \n1. Related Job 1 \n2. Related Job 2 \n3. Related Job 3 \n4. Related Job 4 \n5. Related Job 5");
-                int updateId = scan.nextInt();
-                scan.nextLine();
-                String updateString = "related" + updateId;
-
-                if(updateId < 1 || updateId > 5)
-                {
-                    System.out.println("Please enter a number between 1 and 5.");
-                    return false;
-                }
-
-                System.out.println("What would you like this field to up updated to?");
-                int relatedJob = scan.nextInt();
-                scan.nextLine();
-
-                PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?");
-                updateIntField(pstRJ, updateString, relatedJob, jobId);
-                return true;
+                boolean success = updateRelatedJobs(con, scan);
+                return success;
             }
             else
             {
@@ -1190,6 +814,12 @@ public class main
         return false;
     }
 
+    //prelim completed
+    /**
+     * Selects all relevant job information across all tables in the database.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if the update was successful, false otherwise
+     */
     public static boolean jobInfo(Connection con, Scanner scan)
     {
         try
@@ -1222,8 +852,8 @@ public class main
                             + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12)
                             + "\nLocation Area: " + rs.getString(14) + " Address: " + rs.getString(15) + " " + rs.getString(16)
                             + "\nManager's Name: " + rs.getString(18) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(20)
-                            + "\n Full Time Salary: N/A" + "\nNumber of Stock Options: " + rs.getInt(22) + " Signing Bonus: " + rs.getFloat(23)
-                            + "\nRelated Job 1: " + rs.getInt(25) + "Related Job 2: " + rs.getInt(26) + "Related Job 3: " + rs.getInt(27) + "Related Job 4: " + rs.getInt(28) + "Related Job 5: " + rs.getInt(29));
+                            + "\n Full Time Salary" + rs.getFloat(24) + "\nNumber of Stock Options: " + rs.getInt(22) + " Signing Bonus: " + rs.getFloat(23)
+                            + "\nRelated Job 1: " + rs.getInt(26) + "Related Job 2: " + rs.getInt(27) + "Related Job 3: " + rs.getInt(28) + "Related Job 4: " + rs.getInt(29) + "Related Job 5: " + rs.getInt(30));
                 }
             }
             if (type == "I")
@@ -1482,7 +1112,7 @@ public class main
             // pst5.executeUpdate();
             // System.out.println("The record has been deleted from Related Jobs.");
 
-            if(type.equals("I"))
+            if(type)
             {
                 deleteEntry(pst5, "Internship", "jobId", jobId);
                 // pst5.clearParameters();
@@ -1492,7 +1122,7 @@ public class main
                 // pst5.executeUpdate();
                 // System.out.println("The record has been deleted from Internship.");
             }
-            else if(type == "F")
+            else if(!type)
             {
                 deleteEntry(pst5, "FullTime", "jobId", jobId);
                 // pst5.clearParameters();
@@ -1511,5 +1141,507 @@ public class main
             System.out.println("Please enter a valid input.");
         }
         return false;
+    }
+
+
+    //update Table methods
+    /**
+     * Updates a table, where the user selected COMPANY.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateCompany(Connection con, Scanner scan)
+    {
+        try {
+            System.out.println("What is the ID of the Company you would like to update?");
+            int companyId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The current information for this Company is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
+            pstM.clearParameters();
+            pstM.setInt(1, companyId);
+            ResultSet rs = pstM.executeQuery();
+            while (rs.next()) {
+                System.out.println("Company ID: " + rs.getInt(1) + " Company Name: " + rs.getString(2) + " Number of Employees: " + rs.getInt(3) + " Yearly Revenue: " + rs.getFloat(4) + " Stock Price: " + rs.getFloat(5));
+            }
+
+            System.out.println("Which field would you like to update? \n1. Company Name \n2. Number of Employees \n3. Yearly Revenue \n4. Stock Price");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+
+            if (updateId < 1 || updateId > 4) {
+                System.out.println("Please enter a number between 1 and 4.");
+                return false;
+            }
+
+            String field = "";
+            String answer = "";
+            int intAnswer = -1;
+            float floatAnswer = -1;
+
+            System.out.println("What would you like this field to up updated to?");
+            if (updateId == 1) {
+                field = "companyName";
+                answer = scan.nextLine();
+                if (!inputCheck(answer, 50)) {
+                    return false;
+                }
+            } else if (updateId == 2) {
+                field = "numEmployees";
+                intAnswer = scan.nextInt();
+            } else if (updateId == 3) {
+                field = "yearlyRevenue";
+                floatAnswer = scan.nextFloat();
+            } else if (updateId == 4) {
+                field = "stockPrice";
+                floatAnswer = scan.nextFloat();
+            }
+
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?");
+            if (!answer.equals("")) {
+                updateStringField(pstJ, field, answer, companyId);
+            } else if (intAnswer != -1) {
+                updateIntField(pstJ, field, intAnswer, companyId);
+            } else if (floatAnswer != -1) {
+                updateFloatField(pstJ, field, floatAnswer, companyId);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected COMPETITION.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateCompetition(Connection con, Scanner scan)
+    {
+        try {
+            System.out.println("What is the ID of the Job you would like to update the Competition to?");
+            int jobId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The current information for this Job's Competition is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?");
+            pstM.clearParameters();
+            pstM.setInt(1, jobId);
+            ResultSet rs = pstM.executeQuery();
+            while (rs.next()) {
+                System.out.println("Job ID: " + rs.getInt(1) + " Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3));
+            }
+
+            System.out.println("Which field would you like to update? \n1. Number of Open Spots \n2. Number of Applicants ");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+
+            if (updateId < 1 || updateId > 2) {
+                System.out.println("Please enter a number between 1 and 2.");
+                return false;
+            }
+
+            String field = "";
+            int answer = -1;
+
+            System.out.println("What would you like this field to up updated to?");
+            if (updateId == 1) {
+                field = "numOpenSpots";
+                answer = scan.nextInt();
+            } else if (updateId == 2) {
+                field = "numApplicants";
+                answer = scan.nextInt();
+            }
+
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?");
+            updateIntField(pstJ, field, answer, jobId);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected FULL TIME.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateFullTime(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("What is the ID of the Full Time Job you would like to update?");
+            int jobId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The current information for this Job is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM FullTime WHERE jobId=?");
+            pstM.clearParameters();
+            pstM.setInt(1, jobId);
+            ResultSet rs = pstM.executeQuery();
+            while(rs.next())
+            {
+                System.out.println("Job ID: " + rs.getInt(1)+ " Full Time Number of Stock Options: " + rs.getInt(2) + " Singing Bonus: " + rs.getFloat(3) + " Salary: " + rs.getFloat(4));
+            }
+
+            System.out.println("Which field would you like to update? \n1. Number of Stock Options \n2. Signing Bonus \n3. Salary");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+
+            if(updateId < 1 || updateId > 3)
+            {
+                System.out.println("Please enter a number between 1 and 3.");
+                return false;
+            }
+
+            String field = "";
+            int intAnswer = -1;
+            float floatAnswer = -1;
+
+            System.out.println("What would you like this field to up updated to?");
+            if(updateId == 1)
+            {
+                field = "numStockOptions";
+                intAnswer = scan.nextInt();
+            }
+            else if(updateId == 2)
+            {
+                field = "signingBonus";
+                floatAnswer = scan.nextFloat();
+            }
+            else if(updateId == 3)
+            {
+                field = "salary";
+                floatAnswer = scan.nextFloat();
+            }
+
+            PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?");
+            if (intAnswer != -1)
+            {
+                updateIntField(pstJ, field, intAnswer, jobId);
+            }
+            if (floatAnswer != -1)
+            {
+                updateFloatField(pstJ, field, floatAnswer, jobId);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected INTERNSHIP.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateInternship(Connection con, Scanner scan)
+    {
+        System.out.println("What is the ID of the Job you would like to update?");
+        int jobId = scan.nextInt();
+        scan.nextLine();
+
+        System.out.println("The current information for this Job is: ");
+        PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
+        pstM.clearParameters();
+        pstM.setInt(1, jobId);
+        ResultSet rs = pstM.executeQuery();
+        while(rs.next())
+        {
+            System.out.println("Job ID: " + rs.getInt(1)+ "Internship Pay Period: " + rs.getString(2) + " Salary: " + rs.getFloat(3) + " Season: " + rs.getString(4));
+
+        }
+
+        System.out.println("Which field would you like to update? \n1. Pay Period \n2. Salary \n3. Season");
+        int updateId = scan.nextInt();
+        scan.nextLine();
+
+        if(updateId < 1 || updateId > 3)
+        {
+            System.out.println("Please enter a number between 1 and 3.");
+            return false;
+        }
+
+        String field = "";
+        String answer = "";
+        float floatAnswer = -1;
+
+        System.out.println("What would you like this field to up updated to?");
+        if(updateId == 1)
+        {
+            field = "payPeriod";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 2)
+        {
+            field = "salary";
+            floatAnswer = scan.nextFloat();
+        }
+        else if(updateId == 3)
+        {
+            field = "season";
+            answer = scan.nextLine();
+        }
+
+        PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?");
+        if (!answer.equals(""))
+        {
+            updateStringField(pstJ, field, answer, jobId);
+        }
+        else if (floatAnswer != -1)
+        {
+            updateFloatField(pstJ, field, floatAnswer, jobId);
+        }
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected JOB.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateJob(Connection con, Scanner scan)
+    {
+        System.out.println("What is the ID of the Job you would like to update?");
+        int jobId = scan.nextInt();
+        scan.nextLine();
+
+        System.out.println("The current information for this Job is: ");
+        PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?");
+        pstM.clearParameters();
+        pstM.setInt(1, jobId);
+        ResultSet rs = pstM.executeQuery();
+        while(rs.next())
+        {
+            System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
+                    + " Type: " + rs.getString(7));
+        }
+
+        System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. Type");
+        System.out.println("Company ID and Manager ID are not an allowed to be updated.");
+        int updateId = scan.nextInt();
+        scan.nextLine();
+
+        if(updateId < 1 || updateId > 4)
+        {
+            System.out.println("Please enter a number between 1 and 4.");
+            return false;
+        }
+
+        String field = "";
+        String answer = "";
+
+        System.out.println("What would you like this field to up updated to?");
+        if(updateId == 1)
+        {
+            field = "jobTitle";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 2)
+        {
+            field = "description";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 3)
+        {
+            field = "industry";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 4)
+        {
+            field = "type";
+
+            answer = "false";
+            System.out.println("Enter 'Y' for yes");
+            if (scan.nextLine().toLowerCase().equals("y"))
+            {
+                answer = "true";
+            }
+        }
+
+        PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?");
+        updateStringField(pstJ, field, answer, jobId);
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected LOCATION.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateLocation(Connection con, Scanner scan)
+    {
+        System.out.println("What is the ID of the Company you would like to update the Location of?");
+        int companyId = scan.nextInt();
+        scan.nextLine();
+
+        System.out.println("The current information for this Company's Location is: ");
+        PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?");
+        pstM.clearParameters();
+        pstM.setInt(1, companyId);
+        ResultSet rs = pstM.executeQuery();
+        while(rs.next())
+        {
+            System.out.println("Company ID: " + rs.getInt(1)+ "Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + "\n");
+        }
+
+        System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State");
+        int updateId = scan.nextInt();
+        scan.nextLine();
+
+        if(updateId < 1 || updateId > 4)
+        {
+            System.out.println("Please enter a number between 1 and 4.");
+            return false;
+        }
+
+        String field = "";
+        String answer = "";
+
+        System.out.println("What would you like this field to up updated to?");
+        if(updateId == 1)
+        {
+            field = "locationArea";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 2)
+        {
+            field = "street";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 3)
+        {
+            field = "city";
+            answer = scan.nextLine();
+        }
+        else if(updateId == 4)
+        {
+            field = "state";
+            answer = scan.nextLine();
+        }
+
+        PreparedStatement pstL = con.prepareStatement("UPDATE Location SET ?=? WHERE companyId=?");
+        updateStringField(pstL, field, answer, companyId);
+    }
+
+    /**
+     * Updates a table, where the user selected MANAGER.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateManager(Connection con, Scanner scan)
+    {
+        try {
+            System.out.println("What is the ID of the Manager you would like to update?");
+            int managerId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The current information for this Manager is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Manager WHERE managerId=?");
+            pstM.clearParameters();
+            pstM.setInt(1, managerId);
+            ResultSet rs = pstM.executeQuery();
+            while (rs.next())
+            {
+                String techBool = "No";
+                if (rs.getBoolean(4))
+                {
+                    techBool = "Yes";
+                }
+                System.out.println("Manager ID:" + rs.getInt(1) + " Manager's Name: " + rs.getString(2) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(4));
+            }
+
+            System.out.println("Which field would you like to update? \n1.Manager's Name \n2. Technical Experience \n3. Years at Company");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+
+            if (updateId < 1 || updateId > 3)
+            {
+                System.out.println("Please enter a number between 1 and 3.");
+                return false;
+            }
+
+            String field = "";
+            String answer = "";
+
+            System.out.println("What would you like this field to up updated to?");
+            if (updateId == 1) {
+                field = "name";
+                answer = scan.nextLine();
+            }
+            else if (updateId == 2)
+            {
+                answer = "false";
+                System.out.println("Enter 'Y' for yes");
+                if (scan.nextLine().toLowerCase().equals("y"))
+                {
+                    answer = "true";
+                }
+                field = "technicalExperience";
+            }
+            else if (updateId == 3)
+            {
+                field = "yearsAtCompany";
+                answer = "" + scan.nextInt();
+                scan.nextLine();
+            }
+
+            PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET ?=? WHERE managerId=?");
+            updateStringField(pstRJ, field, answer, managerId);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates a table, where the user selected RELATED JOBS.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateRelatedJobs(Connection con, Scanner scan)
+    {
+        try {
+            System.out.println("What is the ID of the Job's Related Jobs you would like to update?");
+            int jobId = scan.nextInt();
+            scan.nextLine();
+
+            System.out.println("The current information for this Job is: ");
+            PreparedStatement pst7 = con.prepareStatement("SELECT * FROM RelatedJobs WHERE jobId=?");
+            pst7.clearParameters();
+            pst7.setInt(1, jobId);
+            ResultSet rs = pst7.executeQuery();
+            while (rs.next()) {
+                System.out.println("Job ID: " + rs.getInt(1) + " Related Job 1: " + rs.getInt(2) + "Related Job 2: " + rs.getInt(3) + "Related Job 3: " + rs.getInt(4) + "Related Job 4: " + rs.getInt(5) + "Related Job 5: " + rs.getInt(6));
+            }
+
+            System.out.println("Which Field would you like to update? \n1. Related Job 1 \n2. Related Job 2 \n3. Related Job 3 \n4. Related Job 4 \n5. Related Job 5");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+            String updateString = "related" + updateId;
+
+            if (updateId < 1 || updateId > 5) {
+                System.out.println("Please enter a number between 1 and 5.");
+                return false;
+            }
+
+            System.out.println("What would you like this field to up updated to?");
+            int relatedJob = scan.nextInt();
+            scan.nextLine();
+
+            PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?");
+            updateIntField(pstRJ, updateString, relatedJob, jobId);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+        return true;
     }
 }
