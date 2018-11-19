@@ -10,7 +10,7 @@ def createJob(companyId, managerId):
     jobTitle = faker.job();
     industry = faker.company_suffix()
     description = faker.text()
-    type = random.choice(True, False)
+    type = random.choice([True, False])
 
     curr.execute("INSERT INTO Job VALUES(?, ?, ?, ?, ?, ?);", (jobTitle, industry, description, companyId, managerId, type))
     conn.commit()
@@ -18,8 +18,8 @@ def createJob(companyId, managerId):
 
 def createCompetition(jobId):
     #create competition
-    numOpenSpots = faker.random_int(min=1, max=3000)
-    numApplicants = faker.random_int(min=0, max=5000)
+    numOpenSpots = random.randit(1, 3000)
+    numApplicants = random.randit(0, 5000)
 
     curr.execute("INSERT INTO Competition VALUES(?,?,?);", (jobId, numOpenSpots, numApplicants))
     conn.commit()
@@ -28,9 +28,9 @@ def createCompetition(jobId):
 def createCompany():
     #create company
     companyName = faker.company()
-    numEmployees = faker.random_int(min=1, max=9999999)
+    numEmployees = random.randit(1, 9999999)
     yearlyRevenue = round(random.uniform(0,2000000000), 2)
-    stockPrice = round(random.uniform(0,2000), N)
+    stockPrice = round(random.uniform(0,2000), 2)
 
     curr.execute("INSERT INTO Company VALUES(?, ?, ?, ?);", (companyName, numEmployees, yearlyRevenue, stockPrice))
 
@@ -47,8 +47,8 @@ def createCompany():
 def createManager():
     #create manager
     name = faker.name()
-    techincalExperience = faker.random_choices(True, False)
-    yearsAtCompany = faker.random_int(min=0, max=40)
+    techincalExperience = random.choice([True, False])
+    yearsAtCompany = random.randit(0, 40)
 
     curr.execute("INSERT INTO Manager VALUES(?, ?, ?);", (name, techincalExperience, yearsAtCompany))
     conn.commit()
@@ -64,7 +64,7 @@ def createType(jobId, type):
         curr.execute("INSERT INTO Internship VALUES(?, ?, ?, ?);", (jobdId, payPeriod, salary, season))
     else:
         #create full time
-        numStockOptions = faker.random_int(min=1, max=5000)
+        numStockOptions = random.randit(1, 5000)
         signingBonus = round(random.uniform(0,80000), 2)
         salary = round(random.uniform(0,4000000), 2)
 
@@ -80,7 +80,7 @@ def createRelatedJobs(jobId):
     for i in ans:
         max = i - 1
 
-    numRJ = faker.random_int(min=1, max=5)
+    numRJ = random.randit(1, 5)
     if numRJ > max:
         numRJ = max
 
@@ -121,7 +121,7 @@ def main():
     companyId = 0
     jobId = 0
 
-    company = faker.random_choices(True, False)
+    company = random.choice([True, False])
     if company:
         createCompany()
         curr.execute("SELECT MAX(companyId) FROM Company;")
@@ -132,7 +132,7 @@ def main():
     for i in ans:
         companyId = i
 
-    manager = faker.random_choices(True, False)
+    manager = random.choice([True, False])
     if manager:
         createManager()
     curr.execute("SELECT MAX(managerId) FROM Manager;")
@@ -157,7 +157,7 @@ def main():
     createCompetition(jobId)
     createType(jobId, type)
 
-    related = faker.random_choices(True, False)
+    related = random.choice([True, False])
     if related:
         createRelatedJobs(jobId)
 
