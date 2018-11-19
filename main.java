@@ -97,7 +97,6 @@ public class main
                 if(editOption == 5) //prelim done
                 {
                     boolean success = searchBy(con, scan);
-
                     if(!success)
                     {
                         System.out.println("The search failed. Please try again.");
@@ -107,7 +106,6 @@ public class main
                 if(editOption == 6) //prelim completed
                 {
                     boolean success = jobInfo(con, scan);
-
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -117,7 +115,6 @@ public class main
                 if(editOption == 7) //prelim completed
                 {
                     boolean success = lookup(con, scan);
-
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -126,12 +123,28 @@ public class main
 
                 if(editOption == 8)
                 {
-                    //undo
+                    boolean success = undo(con, scan);
+                    if(success)
+                    {
+                        System.out.println("Undo Successful.");
+                    }
+                    if(!success)
+                    {
+                        System.out.println("Undo Failed. Please try again.");
+                    }
                 }
 
                 if(editOption == 9)
                 {
-                    //redo
+                    boolean success = redo(con, scan);
+                    if(success)
+                    {
+                        System.out.println("Redo Successful.");
+                    }
+                    if(!success)
+                    {
+                        System.out.println("Redo Failed. Please try again.");
+                    }
                 }
 
                 if(editOption == 10) //done lol
@@ -258,6 +271,11 @@ public class main
     }
 
     //prelim completed
+    /**
+     * Returns all entries in the JOB table.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if the call was successful, false otherwise
+     */
     public static boolean queryMethod(Connection con, Scanner scan)
     {
         try
@@ -265,10 +283,16 @@ public class main
             System.out.println("The Job Database:");
             PreparedStatement pst1 = con.prepareStatement("select * from Job");
             ResultSet rs = pst1.executeQuery();
+            String type = "Full Time";
+            if(rs.getBoolean(7))
+            {
+                type = "Internship";
+            }
+
             while (rs.next())
             {
                 System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                        + " Type: " + rs.getString(7));
+                        + " Type: " + type);
             }
             System.out.println("");
             return true;
@@ -280,12 +304,16 @@ public class main
         return false;
     }
 
+    /**
+     * Creates a new posting for a newly created job!
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if the creation was successful, false otherwise
+     */
     public static boolean createNewPosting(Connection con, Scanner scan)
     {
-        boolean validInput = true;
-
         try
         {
+            boolean validInput = true;
             int jobId;
             String jobTitle;
             String industry;
@@ -293,6 +321,27 @@ public class main
             int companyId;
             int managerId;
             String type;
+
+            System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
+            String company = scan.nextLine();
+            boolean newCompany = false;
+            if(company.toLowerCase().equals("y"))
+            {
+                newCompany = true;
+                boolean success = createCompany();
+                if(!success)
+                {
+                    System.out.println("The Company creation failed. Please try again.");
+                }
+            }
+
+            System.out.println("Do you need to create a new Manager? Enter 'y' for yes.");
+            String manager = scan.nextLine();
+            boolean newManager = false;
+            if(manager.toLowerCase().equals("y"))
+            {
+                newManager = true;
+            }
 
             System.out.println("Enter the Job's ID");
             jobId = scan.nextInt();
@@ -340,80 +389,6 @@ public class main
             {
                 System.out.println("Please enter this information again.");
                 return false;
-            }
-
-            String companyName = "";
-            int numEmployees = 0;
-            float yearlyRevenue = 0;
-            float stockPrice = 0;
-
-            String locationArea = "";
-            String street = "";
-            String city = "";
-            String state = ""; //change to 2 chars
-
-            PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?");
-            companyExist.clearParameters();
-            companyExist.setInt(1, companyId);
-            ResultSet setC = companyExist.executeQuery();
-
-            int existingCompany = setC.getInt(1);
-            boolean createCompany = false;
-
-            if(existingCompany == 0)
-            {
-                createCompany = true;
-
-                //company creation
-                System.out.println("Enter the Company's Name (length 100)");
-                companyName = scan.nextLine();
-                System.out.println("Enter the Company's Number of Employees");
-                numEmployees = scan.nextInt();
-                scan.nextLine();
-                System.out.println("Enter the Company's Yearly Revenue");
-                yearlyRevenue = scan.nextFloat();
-                scan.nextLine();
-                System.out.println("Enter the Company's Stock Price");
-                stockPrice = scan.nextFloat();
-                scan.nextLine();
-
-                if (companyName.length() > 100 || companyName.equals(""))
-                {
-                    System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
-                    validInput = false;
-                }
-
-                if(!validInput)
-                {
-                    System.out.println("Please enter this information again.");
-                    return false;
-                }
-
-                //Location creation
-                System.out.println("Enter the Company's Location Area (length 25)");
-                locationArea = scan.nextLine();
-                System.out.println("Enter the Company's Street Address (length 100)");
-                street = scan.nextLine();
-                System.out.println("Enter the Company's City (length 25)");
-                city = scan.nextLine();
-                System.out.println("Enter the Company's State (length 25)");
-                state = scan.nextLine();
-
-                if(locationArea.length() > 25 || city.length() > 25 || state.length() > 25)
-                {
-                    System.out.println("The Location Area, City and State must be 25 characters or less. Please try again.");
-                    validInput = false;
-                }
-                if(street.length() > 100)
-                {
-                    System.out.println("The Street address must be 100 characters or less. Please try again.");
-                    validInput = false;
-                }
-
-                if(validInput == false)
-                {
-                    return false;
-                }
             }
 
             String name = "";
@@ -788,9 +763,9 @@ public class main
             PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
             pstType.setInt(1, jobId);
             ResultSet rsType = pstType.executeQuery();
-            String type = rsType.getString(1);
+            Boolean type = rsType.getBoolean(1);
 
-            if (type == "F")
+            if (!type)
             {
                 PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, Manager m, FullTime f, RelatedJobs r WHERE j.jobId=r.jobId AND j.jobId=?");
                 pst8F.clearParameters();
@@ -805,7 +780,7 @@ public class main
                     }
 
                     System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                            + " Type: " + rs.getString(7)
+                            + " Type: Full Time"
                             + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12)
                             + "\nLocation Area: " + rs.getString(14) + " Address: " + rs.getString(15) + " " + rs.getString(16)
                             + "\nManager's Name: " + rs.getString(18) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(20)
@@ -813,7 +788,7 @@ public class main
                             + "\nRelated Job 1: " + rs.getInt(26) + "Related Job 2: " + rs.getInt(27) + "Related Job 3: " + rs.getInt(28) + "Related Job 4: " + rs.getInt(29) + "Related Job 5: " + rs.getInt(30));
                 }
             }
-            if (type == "I")
+            if (type)
             {
                 PreparedStatement pst8I = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, Manager m, Internship i, RelatedJobs r WHERE j.jobId=r.jobId AND j.jobId=?");
                 pst8I.clearParameters();
@@ -828,7 +803,7 @@ public class main
                     }
 
                     System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Manager ID: " + rs.getInt(6)
-                            + " Type: " + rs.getString(7)
+                            + " Type: Internship"
                             + "\nCompany Name: " + rs.getString(9) + " Number of Employees: " + rs.getInt(10) + " Yearly Revenue: " + rs.getFloat(11) + " Stock Price: " + rs.getFloat(12)
                             + "\nLocation Area: " + rs.getString(14) + " Address: " + rs.getString(15) + " " + rs.getString(16)
                             + "\nManager's Name: " + rs.getString(18) + " Technical Experience: " + techBool + " Years at Company: " + rs.getInt(20)
@@ -845,6 +820,12 @@ public class main
         return false;
     }
 
+    //doesn't need to be split, prelim completed
+    /**
+     * Selects all relevant job information across certain tables in the database.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if there were no issues, false otherwise
+     */
     public static boolean lookup(Connection con, Scanner scan)
     {
         try
@@ -982,112 +963,91 @@ public class main
         return false;
     }
 
+    /**
+     * Calls the deleteEntry method with the associated tables.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @return true if there were no issues, false otherwise
+     */
     public static boolean deleteCall(Connection con, Scanner scan)
     {
-        //@TODO should be updated to use deleteEntry method
-        int jobId;
-
         try
         {
-            System.out.println("Please enter the Job's Id");
+            int jobId = 0;
+
+            System.out.println("Please enter the Job's Id to be deleted:");
             jobId = scan.nextInt();
             scan.nextLine();
 
-            PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM ? WHERE ?=?");
+            PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM Job WHERE jobId=?");
             pstCall.clearParameters();
             pstCall.setString(1, "companyId");
-            pstCall.setString(2, "Job");
-            pstCall.setString(3, "jobId");
-            pstCall.setInt(4, jobId);
+            pstCall.setInt(2, jobId);
             ResultSet rs = pstCall.executeQuery();
             int companyId = rs.getInt(1);
 
             pstCall.clearParameters();
             pstCall.setString(1, "managerId");
-            pstCall.setString(2, "Job");
-            pstCall.setString(3, "jobId");
-            pstCall.setInt(4, jobId);
+            pstCall.setInt(2, jobId);
             rs = pstCall.executeQuery();
             int managerId = rs.getInt(1);
 
             pstCall.clearParameters();
             pstCall.setString(1, "type");
-            pstCall.setString(2, "Job");
-            pstCall.setString(3, "jobId");
-            pstCall.setInt(4, jobId);
+            pstCall.setInt(2, jobId);
             rs = pstCall.executeQuery();
-            String type = rs.getString(1);
+            String type = rs.getBoolean(1);
 
+            boolean deleteCompany = false;
+            boolean deleteManager = false;
+            PreparedStatement pstDeleteMaybe = con.prepareStatement("SELECT COUNT(*) FROM Job WHERE jobId=? AND ?=?");
+            pstDeleteMaybe.clearParameters();
+            pstDeleteMaybe.setInt(1, jobId);
+            pstDeleteMaybe.setString(2, "companyId");
+            pstDeleteMaybe.setInt(3, companyId);
+            rs = pstDeleteMaybe.executeQuery();
+            while(rs.next())
+            {
+                if(rs.getInt(1) == 0)
+                {
+                    deleteCompany = true;
+                }
+            }
+
+            pstDeleteMaybe.clearParameters();
+            pstDeleteMaybe.setInt(1, jobId);
+            pstDeleteMaybe.setString(2, "managerId");
+            pstDeleteMaybe.setInt(3, managerId);
+            rs = pstDeleteMaybe.executeQuery();
+            while(rs.next())
+            {
+                if(rs.getInt(1) == 0)
+                {
+                    deleteManager = true;
+                }
+            }
 
             PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
-            //@TODO should be modified to use deleteEntry method
-            deleteEntry(pst5, "Company", "companyId", companyId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "Company");
-            // pst5.setString(2, "companyId");
-            // pst5.setInt(3, companyId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Company.");
 
+            if(deleteCompany)
+            {
+                deleteEntry(pst5, "Company", "companyId", companyId);
+                deleteEntry(pst5, "Location", "companyId", companyId);
+            }
+            if(deleteManager)
+            {
+                deleteEntry(pst5, "Manager", "managerId", managerId);
+            }
             deleteEntry(pst5, "Competition", "jobId", jobId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "Competition");
-            // pst5.setString(2, "jobId");
-            // pst5.setInt(3, jobId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Competition.");
-
             deleteEntry(pst5, "Job", "jobId", jobId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "Job");
-            // pst5.setString(2, "jobId");
-            // pst5.setInt(3, jobId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Job.");
-
-            deleteEntry(pst5, "Location", "companyId", companyId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "Location");
-            // pst5.setString(2, "companyId");
-            // pst5.setInt(3, companyId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Location.");
-
-            deleteEntry(pst5, "Manager", "managerId", managerId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "Manager");
-            // pst5.setString(2, "managerId");
-            // pst5.setInt(3, managerId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Manager.");
-
             deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
-            // pst5.clearParameters();
-            // pst5.setString(1, "RelatedJobs");
-            // pst5.setString(2, "jobId");
-            // pst5.setInt(3, jobId);
-            // pst5.executeUpdate();
-            // System.out.println("The record has been deleted from Related Jobs.");
 
             if(type)
             {
                 deleteEntry(pst5, "Internship", "jobId", jobId);
-                // pst5.clearParameters();
-                // pst5.setString(1, "Internship");
-                // pst5.setString(2, "jobId");
-                // pst5.setInt(3, jobId);
-                // pst5.executeUpdate();
-                // System.out.println("The record has been deleted from Internship.");
             }
             else if(!type)
             {
                 deleteEntry(pst5, "FullTime", "jobId", jobId);
-                // pst5.clearParameters();
-                // pst5.setString(1, "FullTime");
-                // pst5.setString(2, "jobId");
-                // pst5.setInt(3, jobId);
-                // pst5.executeUpdate();
-                // System.out.println("The record has been deleted from Full Time.");
             }
 
             System.out.println("The record has been completely deleted.");
@@ -1602,6 +1562,7 @@ public class main
         return true;
     }
 
+
     //search tables
     /**
      * Searchs a table, where the user selected LOCATION.
@@ -1792,5 +1753,220 @@ public class main
             System.out.println("Please Enter a valid Input.");
         }
         return false;
+    }
+
+    /**
+     * Undos the last user change, restores previous verion.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean undo(Connection con, Scanner scan)
+    {
+        //undo
+    }
+
+    /**
+     * Redos the last user undo.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean redo(Connection con, Scanner scan)
+    {
+        //redo
+    }
+
+    //this method is the old ugly delete in case we still need it
+    public static boolean deleteCallOLD(Connection con, Scanner scan)
+    {
+        //@TODO should be updated to use deleteEntry method
+        int jobId;
+
+        try
+        {
+            System.out.println("Please enter the Job's Id");
+            jobId = scan.nextInt();
+            scan.nextLine();
+
+            PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM ? WHERE ?=?");
+            pstCall.clearParameters();
+            pstCall.setString(1, "companyId");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            ResultSet rs = pstCall.executeQuery();
+            int companyId = rs.getInt(1);
+
+            pstCall.clearParameters();
+            pstCall.setString(1, "managerId");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            rs = pstCall.executeQuery();
+            int managerId = rs.getInt(1);
+
+            pstCall.clearParameters();
+            pstCall.setString(1, "type");
+            pstCall.setString(2, "Job");
+            pstCall.setString(3, "jobId");
+            pstCall.setInt(4, jobId);
+            rs = pstCall.executeQuery();
+            String type = rs.getString(1);
+
+
+            PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?");
+            //@TODO should be modified to use deleteEntry method
+            deleteEntry(pst5, "Company", "companyId", companyId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Company");
+            // pst5.setString(2, "companyId");
+            // pst5.setInt(3, companyId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Company.");
+
+            deleteEntry(pst5, "Competition", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Competition");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Competition.");
+
+            deleteEntry(pst5, "Job", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Job");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Job.");
+
+            deleteEntry(pst5, "Location", "companyId", companyId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Location");
+            // pst5.setString(2, "companyId");
+            // pst5.setInt(3, companyId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Location.");
+
+            deleteEntry(pst5, "Manager", "managerId", managerId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "Manager");
+            // pst5.setString(2, "managerId");
+            // pst5.setInt(3, managerId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Manager.");
+
+            deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
+            // pst5.clearParameters();
+            // pst5.setString(1, "RelatedJobs");
+            // pst5.setString(2, "jobId");
+            // pst5.setInt(3, jobId);
+            // pst5.executeUpdate();
+            // System.out.println("The record has been deleted from Related Jobs.");
+
+            if(type)
+            {
+                deleteEntry(pst5, "Internship", "jobId", jobId);
+                // pst5.clearParameters();
+                // pst5.setString(1, "Internship");
+                // pst5.setString(2, "jobId");
+                // pst5.setInt(3, jobId);
+                // pst5.executeUpdate();
+                // System.out.println("The record has been deleted from Internship.");
+            }
+            else if(!type)
+            {
+                deleteEntry(pst5, "FullTime", "jobId", jobId);
+                // pst5.clearParameters();
+                // pst5.setString(1, "FullTime");
+                // pst5.setString(2, "jobId");
+                // pst5.setInt(3, jobId);
+                // pst5.executeUpdate();
+                // System.out.println("The record has been deleted from Full Time.");
+            }
+
+            System.out.println("The record has been completely deleted.");
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
+    }
+
+    //create new entry methods
+    public static boolean createCompany
+    {
+        String companyName = "";
+        int numEmployees = 0;
+        float yearlyRevenue = 0;
+        float stockPrice = 0;
+
+        String locationArea = "";
+        String street = "";
+        String city = "";
+        String state = ""; //change to 2 chars
+
+        PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?");
+        companyExist.clearParameters();
+        companyExist.setInt(1, companyId);
+        ResultSet setC = companyExist.executeQuery();
+
+        int existingCompany = setC.getInt(1);
+        boolean createCompany = false;
+
+        if(existingCompany == 0)
+        {
+            createCompany = true;
+
+            //company creation
+            System.out.println("Enter the Company's Name (length 100)");
+            companyName = scan.nextLine();
+            System.out.println("Enter the Company's Number of Employees");
+            numEmployees = scan.nextInt();
+            scan.nextLine();
+            System.out.println("Enter the Company's Yearly Revenue");
+            yearlyRevenue = scan.nextFloat();
+            scan.nextLine();
+            System.out.println("Enter the Company's Stock Price");
+            stockPrice = scan.nextFloat();
+            scan.nextLine();
+
+            if (companyName.length() > 100 || companyName.equals(""))
+            {
+                System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
+                validInput = false;
+            }
+
+            if(!validInput)
+            {
+                System.out.println("Please enter this information again.");
+                return false;
+            }
+
+            //Location creation
+            System.out.println("Enter the Company's Location Area (length 25)");
+            locationArea = scan.nextLine();
+            System.out.println("Enter the Company's Street Address (length 100)");
+            street = scan.nextLine();
+            System.out.println("Enter the Company's City (length 25)");
+            city = scan.nextLine();
+            System.out.println("Enter the Company's State (length 25)");
+            state = scan.nextLine();
+
+            if(locationArea.length() > 25 || city.length() > 25 || state.length() > 25)
+            {
+                System.out.println("The Location Area, City and State must be 25 characters or less. Please try again.");
+                validInput = false;
+            }
+            if(street.length() > 100)
+            {
+                System.out.println("The Street address must be 100 characters or less. Please try again.");
+                validInput = false;
+            }
+
+            if(validInput == false)
+            {
+                return false;
+            }
+        }
     }
 }
