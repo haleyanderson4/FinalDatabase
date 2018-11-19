@@ -1,8 +1,8 @@
-CREATE TABLE Job(jobId INTEGER PRIMARY KEY, jobTitle VARCHAR(50), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER, managerId INTEGER, type BOOL);
+CREATE TABLE Job(jobId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, jobTitle VARCHAR(50), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER, managerId INTEGER, type BOOL);
 
-CREATE TABLE Company(companyId INTEGER PRIMARY KEY, companyName VARCHAR(50), numEmployees INTEGER, yearlyRevenue FLOAT(20,2), stockPrice FLOAT(20,2));
+CREATE TABLE Company(companyId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, companyName VARCHAR(50), numEmployees INTEGER, yearlyRevenue FLOAT(20,2), stockPrice FLOAT(20,2));
 
-CREATE TABLE Manager(managerId INTEGER PRIMARY KEY, name VARCHAR(50), technicalExperience BOOL, yearsAtCompany INTEGER); 
+CREATE TABLE Manager(managerId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, name VARCHAR(50), technicalExperience BOOL, yearsAtCompany INTEGER); 
 
 CREATE TABLE RelatedJobs(jobId INTEGER PRIMARY KEY, related1 INTEGER, related2 INTEGER, related3 INTEGER, related4 INTEGER, related5 INTEGER);
 
