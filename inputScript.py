@@ -1,6 +1,6 @@
 #pip install Faker
 
-from faker import Faker as Faker
+from faker import Faker
 import sqlite3
 import random
 
