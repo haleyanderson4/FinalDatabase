@@ -1,4 +1,5 @@
 #pip install Faker
+#conda install -c conda-forge faker
 
 from faker import Faker
 import sqlite3
@@ -73,7 +74,7 @@ def createType(jobId, type):
 
 def createRelatedJobs(jobId):
     #create related jobs
-    curr.execute("SELECT COUNT(*) FROM Job")
+    curr.execute("SELECT COUNT(*) FROM Job;")
     ans = curr.fetchall()
 
     for i in ans:
@@ -89,7 +90,7 @@ def createRelatedJobs(jobId):
     relatedJob4 = 0
     relatedJob5 = 0
 
-    for i in numRJ:
+    for i in range(0,numRJ):
         curr.execute("SELECT jobId FROM Job ORDER BY RAND() LIMIT 1;")
         ans = curr.fetchall()
 
@@ -123,7 +124,9 @@ def main():
     company = faker.random_choices(True, False)
     if company:
         createCompany()
-    curr.execute("SELECT MAX(companyId) FROM Company")
+        curr.execute("SELECT MAX(companyId) FROM Company;")
+    else:
+        curr.execute("SELECT companyId FROM Company ORDER BY RAND() LIMIT 1;")
     ans = curr.fetchall()
 
     for i in ans:
@@ -132,20 +135,20 @@ def main():
     manager = faker.random_choices(True, False)
     if manager:
         createManager()
-    curr.execute("SELECT MAX(managerId) FROM Manager")
+    curr.execute("SELECT MAX(managerId) FROM Manager;")
     ans = curr.fetchall()
 
     for i in ans:
         managerId = i
 
     createJob(companyId, managerId)
-    curr.execute("SELECT MAX(jobId) FROM Job")
+    curr.execute("SELECT MAX(jobId) FROM Job;")
     ans = curr.fetchall()
 
     for i in ans:
         jobId = i
 
-    curr.execute("SELECT type FROM Job WHERE jobId=?", (jobId, ))
+    curr.execute("SELECT type FROM Job WHERE jobId=?;", (jobId, ))
     ans = curr.fetchall()
 
     for i in ans:
@@ -164,5 +167,6 @@ conn = sqlite3.connect("jobDatabase")
 curr = conn.cursor()
 
 fake = Faker()
-for i in 10000:
+
+for i in range(0,10000):
     main()
