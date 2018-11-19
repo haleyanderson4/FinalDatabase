@@ -26,7 +26,7 @@ public class main
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Undo \n9. Redo \n10. Quit\n");
+            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Undo \n10. Quit\n");
 
             while(loop)
             {
@@ -123,6 +123,15 @@ public class main
 
                 if(editOption == 8)
                 {
+                    boolean success = statistics(con, scan);
+                    if(!success)
+                    {
+                        System.out.println("The look up failed. Please try again.");
+                    }
+                }
+
+                if(editOption == 9)
+                {
                     boolean success = undo(con, scan);
                     if(success)
                     {
@@ -131,19 +140,6 @@ public class main
                     if(!success)
                     {
                         System.out.println("Undo Failed. Please try again.");
-                    }
-                }
-
-                if(editOption == 9)
-                {
-                    boolean success = redo(con, scan);
-                    if(success)
-                    {
-                        System.out.println("Redo Successful.");
-                    }
-                    if(!success)
-                    {
-                        System.out.println("Redo Failed. Please try again.");
                     }
                 }
 
@@ -1458,7 +1454,7 @@ public class main
                     averageSalary = rs.getFloat(8);
                 }
 
-                System.out.println("Some Statistics for that Location Area:\n");
+                System.out.println("\nSome Statistics for that Location Area:\n");
                 PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l");
                 ResultSet rs8Stat = pst8Stat.executeQuery();
                 while (rs8Stat.next())
@@ -1487,7 +1483,6 @@ public class main
             int companyId = scan.nextInt();
             scan.nextLine();
 
-            System.out.println("The Job Database of that Company:\n");
             PreparedStatement pst6N = con.prepareStatement("select companyName from Company WHERE companyId =?");
             pst6N.clearParameters();
             pst6N.setInt(1, companyId);
@@ -1514,7 +1509,7 @@ public class main
                         + " Type: " + type);
             }
 
-            System.out.println("Some Statistics from " + name + ":");
+            System.out.println("\nSome Statistics from " + name + ":");
             PreparedStatement pst6Stat = con.prepareStatement("select COUNT(*), AVG(c.numApplicants) from Job j, Competition c WHERE j.companyId =? AND c.jobId = j.jobId");
             pst6Stat.clearParameters();
             pst6Stat.setInt(1, companyId);
@@ -1560,12 +1555,12 @@ public class main
                 System.out.println("The Job Database of that Type:\n");
                 PreparedStatement pst7 = con.prepareStatement("SELECT * FROM Job WHERE type=?");
                 pst7.clearParameters();
-                pst7.setString(1, type);
+                pst7.setBoolean(1, search);
                 ResultSet rs = pst7.executeQuery();
                 while(rs.next())
                 {
                     String type = "Full Time";
-                    if(rs.getBoolean(7))
+                    if(search)
                     {
                         type = "Internship";
                     }
@@ -1573,7 +1568,7 @@ public class main
                             + " Type: " + type);
                 }
 
-                if(search)
+                if(!search)
                 {
                     System.out.println("\nSome Statistics on Full Time Jobs:");
                     PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG (salary), Max (salary), AVG (signingBonus) FROM FullTime");
@@ -1583,7 +1578,7 @@ public class main
                         System.out.println("Average Salary: " + rsFTypeStat.getFloat(1) + " Highest Salary: " + rsFTypeStat.getFloat(2) + " Average SigningBonus: " + rsFTypeStat.getFloat(3));
                     }
                 }
-                else if(!search)
+                else if(search)
                 {
                     System.out.println("\nSome Statistics on Internships:");
                     PreparedStatement pstI1TypeStat = con.prepareStatement("SELECT AVG (salary), MAX (salary) FROM Internship");
@@ -1593,6 +1588,14 @@ public class main
                     while (rsI1TypeStat.next() || rsI2TypeStat.next())
                     {
                         System.out.println("Average Salary: " + rsI1TypeStat.getFloat(1) + " Highest Salary: " + rsI1TypeStat.getFloat(2) + " Number of Unpaid Internships: " + rsI2TypeStat.getInt(1));
+                    }
+
+                    System.out.println("\nSummer Internships: ");
+                    PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='summer')");
+                    ResultSet rsSum = pstSum.executeQuery();
+                    while(rsSum.next())
+                    {
+                        System.out.println("Job Title: " + rsSum.getString(2) + " Job ID: " + rsSum.getInt(1));
                     }
                 }
                 else
@@ -1620,12 +1623,55 @@ public class main
     }
 
     /**
-     * Redos the last user undo.
+     * Returns statistics for certain records in the database.
+     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
-    public static boolean redo(Connection con, Scanner scan)
+    public static boolean statistics(Connection con, Scanner scan)
     {
-        //redo
+        try
+        {
+            System.out.println("Statistic Categories: \n");
+
+            System.out.println("\nAverage Internship Salaries by Location: ");
+            PreparedStatement pstLI = con.prepareStatement("SELECT l.locationArea, COUNT(*), AVG(i.salary)FROM Location l, Internship i, Job j WHERE j.companyId = l.companyId AND i.jobId = j.jobId GROUP BY l.locationArea");
+            ResultSet rsLocI = pstLI.executeQuery();
+            while(rsLocI.next())
+            {
+                System.out.println("Location Area: " + rsLocI.getString(1) + " Number of Jobs: " + rsLocI.getInt(2) + " Average Salary: " + rsLocI.getFloat(3));
+            }
+
+            System.out.println("\nAverage Full Time Salaries by Location: ");
+            PreparedStatement pstLF = con.prepareStatement("SELECT l.locationArea, COUNT(*), AVG(i.salary)FROM Location l, FullTime i, Job j WHERE j.companyId = l.companyId AND i.jobId = j.jobId GROUP BY l.locationArea");
+            ResultSet rsLocF = pstLF.executeQuery();
+            while(rsLocF.next())
+            {
+                System.out.println("Location Area: " + rsLocF.getString(1) + " Number of Jobs: " + rsLocF.getInt(2) + " Average Salary: " + rsLocF.getFloat(3));
+            }
+
+            System.out.println("\nCompany Statistics by Location: ");
+            PreparedStatement pstComLoc = con.prepareStatement("SELECT l.locationArea, COUNT(*), AVG(c.yearlyRevenue), AVG(c.numEmployees), AVG(c.stockPrice) FROM Company c, Location l WHERE l.companyId = c.companyId GROUP BY l.locationArea");
+            ResultSet rsComLoc = pstComLoc.executeQuery();
+            while(rsComLoc.next())
+            {
+                System.out.println("Location Area: " + rsComLoc.getString(1) + " Number of Companies: " + rsComLoc.getInt(2) + " Average Yearly Revenue: " + rsComLoc.getFloat(3) + " Average Number of Employees: " + rsComLoc.getFloat(4) " Average Stock Price: " + rsComLoc.getFloat(5));
+            }
+
+            System.out.println("\nAverage Competition by Company: ");
+            PreparedStatement pstComp = con.prepareStatement("SELECT j.companyId, AVG(c.numOpenSpots), AVG(c.numApplicants) FROM Competition c, Job j WHERE j.jobId = c.jobId GROUP BY j.companyId");
+            ResultSet rsComp = pstComp.executeQuery();
+            while(rsComp.next())
+            {
+                System.out.println("Company: " + rsComp.getString(1) + " Average Open Spots: " + rsComp.getFloat(2) + " Average Applicants: " + rsComp.getFloat(3));
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Something went wrong. Please enter this again.");
+        }
+        return false;
     }
 
     //this method is the old ugly delete in case we still need it
@@ -1747,8 +1793,17 @@ public class main
         return false;
     }
 
-    
+
     //create new entry methods
+    /**
+     * Gathers information for the Company table.
+     * @param validInput to account for all input issues.
+     * @param pstC is the Prepared Statement for the Company table.
+     * @param pstL is the Prepared Statement for the Location table.
+     * @param pstId is the Prepared Statement for getting the Id number.
+     * @param companyId is the to get companyId not local to this method.
+     * @return true if the creation was successful, false otherwise.
+     */
     public static boolean createCompany(boolean validInput, PreparedStatement pstC, PreparedStatement pstL, PreparedStatement pstId, int companyId)
     {
         String companyName = "";
@@ -1835,6 +1890,12 @@ public class main
         return true;
     }
 
+    /**
+     * Gathers information for the Manager table.
+     * @param validInput to account for all input issues.
+     * @param pstM is the Prepared Statement for the Manager table.
+     * @return true if the creation was successful, false otherwise
+     */
     public static boolean createManager(boolean validInput, PreparedStatement pstM)
     {
         System.out.println("Enter the Manager's name (length 100)");
@@ -1861,7 +1922,17 @@ public class main
         return true;
     }
 
-    public static boolean createJob(boolean validInput, PreparedStatement pstJ, PreparedStatement pstComp, boolean createManager, boolean createCompany)
+    /**
+     * Gathers information for the company field.
+     * @param validInput to account for all input issues.
+     * @param pstJ is the Prepared Statement for the Job table.
+     * @param pstComp is the Prepared Statement for the Competition table.
+     * @param createCompany is the boolean whether to ask for companyId or not.
+     * @param createManager is the boolean whether to ask for managerId or not.
+     * @param type is the boolean that needs to not be a local variable.
+     * @return true if the creation was successful, false otherwise
+     */
+    public static boolean createJob(boolean validInput, PreparedStatement pstJ, PreparedStatement pstComp, boolean createCompany, boolean createManager, boolean type)
     {
         try
         {
@@ -1988,6 +2059,13 @@ public class main
         return false;
     }
 
+    /**
+     * Gathers information for the company field.
+     * @param validInput to account for all input issues.
+     * @param pstR is the Prepared Statement for the Related Jobs table.
+     * @param related is the boolean for whether to add to the Related Jobs table or not.
+     * @return true if the creation was successful, false otherwise
+     */
     public static boolean createRelated(boolean validInput, PreparedStatement pstR, boolean related)
     {
         try
@@ -2062,6 +2140,14 @@ public class main
         return false;
     }
 
+    /**
+     * Gathers information for the company field.
+     * @param validInput to account for all input issues.
+     * @param pstF is the Prepared Statement for the Full Time table.
+     * @param pstI is the Prepared Statement for the Internship table.
+     * @param type is the boolean set in the Job field on whether it is full time or internship.
+     * @return true if the creation was successful, false otherwise
+     */
     public static boolean createType(boolean validInput, PreparedStatement pstF, PreparedStatement pstI, boolean type)
     {
         try
