@@ -167,7 +167,6 @@ conn = sqlite3.connect("jobDatabase")
 curr = conn.cursor()
 
 fake = Faker()
-k = 0
-while k < 10000:
+
+for i in range(0,10000):
     main()
-    k = k + 1
