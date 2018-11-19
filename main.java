@@ -315,14 +315,12 @@ public class main
         {
             boolean validInput = true;
             int jobId;
-            String jobTitle;
-            String industry;
-            String description;
             int companyId;
             int managerId;
-            String type;
 
-            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyId, companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?,?)");
+            PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?");
+
+            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?)");
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?)");
             System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
             String company = scan.nextLine();
@@ -330,80 +328,46 @@ public class main
             if(company.toLowerCase().equals("y"))
             {
                 createCompany = true;
-                boolean success = createCompany(validInput, pstC, pstL);
+                boolean success = createCompany(validInput, pstC, pstL, pstId, companyId);
                 if(!success)
                 {
                     System.out.println("The Company creation failed. Please try again.");
+                    return false;
                 }
             }
 
-            PreparedStatement pstM = con.prepareStatement("INSERT INTO Manager(managerId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?)");
+            PreparedStatement pstM = con.prepareStatement("INSERT INTO Manager(name, technicalExperience, yearsAtCompany) VALUES(?,?,?)");
             System.out.println("Do you need to create a new Manager? Enter 'y' for yes.");
             String manager = scan.nextLine();
             boolean createManager = false;
             if(manager.toLowerCase().equals("y"))
             {
                 createManager = true;
-                boolean success = createCompany(validInput, pstM);
+                boolean success = createManager(validInput, pstM, pstId, managerId);
                 if(!success)
                 {
-                    System.out.println("The Company creation failed. Please try again.");
+                    System.out.println("The Manager creation failed. Please try again.");
+                    return false;
                 }
             }
 
-            System.out.println("Enter the Job's ID");
-            jobId = scan.nextInt();
-            scan.nextLine();
-
-            System.out.println("Enter the Job's Title (length 25)");
-            jobTitle = scan.nextLine();
-            System.out.println("Enter the Job's Industry (length 25)");
-            industry = scan.nextLine();
-            System.out.println("Enter the Job's Description (length 100)");
-            description = scan.nextLine();
-            System.out.println("Enter the Job's Company Id");
-            companyId = scan.nextInt();
-            scan.nextLine();
-
-            PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?");
-            companyExist.clearParameters();
-            companyExist.setInt(1, companyId);
-            ResultSet setC = companyExist.executeQuery();
-
-            int existingCompany = setC.getInt(1);
-
-            if(existingCompany == 0)
+            PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, managerId, type) VALUES(?,?,?,?,?,?)");
+            PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?)");
+            boolean type;
+            boolean success = createJob(validInput, pstJ, pstComp, createCompany, createManager, type);
+            if(!success)
             {
-                System.out.println("That company does not exsist. Please try again.");
+                System.out.println("The Job creation failed. Please try again.");
                 return false;
             }
 
-            System.out.println("Enter the Job's Manager Id");
-            managerId = scan.nextInt();
-            scan.nextLine();
-
-            System.out.println("Enter the Job's Type (I/F)");
-            type = scan.nextLine();
-
-            if (jobTitle.length() > 25 || industry.length() > 25)
+            PreparedStatement pstF = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus, salary) VALUES(?,?,?,?)");
+            PreparedStatement pstI = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES(?,?,?,?)");
+            boolean success = createType(validInput, pstF, pstI, type);
+            if(!success)
             {
-                System.out.println("Job Title and Industry need to be 25 characters or less. Please try again.");
-                validInput = false;
-            }
-            if (description.length() > 100)
-            {
-                System.out.println("The Description needs to be 100 characters or less. Please try again.");
-                validInput = false;
-            }
-            if (type.length() > 1 || (!type.toUpperCase().equals("I") && !type.toUpperCase().equals("F")))
-            {
-                System.out.println("Type needs to be 1 character only, I or F. Please try again.");
-                validInput = false;
-            }
-            if(jobTitle.equals("") || industry.equals("") || description.equals("") || type.equals(""))
-            {
-                System.out.println("All fields must be entered.");
-                validInput = false;
+                System.out.println("The Full Time or Internship creation failed. Please try again.");
+                return false;
             }
 
             if(!validInput)
@@ -412,128 +376,13 @@ public class main
                 return false;
             }
 
-            String name = "";
-            boolean technicalExperience = false;
-            int yearsAtCompany = 0 ;
-
-            PreparedStatement managerExist = con.prepareStatement("SELECT COUNT(*) FROM Manager WHERE managerId=?");
-            managerExist.clearParameters();
-            managerExist.setInt(1, managerId);
-            ResultSet setM = managerExist.executeQuery();
-
-            int existingManager = setM.getInt(1);
-            boolean createManager = false;
-
-            if(existingManager == 0)
+            PreparedStatement pstR = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
+            boolean related = true;
+            boolean success = createRelated(validInput, pstR, related);
+            if(!success)
             {
-                createManager = true;
-
-                System.out.println("Enter the Manager's name (length 100)");
-                name = scan.nextLine();
-                System.out.println("Enter 'Y' if the Manager has technical experience");
-                String temp = scan.nextLine();
-                if (temp.toLowerCase().equals("y"))
-                {
-                    technicalExperience = true;
-                }
-                else
-                {
-                    technicalExperience = false;
-                }
-                System.out.println("Enter the Manager's Years at the Company");
-                yearsAtCompany = scan.nextInt();
-                scan.nextLine();
-
-                if (name.length() > 100)
-                {
-                    System.out.println("The Manager's name is 100 characters or less. Please try again.");
-                    return false;
-                }
-            }
-
-            int numOpenSpots;
-            int numApplicants;
-
-            System.out.println("Enter the Job's Number of Open Spots");
-            numOpenSpots = scan.nextInt();
-            scan.nextLine();
-            System.out.println("Enter the Job's Number of Applicants");
-            numApplicants = scan.nextInt();
-            scan.nextLine();
-
-            int stockOptions = 0;
-            float signingBonus = 0;
-            String payPeriod = "";
-            float salary = 0;
-            String season = "";
-
-            if(type.equals("F")) //ADD SALARY TO FULL TIME
-            {
-                System.out.println("Enter the Job's Number of Stock Options");
-                stockOptions = scan.nextInt();
-                scan.nextLine();
-                System.out.println("Enter the Job's Signing Bonus");
-                signingBonus = scan.nextFloat();
-                scan.nextLine();
-            }
-            if(type.equals("I"))
-            {
-                System.out.println("Enter the Job's Pay Period (length 10)");
-                payPeriod = scan.nextLine();
-                System.out.println("Enter the Job's salary");
-                salary = scan.nextFloat();
-                scan.nextLine();
-                System.out.println("Enter the Job's Season (length 10)");
-                season = scan.nextLine();
-            }
-
-            if(payPeriod.length() > 10 || season.length() > 10)
-            {
-                System.out.println("Pay Period and Season must be 10 characters or less. Please try again.");
+                System.out.println("The Related Jobs creation failed. Please try again.");
                 return false;
-            }
-
-            System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
-            String relatedMaybe = scan.nextLine();
-
-            int related1 = 0;
-            int related2 = 0;
-            int related3 = 0;
-            int related4 = 0;
-            int related5 = 0;
-
-            if(relatedMaybe.toLowerCase().equals("y"))
-            {
-                System.out.println("How many? Enter a number between 1 and 5.");
-                int numOfRelated = scan.nextInt();
-
-                for(int i = 0; i < numOfRelated; i++)
-                {
-                    System.out.println("What is the ID number of the related job");
-                    int tempRJ = scan.nextInt();
-                    scan.nextLine();
-
-                    if(i == 1)
-                    {
-                        related1 = tempRJ;
-                    }
-                    else if(i == 2)
-                    {
-                        related2 = tempRJ;
-                    }
-                    else if(i == 3)
-                    {
-                        related3 = tempRJ;
-                    }
-                    else if(i == 4)
-                    {
-                        related4 = tempRJ;
-                    }
-                    else if(i == 5)
-                    {
-                        related5 = tempRJ;
-                    }
-                } // fix this
             }
 
             if(validInput)
@@ -541,24 +390,22 @@ public class main
                 PreparedStatement pstStart = con.prepareStatement("START TRANSACTION");
                 pstStart.execute();
 
-                PreparedStatement pst2 = con.prepareStatement("INSERT INTO Job(jobId, jobTitle, industry, description, companyId, managerId, type) VALUES(?,?,?,?,?,?,?)");
-                pst2.clearParameters();
-                pst2.setInt(1, jobId);
-                pst2.setString(2, jobTitle);
-                pst2.setString(3, industry);
-                pst2.setString(4, description);
-                pst2.setInt(5, companyId);
-                pst2.setInt(6, managerId);
-                pst2.setString(7, type);
-
-                pst2.executeUpdate();
-                System.out.println("The Job has been created.");
-
                 if(createCompany)
                 {
                     pstC.executeUpdate();
                     System.out.println("The Company has been created.");
 
+                    pstId.clearParameters();
+                    pstId.setString(1, "companyId");
+                    pstId.setString(2, "Company");
+                    ResultSet rsId = pstId.executeQuery();
+                    while(rsId.next())
+                    {
+                        companyId = rsId.getInt(1);
+                    }
+                    pstJ.setInt(5, companyId);
+
+                    pstL.setInt(1, companyId);
                     pstL.executeUpdate();
                     System.out.println("The Location has been created.");
                 }
@@ -567,53 +414,55 @@ public class main
                 {
                     pstM.executeUpdate();
                     System.out.println("The Manager has been created.");
+
+                    pstId.clearParameters();
+                    pstId.setString(1, "managerId");
+                    pstId.setString(2, "Manager");
+                    ResultSet rsId = pstId.executeQuery();
+                    while(rsId.next())
+                    {
+                        managerId = rsId.getInt(1);
+                    }
+                    pstJ.setInt(6, managerId);
                 }
 
-                PreparedStatement psta = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?)");
-                psta.clearParameters();
-                psta.setInt(1, jobId);
-                psta.setInt(2, numOpenSpots);
-                psta.setInt(3, numApplicants);
+                pstJ.executeUpdate();
+                System.out.println("The Job has been created.");
 
-                psta.executeUpdate();
+                pstId.clearParameters();
+                pstId.setString(1, "jobId");
+                pstId.setString(2, "Job");
+                ResultSet rsId = pstId.executeQuery();
+                while(rsId.next())
+                {
+                    jobId = rsId.getInt(1);
+                }
+
+                pstComp.setInt(1, jobId);
+                pstComp.executeUpdate();
                 System.out.println("The Competition has been created.");
 
-                if(type.equals("F"))
+                if(!type)
                 {
-                    PreparedStatement pstb = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus) VALUES(?,?,?)");
-                    pstb.clearParameters();
-                    pstb.setInt(1, jobId);
-                    pstb.setInt(2, stockOptions);
-                    pstb.setFloat(3, signingBonus);
+                    pstF.clearParameters();
+                    pstF.setInt(1, jobId);
 
-                    pstb.executeUpdate();
+                    pstF.executeUpdate();
                     System.out.println("The Full Time Position has been created.");
                 }
-                if (type.equals("I"))
+                if(type)
                 {
-                    PreparedStatement pstd = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, salary, season) VALUES(?,?,?,?)");
-                    pstd.clearParameters();
-                    pstd.setInt(1, jobId);
-                    pstd.setString(2, payPeriod);
-                    pstd.setFloat(3, salary);
-                    pstd.setString(4, season);
+                    pstI.clearParameters();
+                    pstI.setInt(1, jobId);
 
-                    pstd.executeUpdate();
+                    pstI.executeUpdate();
                     System.out.println("The Internship has been created.");
                 }
 
-                if(relatedMaybe.toLowerCase().equals("y"))
+                if(related)
                 {
-                    PreparedStatement pstg = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?)");
-                    pstg.clearParameters();
-                    pstg.setInt(1, jobId);
-                    pstg.setInt(2, related1);
-                    pstg.setInt(3, related2);
-                    pstg.setInt(4, related3);
-                    pstg.setInt(5, related4);
-                    pstg.setInt(6, related5);
-
-                    pstg.executeUpdate();
+                    pstR.setInt(1, jobId);
+                    pstR.executeUpdate();
                     System.out.println("The Related Job Posting has been created.");
                 }
 
@@ -1292,6 +1141,8 @@ public class main
         {
             field = "payPeriod";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 25)) return false;
         }
         else if(updateId == 2)
         {
@@ -1302,6 +1153,8 @@ public class main
         {
             field = "season";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 25)) return false;
         }
 
         PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?");
@@ -1337,14 +1190,14 @@ public class main
                     + " Type: " + rs.getString(7));
         }
 
-        System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. Type");
-        System.out.println("Company ID and Manager ID are not an allowed to be updated.");
+        System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description");
+        System.out.println("Company ID, Manager ID, and Type are not an allowed to be updated.");
         int updateId = scan.nextInt();
         scan.nextLine();
 
-        if(updateId < 1 || updateId > 4)
+        if(updateId < 1 || updateId > 3)
         {
-            System.out.println("Please enter a number between 1 and 4.");
+            System.out.println("Please enter a number between 1 and 3.");
             return false;
         }
 
@@ -1356,27 +1209,22 @@ public class main
         {
             field = "jobTitle";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 50)) return false;
         }
         else if(updateId == 2)
         {
             field = "description";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 100)) return false;
         }
         else if(updateId == 3)
         {
             field = "industry";
             answer = scan.nextLine();
-        }
-        else if(updateId == 4)
-        {
-            field = "type";
 
-            answer = "false";
-            System.out.println("Enter 'Y' for yes");
-            if (scan.nextLine().toLowerCase().equals("y"))
-            {
-                answer = "true";
-            }
+            if(!inputCheck(answer, 25)) return false;
         }
 
         PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?");
@@ -1422,21 +1270,29 @@ public class main
         {
             field = "locationArea";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 25)) return false;
         }
         else if(updateId == 2)
         {
             field = "street";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 100)) return false;
         }
         else if(updateId == 3)
         {
             field = "city";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 25)) return false;
         }
         else if(updateId == 4)
         {
             field = "state";
             answer = scan.nextLine();
+
+            if(!inputCheck(answer, 2)) return false;
         }
 
         PreparedStatement pstL = con.prepareStatement("UPDATE Location SET ?=? WHERE companyId=?");
@@ -1486,6 +1342,7 @@ public class main
             if (updateId == 1) {
                 field = "name";
                 answer = scan.nextLine();
+                if(!inputCheck(answer, 50)) return false;
             }
             else if (updateId == 2)
             {
@@ -1890,8 +1747,9 @@ public class main
         return false;
     }
 
+    
     //create new entry methods
-    public static boolean createCompany(Boolean validInput, PreparedStatement pstC, PreparedStatement pstL)
+    public static boolean createCompany(boolean validInput, PreparedStatement pstC, PreparedStatement pstL, PreparedStatement pstId, int companyId)
     {
         String companyName = "";
         int numEmployees = 0;
@@ -1916,9 +1774,8 @@ public class main
         stockPrice = scan.nextFloat();
         scan.nextLine();
 
-        if (companyName.length() > 100 || companyName.equals(""))
+        if (companyName.equals("") || inputCheck(companyName, 100))
         {
-            System.out.println("The Company Name needs to be 100 characters or less. Please try again.");
             validInput = false;
         }
 
@@ -1938,14 +1795,8 @@ public class main
         System.out.println("Enter the Company's State (length 2)");
         state = scan.nextLine();
 
-        if(locationArea.length() > 25 || city.length() > 25)
+        if(!inputCheck(street,100) || !inputCheck(locationArea, 25) || !inputCheck(city, 25))
         {
-            System.out.println("The Location Area and City must be 25 characters or less. Please try again.");
-            validInput = false;
-        }
-        if(street.length() > 100)
-        {
-            System.out.println("The Street address must be 100 characters or less. Please try again.");
             validInput = false;
         }
         if(state.length() != 2)
@@ -1959,12 +1810,20 @@ public class main
             return false;
         }
 
+        pstId.clearParameters();
+        pstId.setString(1, "companyId");
+        pstId.setString(2, "Company");
+        ResultSet rsId = pstId.executeQuery();
+        while(rsId.next())
+        {
+            companyId = rsId.getInt(1);
+        }
+
         pstC.clearParameters();
-        pstC.setInt(1, companyId);
-        pstC.setString(2, companyName);
-        pstC.setInt(3, numEmployees);
-        pstC.setFloat(4, yearlyRevenue);
-        pstC.setFloat(5, stockPrice);
+        pstC.setString(1, companyName);
+        pstC.setInt(2, numEmployees);
+        pstC.setFloat(3, yearlyRevenue);
+        pstC.setFloat(4, stockPrice);
 
         pstL.clearParameters();
         pstL.setInt(1, companyId);
@@ -1978,11 +1837,283 @@ public class main
 
     public static boolean createManager(boolean validInput, PreparedStatement pstM)
     {
+        System.out.println("Enter the Manager's name (length 100)");
+        name = scan.nextLine();
+        System.out.println("Enter 'Y' if the Manager has technical experience");
+        String temp = scan.nextLine();
+        if (temp.toLowerCase().equals("y"))
+        {
+            technicalExperience = true;
+        }
+        else
+        {
+            technicalExperience = false;
+        }
+        System.out.println("Enter the Manager's Years at the Company");
+        yearsAtCompany = scan.nextInt();
+        scan.nextLine();
 
         pstf.clearParameters();
-        pstf.setInt(1, managerId);
-        pstf.setString(2, name);
-        pstf.setBoolean(3, technicalExperience);
-        pstf.setInt(4, yearsAtCompany);
+        pstf.setString(1, name);
+        pstf.setBoolean(2, technicalExperience);
+        pstf.setInt(3, yearsAtCompany);
+
+        return true;
+    }
+
+    public static boolean createJob(boolean validInput, PreparedStatement pstJ, PreparedStatement pstComp, boolean createManager, boolean createCompany)
+    {
+        try
+        {
+            String jobTitle = "";
+            String industry = "";
+            String description = "";
+            String typeS = "";
+            int companyId = 0;
+            int managerId = 0;
+
+            System.out.println("Enter the Job's Title (length 25)");
+            jobTitle = scan.nextLine();
+            System.out.println("Enter the Job's Industry (length 25)");
+            industry = scan.nextLine();
+            System.out.println("Enter the Job's Description (length 100)");
+            description = scan.nextLine();
+
+            if(!createCompany)
+            {
+                System.out.println("Enter the Job's Company Id");
+                companyId = scan.nextInt();
+                scan.nextLine();
+
+                PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?");
+                companyExist.clearParameters();
+                companyExist.setInt(1, companyId);
+                ResultSet setC = companyExist.executeQuery();
+
+                int existingCompany = setC.getInt(1);
+
+                if (existingCompany == 0)
+                {
+                    System.out.println("That Company does not exsist. Please try again.");
+                    return false;
+                }
+                else
+                {
+                    pstJ.setInt(5, companyId);
+                }
+            }
+
+            if(!createManager)
+            {
+                System.out.println("Enter the Job's Manager Id");
+                managerId = scan.nextInt();
+                scan.nextLine();
+
+                PreparedStatement managerExist = con.prepareStatement("SELECT COUNT(*) FROM Manager WHERE managerId=?");
+                managerExist.clearParameters();
+                managerExist.setInt(1, managerId);
+                ResultSet setM = managerExist.executeQuery();
+
+                int existingManager = setM.getInt(1);
+
+                if (existingManager == 0)
+                {
+                    System.out.println("That Manager does not exsist. Please try again.");
+                    return false;
+                }
+                else
+                {
+                    pstJ.setInt(6, managerId);
+                }
+            }
+
+            System.out.println("Enter the Job's Type (I/F)");
+            typeS = scan.nextLine();
+
+            if(typeS.toLowerCase().equals("f"))
+            {
+                type = false;
+            }
+            else if(typeS.toLowerCase().equals("i"))
+            {
+                type = true;
+            }
+            else
+            {
+                System.out.println("Type needs to be 1 character only, I or F. Please try again.");
+                validInput = false;
+            }
+
+            if (!inputCheck(description, 100) || !inputCheck(jobTitle, 25) || !inputCheck(industry, 25)))
+            {
+                validInput = false;
+            }
+            if(jobTitle.equals("") || industry.equals("") || description.equals("") || type.equals(""))
+            {
+                System.out.println("All fields must be entered.");
+                validInput = false;
+            }
+
+            if(!validInput)
+            {
+                return false;
+            }
+
+            pstJ.clearParameters();
+            pstJ.setString(2, jobTitle);
+            pstJ.setString(3, industry);
+            pstJ.setString(4, description);
+            pstJ.setString(7, type);
+
+            int numOpenSpots;
+            int numApplicants;
+
+            System.out.println("Enter the Job's Number of Open Spots");
+            numOpenSpots = scan.nextInt();
+            scan.nextLine();
+            System.out.println("Enter the Job's Number of Applicants");
+            numApplicants = scan.nextInt();
+            scan.nextLine();
+
+            pstComp.clearParameters();
+            pstComp.setInt(2, numOpenSpots);
+            pstComp.setInt(3, numApplicants);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
+    }
+
+    public static boolean createRelated(boolean validInput, PreparedStatement pstR, boolean related)
+    {
+        try
+        {
+            System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
+            String relatedMaybe = scan.nextLine();
+
+            int related1 = 0;
+            int related2 = 0;
+            int related3 = 0;
+            int related4 = 0;
+            int related5 = 0;
+
+            if(relatedMaybe.toLowerCase().equals("y"))
+            {
+                System.out.println("How many? Enter a number between 1 and 5.");
+                int numOfRelated = scan.nextInt();
+
+                if(numOfRelated < 1 || numOfRelated > 5)
+                {
+                    System.out.println("Please enter a please between 1 and 5. Try again.");
+                    validInput = false;
+                    return false;
+                }
+
+                for(int i = 0; i < numOfRelated; i++)
+                {
+                    System.out.println("What is the ID number of the related job");
+                    int tempRJ = scan.nextInt();
+                    scan.nextLine();
+
+                    if(i == 1)
+                    {
+                        related1 = tempRJ;
+                    }
+                    else if(i == 2)
+                    {
+                        related2 = tempRJ;
+                    }
+                    else if(i == 3)
+                    {
+                        related3 = tempRJ;
+                    }
+                    else if(i == 4)
+                    {
+                        related4 = tempRJ;
+                    }
+                    else if(i == 5)
+                    {
+                        related5 = tempRJ;
+                    }
+                } // fix this
+            }
+            else
+            {
+                related = false;
+            }
+
+            pstR.clearParameters();
+            pstR.setInt(2, related1);
+            pstR.setInt(3, related2);
+            pstR.setInt(4, related3);
+            pstR.setInt(5, related4);
+            pstR.setInt(6, related5);
+
+            return true;
+        }
+        catch(Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
+    }
+
+    public static boolean createType(boolean validInput, PreparedStatement pstF, PreparedStatement pstI, boolean type)
+    {
+        try
+        {
+            int stockOptions = 0;
+            float signingBonus = 0;
+            String payPeriod = "";
+            float salary = 0;
+            String season = "";
+
+            if(!type)
+            {
+                System.out.println("Enter the Job's Number of Stock Options");
+                stockOptions = scan.nextInt();
+                scan.nextLine();
+                System.out.println("Enter the Job's Signing Bonus");
+                signingBonus = scan.nextFloat();
+                scan.nextLine();
+                System.out.println("Enter the Job's Salary");
+                salary = scan.nextFloat();
+                scan.nextLine();
+
+                pstF.setInt(2, stockOptions);
+                pstF.setFloat(3, signingBonus);
+                pstF.setFloat(4, salary);
+            }
+            else if(type)
+            {
+                System.out.println("Enter the Job's Pay Period (length 10)");
+                payPeriod = scan.nextLine();
+                System.out.println("Enter the Job's salary");
+                salary = scan.nextFloat();
+                scan.nextLine();
+                System.out.println("Enter the Job's Season (length 10)");
+                season = scan.nextLine();
+
+                if(!inputCheck(payPeriod, 10) || !inputCheck(season, 10))
+                {
+                    return false;
+                }
+
+                pstI.setString(2, payPeriod);
+                pstI.setFloat(3, salary);
+                pstI.setString(4, season);
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input. Try again.");
+        }
+        return false;
     }
 }
