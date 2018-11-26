@@ -6,14 +6,14 @@ public class Job
   String description;
   int companyId;
   int managerId;
-  char type;
+  String type; //@TODO change to char
 
   public Job()
   {
 
   }
 
-  public Job(int jobId, String jobTitle, String industry, String description, int companyId, int managerId, char type)
+  public Job(int jobId, String jobTitle, String industry, String description, int companyId, int managerId, String type)
   {
     this.jobId = jobId;
     this.jobTitle = jobTitle;

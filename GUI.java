@@ -10,6 +10,7 @@ public class GUI extends JPanel
   private JTextField jobField;
   private JTextField industry;
   private JTextField description;
+  private JFormattedTextField jID;
   private JFormattedTextField cID;
   private JFormattedTextField mID;
   private JTextField type;
@@ -26,7 +27,13 @@ public class GUI extends JPanel
   private JFormattedTextField yearsAtCompany;
   private JButton createManager = new JButton("New manager");
 
+  private JButton deleteJob = new JButton("Delete job");
+  private JButton deleteCompany = new JButton("Delete company");
+  private JButton deleteManager = new JButton("Delete manager");
+
   private NumberFormat intFormat;
+
+  private main main;
 
   public static void main(String[] args)
   {
@@ -43,6 +50,8 @@ public class GUI extends JPanel
     industry = new JTextField(25);
     description = new JTextField(100);
     intFormat = NumberFormat.getNumberInstance();
+    jID = new JFormattedTextField(intFormat);
+    jID.setValue(new Integer(1));
     cID = new JFormattedTextField(intFormat);
     cID.setValue(new Integer(1)); //@TODO don't have a default int value, or commit
     mID = new JFormattedTextField(intFormat);
@@ -96,6 +105,12 @@ public class GUI extends JPanel
     createCompany.addActionListener(new ButtonHandler());
     panel.add(createManager);
     createManager.addActionListener(new ButtonHandler());
+    panel.add(deleteJob);
+    deleteJob.addActionListener(new ButtonHandler());
+    panel.add(deleteCompany);
+    deleteCompany.addActionListener(new ButtonHandler());
+    panel.add(deleteManager);
+    deleteManager.addActionListener(new ButtonHandler());
     return panel;
   }
 
@@ -195,7 +210,9 @@ public class GUI extends JPanel
             j.description = description.getText();
             j.companyId = ((Number)cID.getValue()).intValue();
             j.managerId = ((Number)mID.getValue()).intValue();
+            j.type = type.getText();
             j.jobCreated();
+            main.getJobInfo(j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type);
             createJob.setText("New job");
           }
           catch (java.lang.NumberFormatException ex)
@@ -258,6 +275,42 @@ public class GUI extends JPanel
           {
             System.out.println("Error: " + ex);
           }
+        case("Delete company"):
+          Panel deletePanel = new Panel();
+          deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
+          deletePanel.add(new JLabel("Company ID to be deleted"), "align label");
+          deletePanel.add(cID, "wrap");
+          add(deletePanel, BorderLayout.NORTH);
+          deleteCompany.setText("Confirm delete company");
+          break;
+        case("Confirm delete company"):
+          deleteCompany.setText("Delete company");
+          //@TODO call main's delete call
+          break;
+        case("Delete manager"):
+          deletePanel = new Panel();
+          deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
+          deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
+          deletePanel.add(jID, "wrap");
+          add(deletePanel, BorderLayout.NORTH);
+          deleteManager.setText("Confirm delete manager");
+          break;
+        case("Confirm delete manager"):
+          deleteManager.setText("Delete manager");
+          //@TODO call main's delete call
+          break;
+        case("Delete job"):
+          deletePanel = new Panel();
+          deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
+          deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
+          deletePanel.add(jID, "wrap");
+          add(deletePanel, BorderLayout.NORTH);
+          deleteJob.setText("Confirm delete job");
+          break;
+        case("Confirm delete job"):
+          deleteJob.setText("Delete job");
+          //@TODO call main's delete call
+          break;
         default:
           break;
       }
