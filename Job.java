@@ -29,6 +29,7 @@ public class Job
     System.out.println("Job created.");
     System.out.println("Job title: " + jobTitle);
     System.out.println("Industry: " + industry);
+    System.out.println("CID: " + companyId + " MID: " + managerId);
     System.out.println("Description: " + description);
   }
 }
