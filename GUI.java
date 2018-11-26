@@ -166,10 +166,10 @@ public class GUI extends JPanel
     @Override
     public void actionPerformed(ActionEvent e)
     {
-      // JPanel jobPanel = null;
-      // JPanel companyPanel = null;
-      // JPanel managerPanel = null;
       JPanel jobPanel, companyPanel, managerPanel;
+      jobPanel = new JPanel();
+      companyPanel = new JPanel();
+      managerPanel = new JPanel();
       switch(e.getActionCommand())
       {
         case("New job"):
@@ -178,10 +178,8 @@ public class GUI extends JPanel
           createJob.setText("Save job");
           createManager.setText("New manager");
           createCompany.setText("New company");
-          // try { companyPanel.removeAll();}
-          // catch (Exception ex) {}
-          // try { managerPanel.removeAll(); }
-          // catch (Exception ex) {}
+          remove(companyPanel);
+          remove(managerPanel);
           break;
         case("Save job"):
           if (jobFieldsEmpty())
@@ -211,10 +209,8 @@ public class GUI extends JPanel
           createCompany.setText("Save company");
           createJob.setText("New job");
           createManager.setText("New manager");
-          // try { remove(jobPanel); }
-          // catch (Exception ex) {}
-          // try { remove(managerPanel); }
-          // catch (Exception ex) {}
+          remove(jobPanel);
+          remove(managerPanel);
           break;
         case("Save company"):
           if (companyFieldsEmpty())
@@ -242,10 +238,8 @@ public class GUI extends JPanel
           createManager.setText("Save manager");
           createJob.setText("New job");
           createCompany.setText("New company");
-          // try { remove(jobPanel); }
-          // catch (Exception ex) {}
-          // try { remove(companyPanel); }
-          // catch (Exception ex) {}
+          remove(jobPanel);
+          remove(companyPanel);
           break;
         case("Save manager"):
           if (managerFieldsEmpty())
