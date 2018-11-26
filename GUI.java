@@ -186,6 +186,30 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Sets all buttons back to their original state except the current button.
+  * @TODO may not be necessary - check
+  */
+  private void resetButtonsExcept(JButton button)
+  {
+    if (!button.equals(createJob)) createJob.setText("Create job");
+    if (!button.equals(createManager)) createManager.setText("Create manager");
+    if (!button.equals(createCompany)) createCompany.setText("Create company");
+    if (!button.equals(deleteJob)) deleteJob.setText("Delete job");
+    if (!button.equals(deleteManager)) deleteManager.setText("Delete manager");
+    if (!button.equals(deleteCompany)) deleteCompany.setText("Delete company");
+  }
+
+  private void resetButtons()
+  {
+    createJob.setText("New job");
+    createManager.setText("New manager");
+    createCompany.setText("New company");
+    deleteJob.setText("Delete job");
+    deleteManager.setText("Delete manager");
+    deleteCompany.setText("Delete company");
+  }
+
   //@TODO add more exception handling for save cases
   //@TODO deal with repainting
   private class ButtonHandler implements ActionListener
@@ -202,9 +226,8 @@ public class GUI extends JPanel
         case("New job"):
           jobPanel = jobFields();
           add(jobPanel, BorderLayout.NORTH);
+          resetButtons();
           createJob.setText("Save job");
-          createManager.setText("New manager");
-          createCompany.setText("New company");
           remove(companyPanel);
           remove(managerPanel);
           break;
@@ -235,9 +258,8 @@ public class GUI extends JPanel
         case("New company"):
           companyPanel = companyFields();
           add(companyPanel, BorderLayout.NORTH);
+          resetButtons();
           createCompany.setText("Save company");
-          createJob.setText("New job");
-          createManager.setText("New manager");
           remove(jobPanel);
           remove(managerPanel);
           break;
@@ -264,9 +286,8 @@ public class GUI extends JPanel
         case("New manager"):
           managerPanel = managerFields();
           add(managerPanel, BorderLayout.NORTH);
+          resetButtons();
           createManager.setText("Save manager");
-          createJob.setText("New job");
-          createCompany.setText("New company");
           remove(jobPanel);
           remove(companyPanel);
           break;
@@ -293,6 +314,7 @@ public class GUI extends JPanel
           deletePanel.add(new JLabel("Company ID to be deleted"), "align label");
           deletePanel.add(cID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
+          resetButtons();
           deleteCompany.setText("Confirm delete company");
           break;
         case("Confirm delete company"):
@@ -305,6 +327,7 @@ public class GUI extends JPanel
           deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
+          resetButtons();
           deleteManager.setText("Confirm delete manager");
           break;
         case("Confirm delete manager"):
@@ -317,6 +340,7 @@ public class GUI extends JPanel
           deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
+          resetButtons();
           deleteJob.setText("Confirm delete job");
           break;
         case("Confirm delete job"):
