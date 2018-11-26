@@ -63,6 +63,30 @@ public class GUI extends JPanel
     add(initButtons(), BorderLayout.CENTER);
   }
 
+  public boolean jobFieldsEmpty()
+  {
+    return (jobField.getText().trim().isEmpty()
+            || industry.getText().trim().isEmpty()
+            || description.getText().trim().isEmpty()
+            || cID.getText().trim().isEmpty()
+            || mID.getText().trim().isEmpty()
+            || type.getText().trim().isEmpty());
+  }
+
+  public boolean companyFieldsEmpty()
+  {
+    return (companyName.getText().trim().isEmpty()
+            || numEmployees.getText().trim().isEmpty()
+            || revenue.getText().trim().isEmpty()
+            || stockPrice.getText().trim().isEmpty());
+  }
+
+  public boolean managerFieldsEmpty()
+  {
+    return (managerName.getText().trim().isEmpty()
+          || yearsAtCompany.getText().trim().isEmpty());
+  }
+
   private JPanel initButtons()
   {
     JPanel panel = new JPanel();
@@ -160,6 +184,11 @@ public class GUI extends JPanel
           // catch (Exception ex) {}
           break;
         case("Save job"):
+          if (jobFieldsEmpty())
+          {
+            JOptionPane.showMessageDialog(null, "All fields must have data.");
+            return;
+          }
           Job j = new Job();
           try
           {
@@ -188,6 +217,11 @@ public class GUI extends JPanel
           // catch (Exception ex) {}
           break;
         case("Save company"):
+          if (companyFieldsEmpty())
+          {
+            JOptionPane.showMessageDialog(null, "All fields must have data.");
+            return;
+          }
           Company c = new Company();
           try
           {
@@ -214,6 +248,11 @@ public class GUI extends JPanel
           // catch (Exception ex) {}
           break;
         case("Save manager"):
+          if (managerFieldsEmpty())
+          {
+            JOptionPane.showMessageDialog(null, "All fields must have data.");
+            return;
+          }
           Manager m = new Manager();
           try
           {
