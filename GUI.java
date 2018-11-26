@@ -5,6 +5,18 @@ import java.awt.event.*;
 import java.text.NumberFormat;
 import java.lang.NumberFormatException;
 
+/**
+* @TODO list for GUI
+* [X] Add job/manager/company
+* [] Delete job/manager/company
+* [] Search
+* [] Update
+* Bugs:
+* [] Repainting!!!!!!!!!!!!
+* [] A more efficient way of dealing with re-naming buttons
+* [] Shit I have a lot to do
+*/
+
 public class GUI extends JPanel
 {
   private JTextField jobField;
