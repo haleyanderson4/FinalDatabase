@@ -2,3 +2,9 @@
 Config.class
 
 main.class
+
+*.class
+
+*.jar
+
+*.class
