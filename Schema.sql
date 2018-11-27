@@ -8,7 +8,7 @@ CREATE TABLE RelatedJobs(jobId INTEGER PRIMARY KEY, FOREIGN KEY jobId(jobId) REF
 
 CREATE TABLE Competition(jobId INTEGER PRIMARY KEY AUTO_INCREMENT, FOREIGN KEY jobId(jobId) REFERENCES Job(jobId) ON DELETE CASCADE, numOpenSpots INTEGER, numApplicants INTEGER);
 
-CREATE TABLE Location(companyId INTEGER PRIMARY KEY AUTO_INCREMENT, locationArea VARCHAR (25) not null, street VARCHAR(100) not null, city VARCHAR(25) not null, state VARCHAR(2) not null);
+CREATE TABLE Location(companyId INTEGER PRIMARY KEY AUTO_INCREMENT, FOREIGN KEY companyId(companyId) REFERENCES Company(companyId) ON DELETE CASCADE, locationArea VARCHAR (25) not null, street VARCHAR(100) not null, city VARCHAR(25) not null, state VARCHAR(2) not null);
 
 CREATE TABLE FullTime(jobId INTEGER PRIMARY KEY, FOREIGN KEY jobId(jobId) REFERENCES Job(jobId) ON DELETE CASCADE, numStockOptions INTEGER not null, signingBonus FLOAT(20,2) not null, salary FLOAT(20,2) not null);
 
