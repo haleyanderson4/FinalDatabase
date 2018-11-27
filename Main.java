@@ -28,8 +28,8 @@ public class Main
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type \n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Undo \n10. Quit\n");
-
+            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
+                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Undo \n10. Generate Database Report \n11. Quit");
             while(loop)
             {
                 try
@@ -37,16 +37,16 @@ public class Main
                     System.out.println("What would you like to do: ");
                     editOption = scan.nextInt();
                     System.out.println(" ");
-
-                    if (editOption < 1 || editOption > 10)
+                    if (editOption < 1 || editOption > 11)
                     {
-                        System.out.println("Please enter a number between 1 and 10\n");
+                        System.out.println("Please enter a number between 1 and 11\n");
+                        continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 10\n");
-                    scan.nextLine();
+                    System.out.println("Please enter a number between 1 and 11\n");
+                    continue;
                 }
 
                 if(editOption == 1) //prelim completed
@@ -135,7 +135,7 @@ public class Main
 
                 if(editOption == 9)
                 {
-                    boolean success = undo(con, scan);
+                    boolean success = undo(con);
                     if(success)
                     {
                         System.out.println("Undo Successful.");
@@ -146,7 +146,19 @@ public class Main
                     }
                 }
 
-                if(editOption == 10) //done lol
+                if(editOption == 10)
+                {
+                    boolean success = generateReport(con);
+                    if(success)
+                    {
+                        System.out.println("Report Generation Successful.");
+                    }
+                    if(!success)
+                    {
+                        System.out.println("Report Generation Failed. Please try again.");
+                    }
+                }
+                if(editOption == 11) //done lol
                 {
                     loop = false;
                 }
@@ -1684,16 +1696,6 @@ public class Main
     }
 
     /**
-     * Undos the last user change, restores previous verion.
-     * @return true if there were no issues, false otherwise
-     */
-    public static boolean undo(Connection con, Scanner scan)
-    {
-        //undo
-        return false;
-    }
-
-    /**
      * Returns statistics for certain records in the database.
      * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
@@ -2225,6 +2227,42 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+        }
+        return false;
+    }
+
+    /**
+     * Creates an external file of all entries in the database
+     * @param type is the boolean set in the Job field on whether it is full time or internship.
+     * @return true if the creation was successful, false otherwise
+     */
+    public static boolean generateReport(Connection con)
+    {
+        try
+        {
+            //generate a report
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Something went wrong.");
+        }
+        return false;
+    }
+    /**
+     * Undos the last user change, restores previous verion.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean undo(Connection con)
+    {
+        try
+        {
+            //pstUndo.execute();
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Something went wrong.");
         }
         return false;
     }
