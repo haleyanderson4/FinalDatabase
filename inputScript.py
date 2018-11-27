@@ -8,7 +8,7 @@ import random
 def createJob(companyId, managerId):
     #create job
     jobTitle = faker.job();
-    industry = faker.company_suffix()
+    industry = faker.choice(['IT', 'SWE', 'SDE', 'WebDev', 'AppDev'])
     description = faker.text()
     type = random.choice([True, False])
 
