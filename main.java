@@ -12,7 +12,7 @@
  * ??? More, what else
  */
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+//import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.sql.*;
 import java.util.*;
@@ -2227,5 +2227,14 @@ public class main
             System.out.println("Please enter a valid input. Try again.");
         }
         return false;
+    }
+
+    /**
+    * Gets info from the GUI about job components.
+    * @TODO figure out what we're doing with said data.
+    */
+    public static void getJobInfo(String jobTitle, String industry, String description, int companyId, int managerId, String type)
+    {
+
     }
 }
