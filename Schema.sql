@@ -1,4 +1,4 @@
-CREATE TABLE Job(jobId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, jobTitle VARCHAR(50), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER FOREIGN KEY companyId(companyId) REFERENCES Company(companyId), managerId INTEGER FOREIGN KEY managerId(managerId) REFERENCES Manager(managerId), type BOOL);
+CREATE TABLE Job(jobId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, jobTitle VARCHAR(50), industry VARCHAR(25), description VARCHAR(100), companyId INTEGER, managerId INTEGER, type BOOLEAN, FOREIGN KEY managerId REFERENCES Manager(managerId), type BOOL)  FOREIGN KEY companyId REFERENCES Company(companyId);
 
 CREATE TABLE Company(companyId INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, companyName VARCHAR(50), numEmployees INTEGER, yearlyRevenue FLOAT(20,2), stockPrice FLOAT(20,2));
 
