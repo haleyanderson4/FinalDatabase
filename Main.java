@@ -47,6 +47,8 @@ public class main
                 catch(Exception e)
                 {
                     System.out.println("Please enter a number between 1 and 11\n");
+                    scan.nextLine();
+                    editOption = 0;
                     continue;
                 }
 
@@ -179,7 +181,10 @@ public class main
      */
     public static boolean inputCheck(String str, int length)
     {
-        if (str.length() <= length) return true;
+        if (str.length() <= length)
+        {
+            return true;
+        }
         else {
             System.out.println("Must be less than " + length + " characters. Try again.");
             return false;
@@ -1903,14 +1908,10 @@ public class main
             stockPrice = scan.nextFloat();
             scan.nextLine();
 
-            if (companyName.equals("") || inputCheck(companyName, 100))
+            if (!inputCheck(companyName, 100))
             {
+                System.out.println("Please enter this information again");
                 validInput = false;
-            }
-
-            if(!validInput)
-            {
-                System.out.println("Please enter this information again.");
                 return false;
             }
 
@@ -2013,8 +2014,6 @@ public class main
             String industry = "";
             String description = "";
             String typeS = "";
-            int companyId = 0;
-            int managerId = 0;
 
             System.out.println("Enter the Job's Title (length 25)");
             jobTitle = scan.nextLine();
@@ -2043,23 +2042,14 @@ public class main
             if(!inputCheck(description, 100) || !inputCheck(jobTitle, 25) || !inputCheck(industry, 25))
             {
                 validInput = false;
-            }
-            if(jobTitle.equals("") || industry.equals("") || description.equals("") || typeS.equals(""))
-            {
-                System.out.println("All fields must be entered.");
-                validInput = false;
-            }
-
-            if(!validInput)
-            {
                 return false;
             }
 
             pstJ.clearParameters();
-            pstJ.setString(2, jobTitle);
-            pstJ.setString(3, industry);
-            pstJ.setString(4, description);
-            pstJ.setBoolean(7, type);
+            pstJ.setString(1, jobTitle);
+            pstJ.setString(2, industry);
+            pstJ.setString(3, description);
+            pstJ.setBoolean(6, type);
 
             int numOpenSpots;
             int numApplicants;
@@ -2079,6 +2069,7 @@ public class main
         }
         catch (Exception e)
         {
+            System.out.println(e);
             System.out.println("Please enter a valid input.");
         }
         return false;
