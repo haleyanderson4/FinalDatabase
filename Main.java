@@ -17,7 +17,7 @@
 import java.sql.*;
 import java.util.*;
 
-public class Main
+public class main
 {
     public static void main(String[] args)
     {
@@ -36,6 +36,7 @@ public class Main
                 {
                     System.out.println("What would you like to do: ");
                     editOption = scan.nextInt();
+                    scan.nextLine();
                     System.out.println(" ");
                     if (editOption < 1 || editOption > 11)
                     {
@@ -284,7 +285,7 @@ public class Main
     //prelim completed
     /**
      * Returns all entries in the JOB table.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the call was successful, false otherwise
      */
     public static boolean queryMethod(Connection con, Scanner scan)
@@ -317,7 +318,7 @@ public class Main
 
     /**
      * Creates a new posting for a newly created job!
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
      */
     public static boolean createNewPosting(Connection con, Scanner scan)
@@ -331,7 +332,6 @@ public class Main
             int managerId = 0;
 
             PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
-
             PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);");
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
             System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
@@ -523,6 +523,7 @@ public class Main
         }
         catch (Exception e)
         {
+            System.out.println(e);
             System.out.println("Please enter this information again, and be sure that the ID number chosen is available.");
         }
         return false;
@@ -532,7 +533,7 @@ public class Main
     /**
      * Parent method to update database tables, where the user selected UPDATE INFORMATION.
      * Method calls updateTable methods to execute the requested updates.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the update was successful, false otherwise
      */
     public static boolean updateField(Connection con, Scanner scan)
@@ -601,7 +602,7 @@ public class Main
     /**
      * Searchs for information from certain tables. Also gives several statistics for the group searched.
      * Parent method to search tables.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
     public static boolean searchBy(Connection con, Scanner scan)
@@ -646,7 +647,7 @@ public class Main
     //prelim completed
     /**
      * Selects all relevant job information across all tables in the database.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
     public static boolean jobInfo(Connection con, Scanner scan)
@@ -720,7 +721,7 @@ public class Main
     //doesn't need to be split, prelim completed
     /**
      * Selects all relevant job information across certain tables in the database.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
     public static boolean lookup(Connection con, Scanner scan)
@@ -862,7 +863,7 @@ public class Main
 
     /**
      * Calls the deleteEntry method with the associated tables.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
     public static boolean deleteCall(Connection con, Scanner scan)
@@ -1697,7 +1698,7 @@ public class Main
 
     /**
      * Returns statistics for certain records in the database.
-     * @param Takes Connection and Scanner as input to assist in executing the SQL commands.
+     * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
     public static boolean statistics(Connection con, Scanner scan)
@@ -1873,8 +1874,6 @@ public class Main
      * @param validInput to account for all input issues.
      * @param pstC is the Prepared Statement for the Company table.
      * @param pstL is the Prepared Statement for the Location table.
-     * @param pstId is the Prepared Statement for getting the Id number.
-     * @param companyId is the to get companyId not local to this method.
      * @return true if the creation was successful, false otherwise.
      */
     public static boolean createCompany(boolean validInput, PreparedStatement pstC, PreparedStatement pstL, Scanner scan)
@@ -2003,8 +2002,6 @@ public class Main
      * @param validInput to account for all input issues.
      * @param pstJ is the Prepared Statement for the Job table.
      * @param pstComp is the Prepared Statement for the Competition table.
-     * @param createCompany is the boolean whether to ask for companyId or not.
-     * @param createManager is the boolean whether to ask for managerId or not.
      * @param type is the boolean that needs to not be a local variable.
      * @return true if the creation was successful, false otherwise
      */
@@ -2233,7 +2230,7 @@ public class Main
 
     /**
      * Creates an external file of all entries in the database
-     * @param type is the boolean set in the Job field on whether it is full time or internship.
+     * @param con as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
      */
     public static boolean generateReport(Connection con)
@@ -2268,9 +2265,9 @@ public class Main
     }
 
     /**
-    * Gets info from the GUI about job components.
-    * @TODO figure out what we're doing with said data.
-    */
+     * Gets info from the GUI about job components.
+     * @TODO figure out what we're doing with said data.
+     */
     public static void getJobInfo(String jobTitle, String industry, String description, int companyId, int managerId, String type)
     {
 
