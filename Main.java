@@ -17,7 +17,7 @@
 import java.sql.*;
 import java.util.*;
 
-public class main
+public class Main
 {
     public static void main(String[] args)
     {
@@ -29,7 +29,7 @@ public class main
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
             System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
-                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Undo \n10. Generate Database Report \n11. Quit");
+                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9.  Add a new Manager. \n10. Undo \n11. Generate Database Report \n12. Quit");
             while(loop)
             {
                 try
@@ -38,15 +38,15 @@ public class main
                     editOption = scan.nextInt();
                     scan.nextLine();
                     System.out.println(" ");
-                    if (editOption < 1 || editOption > 11)
+                    if (editOption < 1 || editOption > 12)
                     {
-                        System.out.println("Please enter a number between 1 and 11\n");
+                        System.out.println("Please enter a number between 1 and 12\n");
                         continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 11\n");
+                    System.out.println("Please enter a number between 1 and 12\n");
                     scan.nextLine();
                     editOption = 0;
                     continue;
@@ -136,7 +136,20 @@ public class main
                     }
                 }
 
-                if(editOption == 9)
+                if (editOption == 9)
+                {
+                  boolean success = createNewManager(con, scan);
+                  if (success)
+                  {
+                    System.out.println("Manager successfully added.");
+                  }
+                  else
+                  {
+                    System.out.println("Process failed. The manager was not added. Try agan.");
+                  }
+                }
+
+                if(editOption == 10)
                 {
                     boolean success = undo(con);
                     if(success)
@@ -149,7 +162,7 @@ public class main
                     }
                 }
 
-                if(editOption == 10)
+                if(editOption == 11)
                 {
                     boolean success = generateReport(con);
                     if(success)
@@ -161,7 +174,7 @@ public class main
                         System.out.println("Report Generation Failed. Please try again.");
                     }
                 }
-                if(editOption == 11) //done lol
+                if(editOption == 12) //done lol
                 {
                     loop = false;
                 }
@@ -322,6 +335,74 @@ public class main
     }
 
     /**
+    * Creates a new manager.
+    * @param con Connection to the DB
+    * @param scan Scanner object
+    * @return true if creation was successful, false otherwise
+    */
+    public static boolean createNewManager(Connection con, Scanner scan)
+    {
+      try
+      {
+        PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
+        PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
+        System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
+        String company = scan.nextLine();
+        boolean createCompany = false;
+        boolean success;
+        int companyId;
+
+        if(company.toLowerCase().equals("y"))
+        {
+            createCompany = true;
+            success = createCompany(true, pstC, pstL, scan);
+            ResultSet rs = pstC.getGeneratedKeys();
+            companyId = rs.getInt(1);
+            if(!success)
+            {
+                System.out.println("The Company creation failed. Please try again.");
+                return false;
+            }
+        }
+        else
+        {
+            System.out.println("Enter the Manager's Company Id");
+            companyId = scan.nextInt();
+            scan.nextLine();
+
+            PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?;");
+            companyExist.clearParameters();
+            companyExist.setInt(1, companyId);
+            ResultSet setC = companyExist.executeQuery();
+
+            int existingCompany = setC.getInt(1);
+
+            if (existingCompany == 0)
+            {
+                System.out.println("That Company does not exsist. Please try again.");
+                return false;
+            }
+        }
+        PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(managerId, name, companyId, technicalExperience, yearsAtCompany) VALUES(?,?,?,?,?)");
+        success = createManager(true, pstM, scan, companyId);
+        if (!success)
+        {
+          System.out.println("The manager creation failed. Please try again.");
+          return false;
+        }
+        pstM.executeUpdate();
+        return true;
+      }
+      catch (Exception e)
+      {
+        System.out.println(e);
+        System.out.println("There was an error creating the manager. Try again.");
+      }
+      return false;
+    }
+
+    /**
      * Creates a new posting for a newly created job!
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
@@ -372,41 +453,7 @@ public class main
                 }
             }
 
-            PreparedStatement pstM = con.prepareStatement("INSERT INTO Manager(name, technicalExperience, yearsAtCompany) VALUES(?,?,?);");
-            System.out.println("Do you need to create a new Manager? Enter 'y' for yes.");
-            String manager = scan.nextLine();
-            boolean createManager = false;
-            if(manager.toLowerCase().equals("y"))
-            {
-                createManager = true;
-                success = createManager(validInput, pstM, scan);
-                if(!success)
-                {
-                    System.out.println("The Manager creation failed. Please try again.");
-                    return false;
-                }
-            }
-            else
-            {
-                System.out.println("Enter the Job's Manager Id");
-                managerId = scan.nextInt();
-                scan.nextLine();
-
-                PreparedStatement managerExist = con.prepareStatement("SELECT COUNT(*) FROM Manager WHERE managerId=?;");
-                managerExist.clearParameters();
-                managerExist.setInt(1, managerId);
-                ResultSet setM = managerExist.executeQuery();
-
-                int existingManager = setM.getInt(1);
-
-                if (existingManager == 0)
-                {
-                    System.out.println("That Manager does not exsist. Please try again.");
-                    return false;
-                }
-            }
-
-            PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, managerId, type) VALUES(?,?,?,?,?,?);");
+            PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, type) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
             success = createJob(validInput, pstJ, pstComp, type, scan, con);
@@ -464,23 +511,9 @@ public class main
                     System.out.println("The Location has been created.");
                 }
 
-                if(createManager)
-                {
-                    pstM.executeUpdate();
-                    System.out.println("The Manager has been created.");
 
-                    pstId.clearParameters();
-                    pstId.setString(1, "managerId");
-                    pstId.setString(2, "Manager");
-                    ResultSet rsId = pstId.executeQuery();
-                    while(rsId.next())
-                    {
-                        managerId = rsId.getInt(1);
-                    }
-                }
 
                 pstJ.setInt(5, companyId);
-                pstJ.setInt(6, managerId);
                 pstJ.executeUpdate();
                 System.out.println("The Job has been created.");
 
@@ -1967,7 +2000,7 @@ public class main
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(boolean validInput, PreparedStatement pstM, Scanner scan)
+    public static boolean createManager(boolean validInput, PreparedStatement pstM, Scanner scan, int companyId)
     {
         try
         {
@@ -1986,8 +2019,9 @@ public class main
 
             pstM.clearParameters();
             pstM.setString(1, name);
-            pstM.setBoolean(2, technicalExperience);
-            pstM.setInt(3, yearsAtCompany);
+            pstM.setInt(2, companyId);
+            pstM.setBoolean(3, technicalExperience);
+            pstM.setInt(4, yearsAtCompany);
 
             return true;
         }

@@ -45,7 +45,7 @@ public class GUI extends JPanel
 
   private NumberFormat intFormat;
 
-  private main main;
+  private Main main;
 
   public static void main(String[] args)
   {
