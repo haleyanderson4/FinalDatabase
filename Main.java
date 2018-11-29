@@ -1700,13 +1700,16 @@ public class Main
             }
 
             System.out.println("\nSome Statistics from " + name + ":");
-            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(*), AVG(c.numApplicants) FROM Job j, Competition c WHERE j.companyId =? AND c.jobId = j.jobId;");
+            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(numApplicants), SUM(numApplicants) FROM Competition WHERE jobId=?;");
             pst6Stat.clearParameters();
             pst6Stat.setInt(1, companyId);
             ResultSet rs6Stat = pst6Stat.executeQuery();
             while(rs6Stat.next())
             {
-                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " Average number of Applications to each Job: " + rs6Stat.getFloat(2));
+                int count = rs6Stat.getInt(1);
+                int sum = rs6Stat.getInt(2);
+                float avg = sum/count;
+                System.out.println("Number of Open Jobs at " + name + ": " + count + " Average number of Applications to each Job: " + avg);
             }
 
             return true;
@@ -1737,7 +1740,7 @@ public class Main
             }
             else
             {
-                if(type.toLowerCase().equals("f"))
+                if(type.equals("f"))
                 {
                     search = false;
                 }
@@ -1794,7 +1797,7 @@ public class Main
 
 
                     System.out.println("\nSummer Internships: ");
-                    PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='Summer');");
+                    PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='summer');");
                     ResultSet rsSum = pstSum.executeQuery();
                     while(rsSum.next())
                     {
