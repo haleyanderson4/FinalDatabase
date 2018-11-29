@@ -8,4 +8,5 @@ TO DO:
 - transactions --> rollback
 - report generation (logging)
 - create fake data
+- Switch salary to rate in internship table
 - go through all project requirements 
