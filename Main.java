@@ -1740,7 +1740,7 @@ public class Main
             }
             else
             {
-                if(type.equals("f"))
+                if(type.toLowerCase().equals("f"))
                 {
                     search = false;
                 }
@@ -1797,7 +1797,7 @@ public class Main
 
 
                     System.out.println("\nSummer Internships: ");
-                    PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='summer');");
+                    PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='Summer');");
                     ResultSet rsSum = pstSum.executeQuery();
                     while(rsSum.next())
                     {
