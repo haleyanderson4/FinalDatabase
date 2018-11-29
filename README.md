@@ -9,3 +9,4 @@ TO DO:
 - report generation (logging)
 - create fake data
 - go through all project requirements 
+- delete manager method
