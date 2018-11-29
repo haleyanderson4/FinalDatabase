@@ -1,16 +1,11 @@
 /**
- * Currently functioning:
- * Essentially the whole crud lab, updated for our schema (still needs testing). Nice!
- * Sorry @haleyanderson4, I'm having trouble testing. Will keep working.
- *
  * @TODO
- * Since we want a different format, should have minimal functionality in main method - most work done in helper methods
- * Maybe even different classes?
  * Front-end stuff
  * Populate our db with actual data (low priority)
  * Testing!!!
- *      1 - 8 are tested and work
- * ??? More, what else
+ *      1 - 9 are tested and work
+ * Report Generation
+ * Rollback / Undo 
  */
 
 //import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
@@ -2111,7 +2106,7 @@ public class Main
     {
         try
         {
-            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);");
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
             System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
             String company = scan.nextLine();
@@ -2121,8 +2116,6 @@ public class Main
             if(company.toLowerCase().equals("y"))
             {
                 success = createCompany(pstC, pstL, scan);
-                ResultSet rs = pstC.getGeneratedKeys();
-                companyId = rs.getInt(1);
                 if(!success)
                 {
                     System.out.println("The Company creation failed. Please try again.");
@@ -2132,6 +2125,7 @@ public class Main
                 PreparedStatement pstStart = con.prepareStatement("START TRANSACTION;");
                 pstStart.execute();
                 pstC.executeUpdate();
+                System.out.println("The Company was successfully created.");
 
                 PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company;");
                 ResultSet rsId = pstId.executeQuery();
@@ -2139,6 +2133,10 @@ public class Main
                 {
                     companyId = rsId.getInt(1);
                 }
+
+                pstL.setInt(1, companyId);
+                pstL.executeUpdate();
+                System.out.println("The Location was successfully created.");
             }
             else
             {
