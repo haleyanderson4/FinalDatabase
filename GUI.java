@@ -12,8 +12,8 @@ import java.lang.NumberFormatException;
 * [] Search
 * [] Update
 * Bugs:
-* [] Repainting!!!!!!!!!!!!
-* [] A more efficient way of dealing with re-naming buttons
+* [X] Repainting!!!!!!!!!!!!
+* [X] A more efficient way of dealing with re-naming buttons
 * [] Shit I have a lot to do
 */
 
@@ -211,6 +211,35 @@ public class GUI extends JPanel
     deleteJob.setText("Delete job");
     deleteManager.setText("Delete manager");
     deleteCompany.setText("Delete company");
+  }
+
+  /**
+  * Displays a result set that can be obtained via a select statement.
+  * @param rs the ResultSet to be displayed; will be obtained from main.
+  * @TODO test
+  */
+  private void showTable(ResultSet rs)
+  {
+    JTable table = new JTable();
+    try
+    {
+      int numColumns = rs.getMetaData().getColumnCount();
+      int rowCount = 1;
+      while (rs.next())
+      {
+        Object[] row = new Object[numColumns];
+        for (int col = 0; col < numColumns; ++col)
+        {
+          table.getModel().setValueAt(rs.getObject(col+1), rowCount, col);
+        }
+        rowCount++;
+      }
+    }
+    catch (Exception e)
+    {
+      JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
+    }
+
   }
 
   //@TODO add more exception handling for save cases
