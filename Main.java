@@ -39,15 +39,15 @@ public class Main
                     editOption = scan.nextInt();
                     scan.nextLine();
                     System.out.println(" ");
-                    if (editOption < 1 || editOption > 11)
+                    if (editOption < 1 || editOption > 12)
                     {
-                        System.out.println("Please enter a number between 1 and 11\n");
+                        System.out.println("Please enter a number between 1 and 12\n");
                         continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 11\n");
+                    System.out.println("Please enter a number between 1 and 12\n");
                     scan.nextLine();
                     editOption = 0;
                     continue;
