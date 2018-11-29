@@ -39,15 +39,15 @@ public class Main
                     editOption = scan.nextInt();
                     scan.nextLine();
                     System.out.println(" ");
-                    if (editOption < 1 || editOption > 11)
+                    if (editOption < 1 || editOption > 12)
                     {
-                        System.out.println("Please enter a number between 1 and 11\n");
+                        System.out.println("Please enter a number between 1 and 12\n");
                         continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 11\n");
+                    System.out.println("Please enter a number between 1 and 12\n");
                     scan.nextLine();
                     editOption = 0;
                     continue;
@@ -296,6 +296,7 @@ public class Main
             PreparedStatement pstR = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?);");
             boolean related = true;
             success = createRelated(validInput, pstR, related, scan);
+            System.out.println("DEBUG Hi?");
             if(!success)
             {
                 System.out.println("The Related Jobs creation failed. Please try again.");
@@ -304,6 +305,7 @@ public class Main
 
             if(validInput)
             {
+                System.out.println("DEBUG ValidInput");
                 PreparedStatement pstStart = con.prepareStatement("START TRANSACTION");
                 pstStart.execute();
 
@@ -328,7 +330,7 @@ public class Main
 
 
 
-                pstJ.setInt(5, companyId);
+                pstJ.setInt(4, companyId);
                 pstJ.executeUpdate();
                 System.out.println("The Job has been created.");
 
@@ -373,6 +375,7 @@ public class Main
                 pstEnd.execute();
                 return true;
             }
+            System.out.println("DEBUG 378");
         }
         catch (Exception e)
         {
@@ -520,7 +523,7 @@ public class Main
             pstJ.setString(1, jobTitle);
             pstJ.setString(2, industry);
             pstJ.setString(3, description);
-            pstJ.setBoolean(6, type);
+            pstJ.setBoolean(5, type);
 
             int numOpenSpots;
             int numApplicants;
@@ -611,12 +614,15 @@ public class Main
                 related = false;
             }
 
-            pstR.clearParameters();
-            pstR.setInt(2, related1);
-            pstR.setInt(3, related2);
-            pstR.setInt(4, related3);
-            pstR.setInt(5, related4);
-            pstR.setInt(6, related5);
+            if (related)
+            {
+              pstR.clearParameters();
+              pstR.setInt(2, related1);
+              pstR.setInt(3, related2);
+              pstR.setInt(4, related3);
+              pstR.setInt(5, related4);
+              pstR.setInt(6, related5);
+            }
 
             return true;
         }
