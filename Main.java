@@ -1701,7 +1701,7 @@ public class Main
             }
 
             System.out.println("\nSome Statistics from " + name + ":");
-            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(numApplicants), SUM(numApplicants) FROM Competition WHERE jobId=?;");
+            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(c.numApplicants), AVG(c.numApplicants) FROM Job j, Competition c WHERE j.companyId=?;");
             pst6Stat.clearParameters();
             pst6Stat.setInt(1, companyId);
             ResultSet rs6Stat = pst6Stat.executeQuery();
