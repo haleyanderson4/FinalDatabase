@@ -45,7 +45,7 @@ public class GUI extends JPanel
 
   private NumberFormat intFormat;
 
-  private Main main;
+  //private Main main;
 
   public static void main(String[] args)
   {
@@ -202,6 +202,9 @@ public class GUI extends JPanel
 
   private void resetButtons()
   {
+    removeAll();
+    revalidate();
+    add(initButtons(), BorderLayout.CENTER);
     createJob.setText("New job");
     createManager.setText("New manager");
     createCompany.setText("New company");
@@ -224,9 +227,9 @@ public class GUI extends JPanel
       switch(e.getActionCommand())
       {
         case("New job"):
+          resetButtons();
           jobPanel = jobFields();
           add(jobPanel, BorderLayout.NORTH);
-          resetButtons();
           createJob.setText("Save job");
           remove(companyPanel);
           remove(managerPanel);
@@ -247,7 +250,7 @@ public class GUI extends JPanel
             j.managerId = ((Number)mID.getValue()).intValue();
             j.type = type.getText();
             j.jobCreated();
-            main.getJobInfo(j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type);
+            //main.getJobInfo(j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type);
             createJob.setText("New job");
           }
           catch (java.lang.NumberFormatException ex)
@@ -256,9 +259,9 @@ public class GUI extends JPanel
           }
           break;
         case("New company"):
+          resetButtons();
           companyPanel = companyFields();
           add(companyPanel, BorderLayout.NORTH);
-          resetButtons();
           createCompany.setText("Save company");
           remove(jobPanel);
           remove(managerPanel);
@@ -284,9 +287,9 @@ public class GUI extends JPanel
           }
           break;
         case("New manager"):
+          resetButtons();
           managerPanel = managerFields();
           add(managerPanel, BorderLayout.NORTH);
-          resetButtons();
           createManager.setText("Save manager");
           remove(jobPanel);
           remove(companyPanel);
@@ -310,11 +313,11 @@ public class GUI extends JPanel
           }
         case("Delete company"):
           Panel deletePanel = new Panel();
+          resetButtons();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Company ID to be deleted"), "align label");
           deletePanel.add(cID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
-          resetButtons();
           deleteCompany.setText("Confirm delete company");
           break;
         case("Confirm delete company"):
@@ -322,12 +325,12 @@ public class GUI extends JPanel
           //@TODO call main's delete call
           break;
         case("Delete manager"):
+          resetButtons();
           deletePanel = new Panel();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
-          resetButtons();
           deleteManager.setText("Confirm delete manager");
           break;
         case("Confirm delete manager"):
@@ -335,12 +338,12 @@ public class GUI extends JPanel
           //@TODO call main's delete call
           break;
         case("Delete job"):
+          resetButtons();
           deletePanel = new Panel();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
           add(deletePanel, BorderLayout.NORTH);
-          resetButtons();
           deleteJob.setText("Confirm delete job");
           break;
         case("Confirm delete job"):
