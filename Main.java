@@ -9,6 +9,7 @@
  * Front-end stuff
  * Populate our db with actual data (low priority)
  * Testing!!!
+ *      1 & 8 are tested and work
  * ??? More, what else
  */
 
@@ -138,15 +139,15 @@ public class Main
 
                 if (editOption == 9)
                 {
-                  boolean success = createNewManager(con, scan);
-                  if (success)
-                  {
-                    System.out.println("Manager successfully added.");
-                  }
-                  else
-                  {
-                    System.out.println("Process failed. The manager was not added. Try agan.");
-                  }
+                    boolean success = createNewManager(con, scan);
+                    if (success)
+                    {
+                        System.out.println("Manager successfully added.");
+                    }
+                    else
+                    {
+                        System.out.println("Process failed. The manager was not added. Try agan.");
+                    }
                 }
 
                 if(editOption == 10)
@@ -335,71 +336,63 @@ public class Main
     }
 
     /**
-    * Creates a new manager.
-    * @param con Connection to the DB
-    * @param scan Scanner object
-    * @return true if creation was successful, false otherwise
-    */
+     * Creates a new manager.
+     * @param con Connection to the DB
+     * @param scan Scanner object
+     * @return true if creation was successful, false otherwise
+     */
     public static boolean createNewManager(Connection con, Scanner scan)
     {
-      try
-      {
-        PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
-        PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-        PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
-        System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
-        String company = scan.nextLine();
-        boolean createCompany = false;
-        boolean success;
-        int companyId;
-
-        if(company.toLowerCase().equals("y"))
+        try
         {
-            createCompany = true;
-            success = createCompany(true, pstC, pstL, scan);
-            ResultSet rs = pstC.getGeneratedKeys();
-            companyId = rs.getInt(1);
-            if(!success)
+            PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
+            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
+            System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
+            String company = scan.nextLine();
+            boolean createCompany = false;
+            boolean success;
+            int companyId;
+
+            if(company.toLowerCase().equals("y"))
             {
-                System.out.println("The Company creation failed. Please try again.");
+                createCompany = true;
+                success = createCompany(true, pstC, pstL, scan);
+                ResultSet rs = pstC.getGeneratedKeys();
+                companyId = rs.getInt(1);
+                if(!success)
+                {
+                    System.out.println("The Company creation failed. Please try again.");
+                    return false;
+                }
+            }
+            else
+            {
+                System.out.println("Enter the Manager's Company Id");
+                companyId = scan.nextInt();
+                scan.nextLine();
+
+                if(!checkCompanyID(con, companyId))
+                {
+                    return false;
+                }
+            }
+            PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(managerId, name, companyId, technicalExperience, yearsAtCompany) VALUES(?,?,?,?,?)");
+            success = createManager(true, pstM, scan, companyId);
+            if (!success)
+            {
+                System.out.println("The manager creation failed. Please try again.");
                 return false;
             }
+            pstM.executeUpdate();
+            return true;
         }
-        else
+        catch (Exception e)
         {
-            System.out.println("Enter the Manager's Company Id");
-            companyId = scan.nextInt();
-            scan.nextLine();
-
-            PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?;");
-            companyExist.clearParameters();
-            companyExist.setInt(1, companyId);
-            ResultSet setC = companyExist.executeQuery();
-
-            int existingCompany = setC.getInt(1);
-
-            if (existingCompany == 0)
-            {
-                System.out.println("That Company does not exsist. Please try again.");
-                return false;
-            }
+            System.out.println(e);
+            System.out.println("There was an error creating the manager. Try again.");
         }
-        PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(managerId, name, companyId, technicalExperience, yearsAtCompany) VALUES(?,?,?,?,?)");
-        success = createManager(true, pstM, scan, companyId);
-        if (!success)
-        {
-          System.out.println("The manager creation failed. Please try again.");
-          return false;
-        }
-        pstM.executeUpdate();
-        return true;
-      }
-      catch (Exception e)
-      {
-        System.out.println(e);
-        System.out.println("There was an error creating the manager. Try again.");
-      }
-      return false;
+        return false;
     }
 
     /**
@@ -438,16 +431,8 @@ public class Main
                 companyId = scan.nextInt();
                 scan.nextLine();
 
-                PreparedStatement companyExist = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?;");
-                companyExist.clearParameters();
-                companyExist.setInt(1, companyId);
-                ResultSet setC = companyExist.executeQuery();
-
-                int existingCompany = setC.getInt(1);
-
-                if (existingCompany == 0)
+                if(!checkCompanyID(con, companyId))
                 {
-                    System.out.println("That Company does not exsist. Please try again.");
                     return false;
                 }
             }
@@ -694,50 +679,73 @@ public class Main
             System.out.println("What is the ID number of the job you are looking for?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
             pstType.setInt(1, jobId);
             ResultSet rsType = pstType.executeQuery();
-            Boolean type = rsType.getBoolean(1);
+            Boolean type = true;
+            while(rsType.next())
+            {
+                type = rsType.getBoolean(1);
+            }
+
+            PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=?;");
+            pst8F.clearParameters();
+            pst8F.setInt(1, jobId);
+            ResultSet rs = pst8F.executeQuery();
+            while (rs.next()) //update
+            {
+                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
+                        + " Type: Full Time"
+                        + "\nCompany Name: " + rs.getString(7) + " Number of Employees: " + rs.getInt(8) + " Yearly Revenue: " + rs.getFloat(9) + " Stock Price: " + rs.getFloat(10)
+                        + "\nLocation Area: " + rs.getString(12) + " Address: " + rs.getString(13) + " " + rs.getString(14));
+            }
 
             if (!type)
             {
-                PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, FullTime f, RelatedJobs r WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=r.jobId AND j.jobId=f.jobId AND j.jobId=?;");
-                pst8F.clearParameters();
-                pst8F.setInt(1, jobId);
-                ResultSet rs = pst8F.executeQuery();
-                while (rs.next()) //update
+                PreparedStatement pst8F2 = con.prepareStatement("SELECT salary, numStockOptions, signingBonus FROM FullTime WHERE jobId=?;");
+                pst8F2.clearParameters();
+                pst8F2.setInt(1, jobId);
+                rs = pst8F2.executeQuery();
+                while(rs.next())
                 {
-                    System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: Full Time"
-                            + "\nCompany Name: " + rs.getString(7) + " Number of Employees: " + rs.getInt(8) + " Yearly Revenue: " + rs.getFloat(9) + " Stock Price: " + rs.getFloat(10)
-                            + "\nLocation Area: " + rs.getString(12) + " Address: " + rs.getString(13) + " " + rs.getString(14)
-                            + "\n Full Time Salary" + rs.getFloat(16) + "\nNumber of Stock Options: " + rs.getInt(17) + " Signing Bonus: " + rs.getFloat(18)
-                            + "\nRelated Job 1: " + rs.getInt(20) + "Related Job 2: " + rs.getInt(21) + "Related Job 3: " + rs.getInt(22) + "Related Job 4: " + rs.getInt(23) + "Related Job 5: " + rs.getInt(24));
+                    System.out.println("Full Time Salary" + rs.getFloat(1) + "\nNumber of Stock Options: " + rs.getInt(2) + " Signing Bonus: " + rs.getFloat(3));
                 }
             }
             if (type)
             {
-                PreparedStatement pst8I = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l, Internship i, RelatedJobs r WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=r.jobId AND j.jobId=i.jobId AND j.jobId=?;");
+                PreparedStatement pst8I = con.prepareStatement("SELECT payPeriod, salary, season FROM Internship WHERE jobId=?;");
                 pst8I.clearParameters();
                 pst8I.setInt(1, jobId);
-                ResultSet rs = pst8I.executeQuery();
+                rs = pst8I.executeQuery();
                 while (rs.next())
                 {
-                    String techBool = "No";
-                    if (rs.getBoolean(19))
-                    {
-                        techBool = "Yes";
-                    }
-
-                    System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: Internship"
-                            + "\nCompany Name: " + rs.getString(7) + " Number of Employees: " + rs.getInt(8) + " Yearly Revenue: " + rs.getFloat(9) + " Stock Price: " + rs.getFloat(10)
-                            + "\nLocation Area: " + rs.getString(12) + " Address: " + rs.getString(13) + " " + rs.getString(14)
-                            + "\nInternship Pay Period: " + rs.getString(16) + " Salary: " + rs.getFloat(17) + " Season: " + rs.getString(18)
-                            + "\nRelated Job 1: " + rs.getInt(20) + "Related Job 2: " + rs.getInt(21) + "Related Job 3: " + rs.getInt(22) + "Related Job 4: " + rs.getInt(23) + "Related Job 5: " + rs.getInt(24));
+                    System.out.println("Internship Pay Period: " + rs.getString(1) + " Salary: " + rs.getFloat(2) + " Season: " + rs.getString(3));
                 }
             }
+
+            PreparedStatement pst8F3 = con.prepareStatement("SELECT COUNT(*), related1, related2, related3, related4, related5 FROM RelatedJobs WHERE jobId=?;");
+            pst8F3.clearParameters();
+            pst8F3.setInt(1, jobId);
+            rs = pst8F3.executeQuery();
+            while(rs.next())
+            {
+                if(rs.getInt(1) == 0)
+                {
+                    System.out.println("No related Jobs have been added.");
+                    return true;
+                }
+                else
+                {
+                    System.out.println("Related Job 1: " + rs.getInt(2) + "Related Job 2: " + rs.getInt(3) + "Related Job 3: " + rs.getInt(4) + "Related Job 4: " + rs.getInt(5) + "Related Job 5: " + rs.getInt(6));
+
+                }
+            }
+
             return true;
         }
         catch (Exception e)
@@ -760,6 +768,10 @@ public class Main
             System.out.println("What is the ID number of the job you are looking for?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             System.out.println("What Information are you looking for?");
             System.out.println("1. Company Information \n2. Competition \n3. Type (Full Time / Internship) \n4. Core Job Info \n5. Location Information \n6. Related Jobs");
@@ -923,6 +935,11 @@ public class Main
             jobId = scan.nextInt();
             scan.nextLine();
 
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
+
             PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM Job WHERE jobId=?;");
             pstCall.clearParameters();
             pstCall.setString(1, "companyId");
@@ -1002,6 +1019,11 @@ public class Main
             int companyId = scan.nextInt();
             scan.nextLine();
 
+            if(!checkCompanyID(con, companyId))
+            {
+                return false;
+            }
+
             System.out.println("The current information for this Company is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?;");
             pstM.clearParameters();
@@ -1070,6 +1092,10 @@ public class Main
             System.out.println("What is the ID of the Job you would like to update the Competition to?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             System.out.println("The current information for this Job's Competition is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?;");
@@ -1123,6 +1149,10 @@ public class Main
             System.out.println("What is the ID of the Full Time Job you would like to update?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             System.out.println("The current information for this Job is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM FullTime WHERE jobId=?;");
@@ -1194,6 +1224,10 @@ public class Main
             System.out.println("What is the ID of the Job you would like to update?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             System.out.println("The current information for this Job is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM Job WHERE jobId=?;");
@@ -1347,6 +1381,11 @@ public class Main
             int companyId = scan.nextInt();
             scan.nextLine();
 
+            if(!checkCompanyID(con, companyId))
+            {
+                return false;
+            }
+
             System.out.println("The current information for this Company's Location is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?;");
             pstM.clearParameters();
@@ -1424,6 +1463,11 @@ public class Main
             int managerId = scan.nextInt();
             scan.nextLine();
 
+            if(!checkManagerID(con, managerId))
+            {
+                return false;
+            }
+
             System.out.println("The current information for this Manager is: ");
             PreparedStatement pstM = con.prepareStatement("SELECT * FROM Manager WHERE managerId=?;");
             pstM.clearParameters();
@@ -1498,6 +1542,10 @@ public class Main
             System.out.println("What is the ID of the Job's Related Jobs you would like to update?");
             int jobId = scan.nextInt();
             scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
 
             System.out.println("The current information for this Job is: ");
             PreparedStatement pst7 = con.prepareStatement("SELECT * FROM RelatedJobs WHERE jobId=?;");
@@ -1602,6 +1650,11 @@ public class Main
             System.out.println("Please enter the ID of the Company you want to search for");
             int companyId = scan.nextInt();
             scan.nextLine();
+
+            if(!checkCompanyID(con, companyId))
+            {
+                return false;
+            }
 
             PreparedStatement pst6N = con.prepareStatement("select companyName from Company WHERE companyId =?;");
             pst6N.clearParameters();
@@ -2131,6 +2184,73 @@ public class Main
         }
         return false;
     }
+
+    /**
+     * Checks to ensure the ID is in the database to avoid throwing errors.
+     * @param companyId is the ID being checked.
+     * @return true if the ID is in the database, false otherwise
+     */
+    public static boolean checkCompanyID(Connection con, int companyId)
+    {
+        PreparedStatement pstCheck = con.prepareStatement("SELECT COUNT(*) FROM Company WHERE companyId=?;");
+        pstCheck.clearParameters();
+        pstCheck.setInt(1, companyId);
+        ResultSet rsCheck = pstCheck.executeQuery();
+        while(rsCheck.next())
+        {
+            if(rsCheck.getInt(1) == 0)
+            {
+                System.out.println("Please enter a Company ID that is in system.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks to ensure the ID is in the database to avoid throwing errors.
+     * @param managerId is the ID being checked.
+     * @return true if the ID is in the database, false otherwise
+     */
+    public static boolean checkManagerID(Connection con, int managerId)
+    {
+        PreparedStatement pstCheck = con.prepareStatement("SELECT COUNT(*) FROM Manager WHERE managerId=?;");
+        pstCheck.clearParameters();
+        pstCheck.setInt(1, managerId);
+        ResultSet rsCheck = pstCheck.executeQuery();
+        while(rsCheck.next())
+        {
+            if(rsCheck.getInt(1) == 0)
+            {
+                System.out.println("Please enter a Manager ID that is in system.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks to ensure the ID is in the database to avoid throwing errors.
+     * @param jobId is the ID being checked.
+     * @return true if the ID is in the database, false otherwise
+     */
+    public static boolean checkID(Connection con, int jobId)
+    {
+        PreparedStatement pstCheck = con.prepareStatement("SELECT COUNT(*) FROM Job WHERE jobId=?;");
+        pstCheck.clearParameters();
+        pstCheck.setInt(1, jobId);
+        ResultSet rsCheck = pstCheck.executeQuery();
+        while(rsCheck.next())
+        {
+            if(rsCheck.getInt(1) == 0)
+            {
+                System.out.println("Please enter a Job ID that is in system.");
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Creates an external file of all entries in the database
