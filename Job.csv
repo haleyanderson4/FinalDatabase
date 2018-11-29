@@ -1,4 +1,4 @@
-﻿jobId int, jobTitle String, industry String, Description String, companyId int, type boolean
+﻿jobId, jobTitle, industry, Description, companyId, type
 1,Administrative Services Manager,Management,Management Administrative Services Manager,78,1
 2,Business Office Manager,Management,Management Business Office Manager,76,1
 3,Business Unit Manager,Management,Management Business Unit Manager,33,1
