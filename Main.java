@@ -1700,16 +1700,13 @@ public class Main
             }
 
             System.out.println("\nSome Statistics from " + name + ":");
-            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(numApplicants), SUM(numApplicants) FROM Competition WHERE jobId=?;");
+            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(c.numApplicants), AVG(c.numApplicants) FROM Job j, Competition c WHERE j.companyId=?;");
             pst6Stat.clearParameters();
             pst6Stat.setInt(1, companyId);
             ResultSet rs6Stat = pst6Stat.executeQuery();
             while(rs6Stat.next())
             {
-                int count = rs6Stat.getInt(1);
-                int sum = rs6Stat.getInt(2);
-                float avg = sum/count;
-                System.out.println("Number of Open Jobs at " + name + ": " + count + " Average number of Applications to each Job: " + avg);
+                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " Average number of Applications to each Job: " + rs6Stat.getFloat(2));
             }
 
             return true;
