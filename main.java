@@ -1791,11 +1791,13 @@ public class Main
             PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
             pstType.setInt(1, jobId);
             ResultSet rsType = pstType.executeQuery();
+            System.out.println("Here");
             Boolean type = true;
             while(rsType.next())
             {
                 type = rsType.getBoolean(1);
             }
+            System.out.println("Here1");
 
             PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=?;");
             pst8F.clearParameters();
