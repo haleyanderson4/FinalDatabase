@@ -5,8 +5,7 @@ This project is a database of jobs.
 
 TO DO:
 - GUI
-- transactions
+- transactions --> rollback
 - report generation (logging)
-- create sample input scripts
-- enforce constraints 
+- create fake data
 - go through all project requirements 
