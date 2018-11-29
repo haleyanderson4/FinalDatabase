@@ -772,7 +772,8 @@ public class Main
      */
     public static boolean updateCompany(Connection con, Scanner scan)
     {
-        try {
+        try
+        {
             System.out.println("What is the ID of the Company you would like to update?");
             int companyId = scan.nextInt();
             scan.nextLine();
@@ -823,13 +824,13 @@ public class Main
                 floatAnswer = scan.nextFloat();
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET ?=? WHERE companyId=?;");
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET " + field + "=? WHERE companyId=?;");
             if (!answer.equals("")) {
-                updateStringField(pstJ, field, answer, companyId);
+                updateStringField(pstJ, answer, companyId);
             } else if (intAnswer != -1) {
-                updateIntField(pstJ, field, intAnswer, companyId);
+                updateIntField(pstJ, intAnswer, companyId);
             } else if (floatAnswer != -1) {
-                updateFloatField(pstJ, field, floatAnswer, companyId);
+                updateFloatField(pstJ, floatAnswer, companyId);
             }
         }
         catch (Exception e)
@@ -885,8 +886,8 @@ public class Main
                 answer = scan.nextInt();
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET ?=? WHERE jobId=?;");
-            updateIntField(pstJ, field, answer, jobId);
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET " + field + "=? WHERE jobId=?;");
+            updateIntField(pstJ, answer, jobId);
         }
         catch (Exception e)
         {
@@ -953,14 +954,14 @@ public class Main
                 floatAnswer = scan.nextFloat();
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET ?=? WHERE jobId=?;");
+            PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET " + field + "=? WHERE jobId=?;");
             if (intAnswer != -1)
             {
-                updateIntField(pstJ, field, intAnswer, jobId);
+                updateIntField(pstJ, intAnswer, jobId);
             }
             if (floatAnswer != -1)
             {
-                updateFloatField(pstJ, field, floatAnswer, jobId);
+                updateFloatField(pstJ, floatAnswer, jobId);
             }
         }
         catch (Exception e)
@@ -1033,14 +1034,14 @@ public class Main
                 if(!inputCheck(answer, 25)) return false;
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET ?=? WHERE jobId=?;");
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET " + field + "=? WHERE jobId=?;");
             if (!answer.equals(""))
             {
-                updateStringField(pstJ, field, answer, jobId);
+                updateStringField(pstJ, answer, jobId);
             }
             else if (floatAnswer != -1)
             {
-                updateFloatField(pstJ, field, floatAnswer, jobId);
+                updateFloatField(pstJ, floatAnswer, jobId);
             }
             return true;
         }
@@ -1103,21 +1104,25 @@ public class Main
             }
             else if(updateId == 2)
             {
-                field = "description";
-                answer = scan.nextLine();
-
-                if(!inputCheck(answer, 100)) return false;
-            }
-            else if(updateId == 3)
-            {
                 field = "industry";
                 answer = scan.nextLine();
 
                 if(!inputCheck(answer, 25)) return false;
             }
+            else if(updateId == 3)
+            {
+                field = "description";
+                answer = scan.nextLine();
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET ?=? WHERE jobId=?;");
-            updateStringField(pstJ, field, answer, jobId);
+                if(!inputCheck(answer, 100)) return false;
+            }
+
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET " + field + " =? WHERE jobID=?;");
+            if (!updateStringField(pstJ, answer, jobId))
+            {
+              System.out.println("There was an error updating.");
+              return false;
+            }
             return true;
         }
         catch (Exception e)
@@ -1197,8 +1202,8 @@ public class Main
                 if(!inputCheck(answer, 2)) return false;
             }
 
-            PreparedStatement pstL = con.prepareStatement("UPDATE Location SET ?=? WHERE companyId=?;");
-            updateStringField(pstL, field, answer, companyId);
+            PreparedStatement pstL = con.prepareStatement("UPDATE Location SET " + field + "=? WHERE companyId=?;");
+            updateStringField(pstL, answer, companyId);
 
             return true;
         }
@@ -1278,8 +1283,8 @@ public class Main
                 scan.nextLine();
             }
 
-            PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET ?=? WHERE managerId=?;");
-            updateStringField(pstRJ, field, answer, managerId);
+            PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET " + field + "=? WHERE managerId=?;");
+            updateStringField(pstRJ, answer, managerId);
             return true;
         }
         catch (Exception e)
@@ -1328,8 +1333,8 @@ public class Main
             int relatedJob = scan.nextInt();
             scan.nextLine();
 
-            PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?;");
-            updateIntField(pstRJ, updateString, relatedJob, jobId);
+            PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET " + updateString + "=? WHERE jobId=?;");
+            updateIntField(pstRJ, relatedJob, jobId);
         }
         catch (Exception e)
         {
@@ -1345,14 +1350,14 @@ public class Main
      * Updates an entry, where the field we are updating wants a STRING.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateStringField(PreparedStatement pst, String field, String answer, int id)
+    public static boolean updateStringField(PreparedStatement pst, String answer, int id)
     {
         try
         {
             pst.clearParameters();
-            pst.setString(1, field);
-            pst.setString(2, answer);
-            pst.setInt(3, id);
+            pst.setString(1, answer);
+            pst.setInt(2, id);
+            System.out.println(pst.toString());
             pst.executeUpdate();
             System.out.println("The record has been updated.");
             return true;
@@ -1368,14 +1373,13 @@ public class Main
      * Updates an entry, where the field we are updating wants an INT.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateIntField(PreparedStatement pst, String field, int answer, int id)
+    public static boolean updateIntField(PreparedStatement pst, int answer, int id)
     {
         try
         {
             pst.clearParameters();
-            pst.setString(1, field);
-            pst.setInt(2, answer);
-            pst.setInt(3, id);
+            pst.setInt(1, answer);
+            pst.setInt(2, id);
             pst.executeUpdate();
             System.out.println("The record has been updated.");
             return true;
@@ -1391,14 +1395,13 @@ public class Main
      * Updates an entry, where the field we are updating wants a FLOAT.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateFloatField(PreparedStatement pst, String field, float answer, int id)
+    public static boolean updateFloatField(PreparedStatement pst, float answer, int id)
     {
         try
         {
             pst.clearParameters();
-            pst.setString(1, field);
-            pst.setFloat(2, answer);
-            pst.setInt(3, id);
+            pst.setFloat(1, answer);
+            pst.setInt(2, id);
             pst.executeUpdate();
             System.out.println("The record has been updated.");
             return true;
