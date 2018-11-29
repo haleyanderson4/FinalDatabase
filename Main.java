@@ -9,7 +9,7 @@
  * Front-end stuff
  * Populate our db with actual data (low priority)
  * Testing!!!
- *      1, 5 - 8 are tested and work
+ *      1, 2, 4 - 8 are tested and work
  * ??? More, what else
  */
 
@@ -39,15 +39,15 @@ public class Main
                     editOption = scan.nextInt();
                     scan.nextLine();
                     System.out.println(" ");
-                    if (editOption < 1 || editOption > 12)
+                    if (editOption < 1 || editOption > 11)
                     {
-                        System.out.println("Please enter a number between 1 and 12\n");
+                        System.out.println("Please enter a number between 1 and 11\n");
                         continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 12\n");
+                    System.out.println("Please enter a number between 1 and 11\n");
                     scan.nextLine();
                     editOption = 0;
                     continue;
@@ -239,7 +239,6 @@ public class Main
             int jobId = 0;
             int companyId = 0;
 
-            PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
             PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);");
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
             System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
@@ -270,7 +269,7 @@ public class Main
             PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, type) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
-            success = createJob(pstJ, pstComp, scan, con);
+            success = createJob(pstJ, pstComp, scan);
             String typeS = getType(scan, pstJ);
             if(!success || typeS.equals("nope"))
             {
@@ -314,9 +313,7 @@ public class Main
                 pstC.executeUpdate();
                 System.out.println("The Company has been created.");
 
-                pstId.clearParameters();
-                pstId.setString(1, "companyId");
-                pstId.setString(2, "Company");
+                PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company");
                 ResultSet rsId = pstId.executeQuery();
                 while(rsId.next())
                 {
@@ -328,15 +325,11 @@ public class Main
                 System.out.println("The Location has been created.");
             }
 
-
-
             pstJ.setInt(4, companyId);
             pstJ.executeUpdate();
             System.out.println("The Job has been created.");
 
-            pstId.clearParameters();
-            pstId.setString(1, "jobId");
-            pstId.setString(2, "Job");
+            PreparedStatement pstId = con.prepareStatement("SELECT MAX(jobId) FROM Job");
             ResultSet rsId = pstId.executeQuery();
             while(rsId.next())
             {
@@ -349,7 +342,6 @@ public class Main
 
             if(!type)
             {
-                pstF.clearParameters();
                 pstF.setInt(1, jobId);
 
                 pstF.executeUpdate();
@@ -357,7 +349,6 @@ public class Main
             }
             if(type)
             {
-                pstI.clearParameters();
                 pstI.setInt(1, jobId);
 
                 pstI.executeUpdate();
@@ -377,7 +368,6 @@ public class Main
         }
         catch (Exception e)
         {
-            System.out.println(e);
             System.out.println("Please enter this information again, and be sure that all information is correct.");
         }
         return false;
@@ -462,10 +452,9 @@ public class Main
      * Gathers information for the company field.
      * @param pstJ is the Prepared Statement for the Job table.
      * @param pstComp is the Prepared Statement for the Competition table.
-     * @param type is the boolean that needs to not be a local variable.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan, Connection con)
+    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan)
     {
         try
         {
@@ -508,7 +497,6 @@ public class Main
         }
         catch (Exception e)
         {
-            System.out.println(e);
             System.out.println("Please enter a valid input.");
         }
         return false;
@@ -577,7 +565,7 @@ public class Main
                 return false;
             }
 
-            for(int i = 1; i < numOfRelated; i++)
+            for(int i = 1; i <= numOfRelated; i++)
             {
                 System.out.println("What is the ID number of the related job");
                 int tempRJ = scan.nextInt();
@@ -1107,8 +1095,8 @@ public class Main
             PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET " + field + " =? WHERE jobID=?;");
             if (!updateStringField(pstJ, answer, jobId))
             {
-              System.out.println("There was an error updating.");
-              return false;
+                System.out.println("There was an error updating.");
+                return false;
             }
             return true;
         }
@@ -1320,248 +1308,6 @@ public class Main
             int relatedJob = scan.nextInt();
             scan.nextLine();
 
-            PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET ?=? WHERE jobId=?;");
-            updateIntField(pstRJ, updateString, relatedJob, jobId);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Please enter a valid input.");
-            return false;
-        }
-        return true;
-    }
-
-
-    //OPTION 3 SUPPLEMENTARY METHODS
-    /**
-     * Updates an entry, where the field we are updating wants a STRING.
-     * @return true if the update was successful, false otherwise
-     */
-    public static boolean updateStringField(PreparedStatement pst, String field, String answer, int id)
-    {
-        try
-        {
-            pst.clearParameters();
-            pst.setString(1, field);
-            pst.setString(2, answer);
-            pst.setInt(3, id);
-            pst.executeUpdate();
-            System.out.println("The record has been updated.");
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.println("Error updating: " + e);
-            return false;
-        }
-    }
-
-    /**
-     * Updates an entry, where the field we are updating wants an INT.
-     * @return true if the update was successful, false otherwise
-     */
-    public static boolean updateIntField(PreparedStatement pst, String field, int answer, int id)
-    {
-        try
-        {
-            pst.clearParameters();
-            pst.setString(1, field);
-            pst.setInt(2, answer);
-            pst.setInt(3, id);
-            pst.executeUpdate();
-            System.out.println("The record has been updated.");
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.println("Error updating: " + e);
-            return false;
-        }
-    }
-
-    /**
-     * Updates an entry, where the field we are updating wants a FLOAT.
-     * @return true if the update was successful, false otherwise
-     */
-    public static boolean updateFloatField(PreparedStatement pst, String field, float answer, int id)
-    {
-        try
-        {
-            pst.clearParameters();
-            pst.setString(1, field);
-            pst.setFloat(2, answer);
-            pst.setInt(3, id);
-            pst.executeUpdate();
-            System.out.println("The record has been updated.");
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.println("Error updating: " + e);
-            return false;
-        }
-    }
-
-
-    //OPTION 4 METHODS
-    /**
-     * Calls the deleteEntry method with the associated tables.
-     * @param con and scan as input to assist in executing the SQL commands.
-     * @return true if there were no issues, false otherwise
-     */
-    public static boolean deleteCall(Connection con, Scanner scan)
-    {
-        try
-        {
-            int jobId = 0;
-
-            System.out.println("Please enter the Job's Id to be deleted:");
-            jobId = scan.nextInt();
-            scan.nextLine();
-
-            if(!checkID(con, jobId))
-            {
-                return false;
-            }
-
-            PreparedStatement pstCall = con.prepareStatement("SELECT ? FROM Job WHERE jobId=?;");
-            pstCall.clearParameters();
-            pstCall.setString(1, "companyId");
-            pstCall.setInt(2, jobId);
-            ResultSet rs = pstCall.executeQuery();
-            int companyId = 0;
-            while(rs.next())
-            {
-                companyId = rs.getInt(1);
-            }
-
-            pstCall.clearParameters();
-            pstCall.setString(1, "type");
-            pstCall.setInt(2, jobId);
-            rs = pstCall.executeQuery();
-            boolean type = true;
-            while(rs.next())
-            {
-                type = rs.getBoolean(1);
-            }
-
-            boolean deleteCompany = false;
-            PreparedStatement pstDeleteMaybe = con.prepareStatement("SELECT COUNT(*) FROM Job WHERE companyId=?;");
-            pstDeleteMaybe.clearParameters();
-            pstDeleteMaybe.setInt(1, companyId);
-            rs = pstDeleteMaybe.executeQuery();
-            while(rs.next())
-            {
-                if(rs.getInt(1) == 0)
-                {
-                    deleteCompany = true;
-                }
-            }
-
-            PreparedStatement pst5 = con.prepareStatement("DELETE FROM ? WHERE ?=?;");
-
-            if(deleteCompany)
-            {
-                deleteEntry(pst5, "Company", "companyId", companyId);
-                deleteEntry(pst5, "Location", "companyId", companyId);
-                deleteEntry(pst5, "Manager", "companyId", companyId);
-            }
-
-            if(type)
-            {
-                deleteEntry(pst5, "Internship", "jobId", jobId);
-            }
-            else if(!type)
-            {
-                deleteEntry(pst5, "FullTime", "jobId", jobId);
-            }
-
-            deleteEntry(pst5, "Competition", "jobId", jobId);
-            deleteEntry(pst5, "RelatedJobs", "jobId", jobId);
-            deleteEntry(pst5, "Job", "jobId", jobId);
-
-            System.out.println("The record has been completely deleted.");
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.println("Please enter a valid input.");
-        }
-        return false;
-    }
-
-    /**
-     * Can be called to delete an entry from a specific table.
-     * @param pst the prepared statement
-     * @param tableName the name of the table we're deleting from
-     * @param idName the primary key associated with this table
-     * @param id the id of the entry we're deleting
-     * @return true if the delete is successful, false otherwise
-     */
-    public static boolean deleteEntry(PreparedStatement pst, String tableName, String idName, int id)
-    {
-        try
-        {
-            pst.clearParameters();
-            pst.setString(1, tableName);
-            pst.setString(2, idName);
-            pst.setInt(3, id);
-            pst.executeUpdate();
-            System.out.println("The record has been deleted from " + tableName + ".");
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.println("There was an error deleting. Error: " + e);
-            return false;
-        }
-    }
-
-
-    //OPTION 5 METHODS
-    /**
-     * Searchs for information from certain tables. Also gives several statistics for the group searched.
-     * Parent method to search tables.
-     * @param con and scan as input to assist in executing the SQL commands.
-     * @return true if there were no issues, false otherwise
-     */
-    public static boolean searchBy(Connection con, Scanner scan)
-    {
-        int searchOption;
-
-        try
-        {
-            System.out.println("What would you like to search by? \n1. Location \n2. Company \n3. Type");
-
-            searchOption = scan.nextInt();
-            scan.nextLine();
-
-            if(searchOption == 1)
-            {
-                boolean success = searchLocation(con,scan);
-                return success;
-            }
-            else if(searchOption == 2)
-            {
-                boolean success = searchCompany(con,scan);
-                return success;
-            }
-            else if(searchOption == 3)
-            {
-                boolean success = searchType(con,scan);
-                return success;
-            }
-            else
-            {
-                System.out.println("Please enter a number between 1 and 3.");
-                return false;
-            }
-
-            System.out.println("What would you like this field to up updated to?");
-            int relatedJob = scan.nextInt();
-            scan.nextLine();
-            String updateString = "related" + relatedJob;
-
             PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET " + updateString + "=? WHERE jobId=?;");
             updateIntField(pstRJ, relatedJob, jobId);
         }
@@ -1586,7 +1332,6 @@ public class Main
             pst.clearParameters();
             pst.setString(1, answer);
             pst.setInt(2, id);
-            System.out.println(pst.toString());
             pst.executeUpdate();
             System.out.println("The record has been updated.");
             return true;
@@ -1640,6 +1385,183 @@ public class Main
             System.out.println("Error updating: " + e);
             return false;
         }
+    }
+
+
+    //OPTION 4 METHODS
+    /**
+     * Deletes the entries from the associated tables.
+     * @param con and scan as input to assist in executing the SQL commands.
+     * @return true if the delete is successful, false otherwise
+     */
+    public static boolean deleteCall(Connection con, Scanner scan)
+    {
+        try
+        {
+            System.out.println("Please enter the Job's Id");
+            int jobId = scan.nextInt();
+            scan.nextLine();
+            if(!checkID(con, jobId))
+            {
+                return false;
+            }
+
+            PreparedStatement pstCompID = con.prepareStatement("SELECT companyId FROM Job WHERE jobId=?");
+            pstCompID.clearParameters();
+            pstCompID.setInt(1, jobId);
+            ResultSet rs = pstCompID.executeQuery();
+            int companyId = 0;
+            while(rs.next())
+            {
+                companyId = rs.getInt(1);
+            }
+
+            PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
+            pstType.clearParameters();
+            pstType.setInt(1, jobId);
+            rs = pstType.executeQuery();
+            boolean type = true;
+            while(rs.next())
+            {
+                type = rs.getBoolean(1);
+            }
+
+            PreparedStatement pstStart = con.prepareStatement("START TRANSACTION");
+            pstStart.execute();
+
+            PreparedStatement pstJ = con.prepareStatement("DELETE FROM Job WHERE jobId=?");
+            pstJ.clearParameters();
+            pstJ.setInt(1, jobId);
+            pstJ.executeUpdate();
+            System.out.println("The record has been deleted from Job.");
+
+            PreparedStatement pstCom = con.prepareStatement("DELETE FROM Competition WHERE jobId=?");
+            pstCom.clearParameters();
+            pstCom.setInt(1, jobId);
+            pstCom.executeUpdate();
+            System.out.println("The record has been deleted from Competition.");
+
+            PreparedStatement pstRJCount = con.prepareStatement("SELECT COUNT(*) FROM RelatedJobs WHERE jobId=?");
+            pstRJCount.clearParameters();
+            pstRJCount.setInt(1, jobId);
+            rs = pstRJCount.executeQuery();
+            while(rs.next())
+            {
+                if (rs.getInt(1) != 0)
+                {
+                    PreparedStatement pstRJ = con.prepareStatement("DELETE FROM RelatedJobs WHERE jobId=?");
+                    pstRJ.clearParameters();
+                    pstRJ.setInt(1, jobId);
+                    pstRJ.executeUpdate();
+                    System.out.println("The record has been deleted from Related Jobs.");
+                }
+            }
+
+            PreparedStatement pstComNum = con.prepareStatement("SELECT COUNT(*) FROM Job WHERE companyId=?");
+            pstComNum.clearParameters();
+            pstComNum.setInt(1, companyId);
+            rs = pstComNum.executeQuery();
+            while(rs.next())
+            {
+                if(rs.getInt(1) == 0)
+                {
+                    System.out.println("The Company no longer has any jobs and it and corresponding managers will be deleted.");
+
+                    PreparedStatement pstComP = con.prepareStatement("DELETE FROM Company WHERE companyId=?");
+                    pstComP.clearParameters();
+                    pstComP.setInt(1, companyId);
+                    pstComP.executeUpdate();
+                    System.out.println("The record has been deleted from Company.");
+
+                    PreparedStatement pstLoc = con.prepareStatement("DELETE FROM Location WHERE companyId=?");
+                    pstLoc.clearParameters();
+                    pstLoc.setInt(1, companyId);
+                    pstLoc.executeUpdate();
+                    System.out.println("The record has been deleted from Location.");
+
+                    PreparedStatement pstManager = con.prepareStatement("DELETE FROM Manager WHERE companyId=?");
+                    pstManager.clearParameters();
+                    pstManager.setInt(1, companyId);
+                    pstManager.executeUpdate();
+                    System.out.println("Corresponding Managers have been deleted.");
+                }
+            }
+
+            if(type)
+            {
+                PreparedStatement pstIn = con.prepareStatement("DELETE FROM Internship WHERE jobId=?");
+                pstIn.clearParameters();
+                pstIn.setInt(1, jobId);
+                pstIn.executeUpdate();
+                System.out.println("The record has been deleted from Internship.");
+            }
+            else if(!type)
+            {
+                PreparedStatement pstF = con.prepareStatement("DELETE FROM FullTime WHERE jobId=?");
+                pstF.clearParameters();
+                pstF.setInt(1, jobId);
+                pstF.executeUpdate();
+                System.out.println("The record has been deleted from Full Time.");
+            }
+
+            PreparedStatement pstEnd = con.prepareStatement("COMMIT");
+            pstEnd.execute();
+
+            System.out.println("The record has been completely deleted.");
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
+    }
+
+
+    //OPTION 5 METHODS
+    /**
+     * Searchs for information from certain tables. Also gives several statistics for the group searched.
+     * Parent method to search tables.
+     * @param con and scan as input to assist in executing the SQL commands.
+     * @return true if there were no issues, false otherwise
+     */
+    public static boolean searchBy(Connection con, Scanner scan)
+    {
+        int searchOption;
+
+        try
+        {
+            System.out.println("What would you like to search by? \n1. Location \n2. Company \n3. Type");
+
+            searchOption = scan.nextInt();
+            scan.nextLine();
+
+            if(searchOption == 1)
+            {
+                boolean success = searchLocation(con,scan);
+                return success;
+            }
+            else if(searchOption == 2)
+            {
+                boolean success = searchCompany(con,scan);
+                return success;
+            }
+            else if(searchOption == 3)
+            {
+                boolean success = searchType(con,scan);
+                return success;
+            }
+            else
+            {
+                System.out.println("Please enter a number between 1 and 3.");
+                return false;
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+        }
+        return false;
     }
 
     /**
@@ -1855,6 +1777,7 @@ public class Main
         return false;
     }
 
+
     //OPTION 6 METHODS
     /**
      * Selects all relevant job information across all tables in the database.
@@ -2064,65 +1987,6 @@ public class Main
                     }
 
                     System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: " + type + "\nNumber of Open Spots: " + rs.getInt(8) + " Number of Applicants: " + rs.getInt(9) + "\n");
-                }
-            }
-
-            if(selectOption == 3)
-            {
-                PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
-                pstType.setInt(1, jobId);
-                ResultSet rsType = pstType.executeQuery();
-                boolean type = true;
-                while(rsType.next())
-                {
-                    type = rsType.getBoolean(1);
-                }
-
-                if(!type) //add salary
-                {
-                    PreparedStatement pstFullTime = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, f.salary, f.numStockOptions, f.signingBonus FROM Job j, FullTime f WHERE f.jobId=j.jobId AND j.jobId=?;");
-                    pstFullTime.setInt(1, jobId);
-
-                    ResultSet rs = pstFullTime.executeQuery();
-                    while(rs.next())
-                    {
-                        System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                                + " Type: Full Time" + "\n Full Time Salary: " + rs.getFloat(6) + "\nNumber of Stock Options: " + rs.getInt(7) + " Signing Bonus: " + rs.getFloat(8) + "\n");
-                    }
-
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: " + type + "\nLocation Area: " + rs.getString(8) + " Address: " + rs.getString(9) + " " + rs.getString(10) + ", " + rs.getString(11) + "\n");
-                }
-                else if(type)
-                {
-                    PreparedStatement pstIntern = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, i.payPeriod, i.salary, i.season FROM Job j, Internship i WHERE i.jobId=j.jobId AND j.jobId=?;");
-                    pstIntern.setInt(1, jobId);
-
-                    ResultSet rs = pstIntern.executeQuery();
-                    while(rs.next())
-                    {
-                        System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                                + " Type: Internship" + "\nInternship Pay Period: " + rs.getString(6) + " Salary: " + rs.getFloat(7) + " Season: " + rs.getString(8) + "\n");
-                    }
-                }
-            }
-
-            if(selectOption == 4)
-            {
-                PreparedStatement pst4 = con.prepareStatement("SELECT * FROM Job j WHERE j.jobId=?;");
-                pst4.clearParameters();
-                pst4.setInt(1, jobId);
-                ResultSet rs = pst4.executeQuery();
-                while(rs.next())
-                {
-                    String type = "Full Time";
-                    if(rs.getBoolean(6))
-                    {
-                        type = "Internship";
-                    }
-
-                    System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
                             + " Type: " + type + "\n");
                 }
             }
@@ -2272,7 +2136,7 @@ public class Main
                 }
             }
             PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(managerId, name, companyId, technicalExperience, yearsAtCompany) VALUES(?,?,?,?,?)");
-            success = createManager(true, pstM, scan, companyId);
+            success = createManager(pstM, scan, companyId);
             if (!success)
             {
                 System.out.println("The manager creation failed. Please try again.");
@@ -2283,20 +2147,18 @@ public class Main
         }
         catch (Exception e)
         {
-            System.out.println("Something went wrong.");
+            System.out.println(e);
+            System.out.println("There was an error creating the manager. Try again.");
         }
         return false;
     }
 
-
-    //OPTION 11 METHODS
     /**
      * Gathers information for the Manager table.
-     * @param validInput to account for all input issues.
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(boolean validInput, PreparedStatement pstM, Scanner scan, int companyId)
+    public static boolean createManager(PreparedStatement pstM, Scanner scan, int companyId)
     {
         try
         {
@@ -2357,19 +2219,16 @@ public class Main
      */
     public static boolean generateReport(Connection con)
     {
-      try
-      {
-        if (str.length() <= length)
+        try
         {
             //generate a report
             return true;
         }
-      }
-      catch (Exception e)
-      {
-          System.out.println("Something went wrong.");
-      }
-      return false;
+        catch (Exception e)
+        {
+            System.out.println("Something went wrong.");
+        }
+        return false;
     }
 
 
