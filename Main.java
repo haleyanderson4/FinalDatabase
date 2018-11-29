@@ -9,7 +9,7 @@
  * Front-end stuff
  * Populate our db with actual data (low priority)
  * Testing!!!
- *      1, 2, 4 - 8 are tested and work
+ *      1 - 8 are tested and work
  * ??? More, what else
  */
 
