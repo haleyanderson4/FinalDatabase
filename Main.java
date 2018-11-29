@@ -1764,7 +1764,7 @@ public class Main
                 if(!search)
                 {
                     System.out.println("\nSome Statistics on Full Time Jobs:");
-                    PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG(salary), Max(rate), AVG(signingBonus) FROM FullTime;");
+                    PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG(salary), Max(salary), AVG(signingBonus) FROM FullTime;");
                     ResultSet rsFTypeStat = pstFTypeStat.executeQuery();
                     while (rsFTypeStat.next())
                     {
