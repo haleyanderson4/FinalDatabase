@@ -1701,13 +1701,14 @@ public class Main
             }
 
             System.out.println("\nSome Statistics from " + name + ":");
-            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(*), AVG(c.numApplicants) FROM Job j, Competition c WHERE j.companyId =? AND c.jobId = j.jobId;");
+            PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(numApplicants), SUM(numApplicants) FROM Competition WHERE jobId=?;");
             pst6Stat.clearParameters();
             pst6Stat.setInt(1, companyId);
             ResultSet rs6Stat = pst6Stat.executeQuery();
             while(rs6Stat.next())
             {
                 System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " \nAverage number of Applications to each Job: " + rs6Stat.getFloat(2));
+
             }
 
             return true;
@@ -1762,7 +1763,7 @@ public class Main
                 if(!search)
                 {
                     System.out.println("\nSome Statistics on Full Time Jobs:");
-                    PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG(salary), Max(rate), AVG(signingBonus) FROM FullTime;");
+                    PreparedStatement pstFTypeStat = con.prepareStatement("SELECT AVG(salary), Max(salary), AVG(signingBonus) FROM FullTime;");
                     ResultSet rsFTypeStat = pstFTypeStat.executeQuery();
                     while (rsFTypeStat.next())
                     {
