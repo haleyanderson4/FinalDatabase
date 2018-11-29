@@ -1611,7 +1611,7 @@ public class Main
     {
         try
         {
-            System.out.println("Please enter the Location Area you want to search for");
+            System.out.println("Please enter the state you want to search for");
             String location = scan.nextLine();
             if(!inputCheck(location, 25))
             {
@@ -1620,8 +1620,8 @@ public class Main
             }
             else
             {
-                System.out.println("The Job Database in that Location Area:\n");
-                PreparedStatement pst8 = con.prepareStatement("select j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?;");
+                System.out.println("The Job Database in that state:\n");
+                PreparedStatement pst8 = con.prepareStatement("select j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.state=?;");
                 pst8.clearParameters();
                 pst8.setString(1, location);
                 ResultSet rs = pst8.executeQuery();
@@ -1638,8 +1638,9 @@ public class Main
                             + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Type: " + type);
                 }
 
-                System.out.println("\nSome Statistics for that Location Area:\n");
-                PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l;");
+                System.out.println("\nSome Statistics for that state:\n");
+                PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l WHERE l.state = ?;");
+                pst8Stat.setString(1, location);
                 ResultSet rs8Stat = pst8Stat.executeQuery();
                 while (rs8Stat.next())
                 {
@@ -1706,7 +1707,7 @@ public class Main
             ResultSet rs6Stat = pst6Stat.executeQuery();
             while(rs6Stat.next())
             {
-                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " Average number of Applications to each Job: " + rs6Stat.getFloat(2));
+                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " \nAverage number of Applications to each Job: " + rs6Stat.getFloat(2));
             }
 
             return true;
