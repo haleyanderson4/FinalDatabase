@@ -305,7 +305,7 @@ public class Main
                 }
             }
 
-            PreparedStatement pstStart = con.prepareStatement("START TRANSACTION");
+            PreparedStatement pstStart = con.prepareStatement("START TRANSACTION;");
             pstStart.execute();
 
             if(createCompany)
@@ -313,7 +313,7 @@ public class Main
                 pstC.executeUpdate();
                 System.out.println("The Company has been created.");
 
-                PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company");
+                PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company;");
                 ResultSet rsId = pstId.executeQuery();
                 while(rsId.next())
                 {
@@ -329,7 +329,7 @@ public class Main
             pstJ.executeUpdate();
             System.out.println("The Job has been created.");
 
-            PreparedStatement pstId = con.prepareStatement("SELECT MAX(jobId) FROM Job");
+            PreparedStatement pstId = con.prepareStatement("SELECT MAX(jobId) FROM Job;");
             ResultSet rsId = pstId.executeQuery();
             while(rsId.next())
             {
@@ -362,7 +362,7 @@ public class Main
                 System.out.println("The Related Job Posting has been created.");
             }
 
-            PreparedStatement pstEnd = con.prepareStatement("COMMIT");
+            PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
             pstEnd.execute();
             return true;
         }
@@ -771,7 +771,8 @@ public class Main
             int updateId = scan.nextInt();
             scan.nextLine();
 
-            if (updateId < 1 || updateId > 4) {
+            if (updateId < 1 || updateId > 4)
+            {
                 System.out.println("Please enter a number between 1 and 4.");
                 return false;
             }
@@ -785,16 +786,23 @@ public class Main
             if (updateId == 1) {
                 field = "companyName";
                 answer = scan.nextLine();
-                if (!inputCheck(answer, 50)) {
+                if (!inputCheck(answer, 50))
+                {
                     return false;
                 }
-            } else if (updateId == 2) {
+            }
+            else if (updateId == 2)
+            {
                 field = "numEmployees";
                 intAnswer = scan.nextInt();
-            } else if (updateId == 3) {
+            }
+            else if (updateId == 3)
+            {
                 field = "yearlyRevenue";
                 floatAnswer = scan.nextFloat();
-            } else if (updateId == 4) {
+            }
+            else if (updateId == 4)
+            {
                 field = "stockPrice";
                 floatAnswer = scan.nextFloat();
             }
@@ -2103,18 +2111,15 @@ public class Main
     {
         try
         {
-            PreparedStatement pstId = con.prepareStatement("SELECT MAX(?) FROM ?;");
-            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
             System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
             String company = scan.nextLine();
-            boolean createCompany = false;
-            boolean success;
-            int companyId;
+            boolean success = true;
+            int companyId = 0;
 
             if(company.toLowerCase().equals("y"))
             {
-                createCompany = true;
                 success = createCompany(pstC, pstL, scan);
                 ResultSet rs = pstC.getGeneratedKeys();
                 companyId = rs.getInt(1);
@@ -2122,6 +2127,17 @@ public class Main
                 {
                     System.out.println("The Company creation failed. Please try again.");
                     return false;
+                }
+
+                PreparedStatement pstStart = con.prepareStatement("START TRANSACTION;");
+                pstStart.execute();
+                pstC.executeUpdate();
+
+                PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company;");
+                ResultSet rsId = pstId.executeQuery();
+                while(rsId.next())
+                {
+                    companyId = rsId.getInt(1);
                 }
             }
             else
@@ -2135,14 +2151,20 @@ public class Main
                     return false;
                 }
             }
-            PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(managerId, name, companyId, technicalExperience, yearsAtCompany) VALUES(?,?,?,?,?)");
-            success = createManager(pstM, scan, companyId);
+
+            PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(companyId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?);");
+            pstM.clearParameters();
+            pstM.setInt(1, companyId);
+            success = createManager(pstM, scan);
             if (!success)
             {
                 System.out.println("The manager creation failed. Please try again.");
                 return false;
             }
             pstM.executeUpdate();
+            PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+            pstEnd.execute();
+
             return true;
         }
         catch (Exception e)
@@ -2158,7 +2180,7 @@ public class Main
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(PreparedStatement pstM, Scanner scan, int companyId)
+    public static boolean createManager(PreparedStatement pstM, Scanner scan)
     {
         try
         {
@@ -2175,8 +2197,6 @@ public class Main
             int yearsAtCompany = scan.nextInt();
             scan.nextLine();
 
-            pstM.clearParameters();
-            pstM.setInt(1, companyId);
             pstM.setString(2, name);
             pstM.setBoolean(3, technicalExperience);
             pstM.setInt(4, yearsAtCompany);
