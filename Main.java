@@ -9,7 +9,7 @@
  * Front-end stuff
  * Populate our db with actual data (low priority)
  * Testing!!!
- *      1 & 8 are tested and work
+ *      1, 6, 7 & 8 are tested and work
  * ??? More, what else
  */
 
@@ -30,7 +30,7 @@ public class Main
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
             System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
-                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager. \n10. Undo \n11. Generate Database Report \n12. Quit");
+                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n10. Undo \n11. Generate Database Report \n12. Quit");
             while(loop)
             {
                 try
@@ -1576,33 +1576,29 @@ public class Main
         {
             System.out.println("Please enter the Location Area you want to search for");
             String location = scan.nextLine();
-
-            if (location.length() > 25)
+            if(!inputCheck(location, 25))
             {
-                System.out.println("Location Area needs to be 25 characters or less. Please try again.");
+                System.out.println("Please enter a valid input.");
                 return false;
             }
             else
             {
                 System.out.println("The Job Database in that Location Area:\n");
-                PreparedStatement pst8 = con.prepareStatement("select j.jobTitle, j.industry, j.description, j.companyId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?;");
+                PreparedStatement pst8 = con.prepareStatement("select j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.locationArea=?;");
                 pst8.clearParameters();
                 pst8.setString(1, location);
                 ResultSet rs = pst8.executeQuery();
 
-                boolean whichType = true;
-                float averageSalary = 0;
                 while (rs.next())
                 {
                     String type = "Full Time";
-                    whichType = rs.getBoolean(6);
-                    if(whichType)
+                    if(rs.getBoolean(6))
                     {
                         type = "Internship";
                     }
+
                     System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: "
                             + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Type: " + type);
-                    averageSalary = rs.getFloat(8);
                 }
 
                 System.out.println("\nSome Statistics for that Location Area:\n");
@@ -1610,7 +1606,7 @@ public class Main
                 ResultSet rs8Stat = pst8Stat.executeQuery();
                 while (rs8Stat.next())
                 {
-                    System.out.println("Number of Companies in the Area: " + rs8Stat.getInt(1) + " Avergae Salary: " + averageSalary);
+                    System.out.println("Number of Companies in the Area: " + rs8Stat.getInt(1));
                 }
             }
             return true;
@@ -1654,10 +1650,11 @@ public class Main
             pst6.clearParameters();
             pst6.setInt(1, companyId);
             ResultSet rs = pst6.executeQuery();
+
             while(rs.next())
             {
                 String type = "Full Time";
-                if(rs.getBoolean(7))
+                if(rs.getBoolean(6))
                 {
                     type = "Internship";
                 }
@@ -1696,7 +1693,7 @@ public class Main
             String type = scan.nextLine();
             boolean search = true;
 
-            if (type.length() > 1 || (!type.toLowerCase().equals("i") && !type.toLowerCase().equals("f")))
+            if (type.length() > 1 || !(type.toLowerCase().equals("i") || type.toLowerCase().equals("f")))
             {
                 System.out.println("Type needs to be of length 1 (I or F). Please try again.");
                 return false;
@@ -1739,12 +1736,24 @@ public class Main
                     System.out.println("\nSome Statistics on Internships:");
                     PreparedStatement pstI1TypeStat = con.prepareStatement("SELECT AVG (salary), MAX (salary) FROM Internship;");
                     ResultSet rsI1TypeStat = pstI1TypeStat.executeQuery();
+                    float avgSal = 0;
+                    float highSal = 0;
+                    while (rsI1TypeStat.next())
+                    {
+                        avgSal = rsI1TypeStat.getFloat(1);
+                        highSal = rsI1TypeStat.getFloat(2);
+                    }
+                    System.out.println("Here");
+
                     PreparedStatement pstI2TypeStat = con.prepareStatement("SELECT COUNT(*) FROM Internship WHERE salary = 0;");
                     ResultSet rsI2TypeStat = pstI2TypeStat.executeQuery();
-                    while (rsI1TypeStat.next() || rsI2TypeStat.next())
+                    int unpaid = 0;
+                    while(rsI2TypeStat.next())
                     {
-                        System.out.println("Average Salary: " + rsI1TypeStat.getFloat(1) + " Highest Salary: " + rsI1TypeStat.getFloat(2) + " Number of Unpaid Internships: " + rsI2TypeStat.getInt(1));
+                        unpaid = rsI2TypeStat.getInt(1);
                     }
+                    System.out.println("Average Salary: " + avgSal + " Highest Salary: " + highSal + " Number of Unpaid Internships: " + unpaid);
+
 
                     System.out.println("\nSummer Internships: ");
                     PreparedStatement pstSum = con.prepareStatement("SELECT jobId, jobTitle FROM Job WHERE jobId IN (SELECT jobId FROM Internship WHERE season='summer');");
@@ -1791,13 +1800,13 @@ public class Main
             PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
             pstType.setInt(1, jobId);
             ResultSet rsType = pstType.executeQuery();
-            Boolean type = true;
+            boolean type = true;
             while(rsType.next())
             {
                 type = rsType.getBoolean(1);
             }
 
-            PreparedStatement pst8F = con.prepareStatement("SELECT * FROM Job j, Company c, Competition co, Location l WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=?;");
+            PreparedStatement pst8F = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, c.companyName, c.numEmployees, c.yearlyRevenue, c.stockPrice, l.locationArea, l.street, l.city, l.state FROM Job j, Company c, Competition co, Location l WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=?;");
             pst8F.clearParameters();
             pst8F.setInt(1, jobId);
             ResultSet rs = pst8F.executeQuery();
@@ -1805,8 +1814,8 @@ public class Main
             {
                 System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
                         + " Type: Full Time"
-                        + "\nCompany Name: " + rs.getString(7) + " Number of Employees: " + rs.getInt(8) + " Yearly Revenue: " + rs.getFloat(9) + " Stock Price: " + rs.getFloat(10)
-                        + "\nLocation Area: " + rs.getString(12) + " Address: " + rs.getString(13) + " " + rs.getString(14));
+                        + "\nCompany Name: " + rs.getString(6) + " Number of Employees: " + rs.getInt(7) + " Yearly Revenue: " + rs.getFloat(8) + " Stock Price: " + rs.getFloat(9)
+                        + "\nLocation Area: " + rs.getString(10) + " Address: " + rs.getString(11) + " " + rs.getString(12));
             }
 
             if (!type)
@@ -1845,7 +1854,7 @@ public class Main
                 }
                 else
                 {
-                    System.out.println("Related Job 1: " + rs.getInt(2) + "Related Job 2: " + rs.getInt(3) + "Related Job 3: " + rs.getInt(4) + "Related Job 4: " + rs.getInt(5) + "Related Job 5: " + rs.getInt(6));
+                    System.out.println("Related Job 1: " + rs.getInt(2) + " Related Job 2: " + rs.getInt(3) + " Related Job 3: " + rs.getInt(4) + " Related Job 4: " + rs.getInt(5) + " Related Job 5: " + rs.getInt(6));
 
                 }
             }
@@ -1932,30 +1941,34 @@ public class Main
                 PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
                 pstType.setInt(1, jobId);
                 ResultSet rsType = pstType.executeQuery();
-                boolean type = rsType.getBoolean(1);
-
-                if(type) //add salary
+                boolean type = true;
+                while(rsType.next())
                 {
-                    PreparedStatement pstFullTime = con.prepareStatement("SELECT * FROM Job j, FullTime f WHERE f.jobId=j.jobId AND j.jobId=?;");
+                    type = rsType.getBoolean(1);
+                }
+
+                if(!type) //add salary
+                {
+                    PreparedStatement pstFullTime = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, f.salary, f.numStockOptions, f.signingBonus FROM Job j, FullTime f WHERE f.jobId=j.jobId AND j.jobId=?;");
                     pstFullTime.setInt(1, jobId);
 
                     ResultSet rs = pstFullTime.executeQuery();
                     while(rs.next())
                     {
                         System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                                + " Type: Full Time" + "\n Full Time Salary: " + rs.getFloat(10) + "\nNumber of Stock Options: " + rs.getInt(8) + " Signing Bonus: " + rs.getFloat(9) + "\n");
+                                + " Type: Full Time" + "\n Full Time Salary: " + rs.getFloat(6) + "\nNumber of Stock Options: " + rs.getInt(7) + " Signing Bonus: " + rs.getFloat(8) + "\n");
                     }
                 }
-                else if(!type)
+                else if(type)
                 {
-                    PreparedStatement pstIntern = con.prepareStatement("SELECT * FROM Job j, Internship i WHERE i.jobId=j.jobId AND j.jobId=?;");
+                    PreparedStatement pstIntern = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, i.payPeriod, i.salary, i.season FROM Job j, Internship i WHERE i.jobId=j.jobId AND j.jobId=?;");
                     pstIntern.setInt(1, jobId);
 
                     ResultSet rs = pstIntern.executeQuery();
                     while(rs.next())
                     {
                         System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                                + " Type: Internship" + "\nInternship Pay Period: " + rs.getString(8) + " Salary: " + rs.getFloat(9) + " Season: " + rs.getString(10) + "\n");
+                                + " Type: Internship" + "\nInternship Pay Period: " + rs.getString(6) + " Salary: " + rs.getFloat(7) + " Season: " + rs.getString(8) + "\n");
                     }
                 }
             }
@@ -2013,7 +2026,7 @@ public class Main
                     }
 
                     System.out.println("Job ID: " + rs.getInt(1)+ " Job Title: " + rs.getString(2) + " Industry: "+ rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: " + type + "\nRelated Job 1: " + rs.getInt(8) + "Related Job 2: " + rs.getInt(9) + "Related Job 3: " + rs.getInt(10) + "Related Job 4: " + rs.getInt(11) + "Related Job 5: " + rs.getInt(12) + "\n");
+                            + " Type: " + type + "\nRelated Job 1: " + rs.getInt(8) + " Related Job 2: " + rs.getInt(9) + " Related Job 3: " + rs.getInt(10) + " Related Job 4: " + rs.getInt(11) + " Related Job 5: " + rs.getInt(12) + "\n");
                 }
             }
             return true;
