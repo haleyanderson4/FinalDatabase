@@ -13,4 +13,4 @@ CREATE TABLE Location(companyId INTEGER PRIMARY KEY AUTO_INCREMENT, FOREIGN KEY 
 
 CREATE TABLE FullTime(jobId INTEGER PRIMARY KEY, FOREIGN KEY jobId(jobId) REFERENCES Job(jobId) ON DELETE CASCADE, numStockOptions INTEGER not null, signingBonus FLOAT(20,2) not null, salary FLOAT(20,2) not null);
 
-CREATE TABLE Internship(jobId INTEGER PRIMARY KEY, FOREIGN KEY jobId(jobId) REFERENCES Job(jobId) ON DELETE CASCADE, payPeriod VARCHAR(25) not null, salary FLOAT(20,2) not null, season VARCHAR(25) not null);
+CREATE TABLE Internship(jobId INTEGER PRIMARY KEY, FOREIGN KEY jobId(jobId) REFERENCES Job(jobId) ON DELETE CASCADE, payPeriod VARCHAR(25) not null, rate FLOAT(20,2) not null, season VARCHAR(25) not null);
