@@ -38,15 +38,15 @@ public class Main
                     editOption = scan.nextInt();
                     scan.nextLine();
                     System.out.println(" ");
-                    if (editOption < 1 || editOption > 11)
+                    if (editOption < 1 || editOption > 12)
                     {
-                        System.out.println("Please enter a number between 1 and 11\n");
+                        System.out.println("Please enter a number between 1 and 12\n");
                         continue;
                     }
                 }
                 catch(Exception e)
                 {
-                    System.out.println("Please enter a number between 1 and 11\n");
+                    System.out.println("Please enter a number between 1 and 12\n");
                     scan.nextLine();
                     editOption = 0;
                     continue;
@@ -322,7 +322,7 @@ public class Main
                     type = "Internship";
                 }
                 System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                        + " Type: " + type);
+                        /*+ " Type: " + type*/);
             }
             System.out.println("");
             return true;
