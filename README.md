@@ -7,7 +7,7 @@ TO DO:
 - GUI
 - transactions --> rollback
 - report generation (logging)
-- create fake data
+- undo
 - go through all project requirements 
 - delete manager method
 - merge update methods (loc & comp, comp & job)
