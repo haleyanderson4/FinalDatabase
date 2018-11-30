@@ -24,12 +24,21 @@ public class Main
         try {
             con = Config.getMySqlConnection(); //connect to database
             boolean loop = true;
-            System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
-                    + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n10. Undo \n11. Generate Database Report \n12. Quit");
+            boolean isNotFirst = false;
             while(loop)
             {
                 try
                 {
+                    if(isNotFirst)
+                    {
+                        System.out.println("Press enter to continue");
+                        scan.nextLine();
+                    }
+                    isNotFirst = true;
+
+                    System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
+                            + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n10. Undo \n11. Generate Database Report \n12. Quit");
+
                     System.out.println("What would you like to do: ");
                     editOption = scan.nextInt();
                     scan.nextLine();
@@ -261,7 +270,7 @@ public class Main
                 }
             }
 
-            PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, type) VALUES(?,?,?,?,?);");
+            PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, isInternship) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
             success = createJob(pstJ, pstComp, scan);
@@ -734,7 +743,7 @@ public class Main
                 boolean success = updateFullTime(con, scan);
                 return success;
             }
-            else if(selectOption == 4) //@TODO update answer to int/float
+            else if(selectOption == 4)
             {
                 boolean success = updateInternship(con, scan);
                 return success;
@@ -1164,13 +1173,13 @@ public class Main
             }
 
             System.out.println("The current information for this Company's Location is: ");
-            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Company WHERE companyId=?;");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Location WHERE companyId=?;");
             pstM.clearParameters();
             pstM.setInt(1, companyId);
             ResultSet rs = pstM.executeQuery();
             while(rs.next())
             {
-                System.out.println("Company ID: " + rs.getInt(1)+ "Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + ", " + rs.getString(5) + "\n");
+                System.out.println("Company ID: " + rs.getInt(1)+ " Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + ", " + rs.getString(5) + "\n");
             }
 
             System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State");
@@ -1455,7 +1464,7 @@ public class Main
                 companyId = rs.getInt(1);
             }
 
-            PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?");
+            PreparedStatement pstType = con.prepareStatement("SELECT isInternship FROM Job WHERE jobId=?");
             pstType.clearParameters();
             pstType.setInt(1, jobId);
             rs = pstType.executeQuery();
@@ -1621,7 +1630,7 @@ public class Main
             else
             {
                 System.out.println("The Job Database in that state:\n");
-                PreparedStatement pst8 = con.prepareStatement("select j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.type from Job j, Location l WHERE j.companyId = l.companyId AND l.state=?;");
+                PreparedStatement pst8 = con.prepareStatement("select j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.isInternship from Job j, Location l WHERE j.companyId = l.companyId AND l.state=?;");
                 pst8.clearParameters();
                 pst8.setString(1, location);
                 ResultSet rs = pst8.executeQuery();
@@ -1638,8 +1647,11 @@ public class Main
                             + rs.getString(4) + " Company ID: " + rs.getInt(5) + " Type: " + type);
                 }
 
+                System.out.println("Press enter to see some statistics for your search");
+                scan.nextLine();
+
                 System.out.println("\nSome Statistics for that state:\n");
-                PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l WHERE l.state = ?;");
+                PreparedStatement pst8Stat = con.prepareStatement("select COUNT(*) from Location l WHERE l.state=?;");
                 pst8Stat.setString(1, location);
                 ResultSet rs8Stat = pst8Stat.executeQuery();
                 while (rs8Stat.next())
@@ -1700,6 +1712,9 @@ public class Main
                         + " Type: " + type);
             }
 
+            System.out.println("Press enter to see some statistics for your search");
+            scan.nextLine();
+
             System.out.println("\nSome Statistics from " + name + ":");
             PreparedStatement pst6Stat = con.prepareStatement("SELECT COUNT(c.numApplicants), AVG(c.numApplicants) FROM Job j, Competition c WHERE j.jobId=c.jobId AND j.companyId=?;");
             pst6Stat.clearParameters();
@@ -1707,7 +1722,7 @@ public class Main
             ResultSet rs6Stat = pst6Stat.executeQuery();
             while(rs6Stat.next())
             {
-                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " \nAverage number of Applications to each Job: " + rs6Stat.getFloat(2));
+                System.out.println("Number of Open Jobs at " + name + ": " + rs6Stat.getInt(1) + " Average number of Applications to each Job: " + rs6Stat.getFloat(2));
 
             }
 
@@ -1745,7 +1760,7 @@ public class Main
                 }
 
                 System.out.println("The Job Database of that Type:\n");
-                PreparedStatement pst7 = con.prepareStatement("SELECT * FROM Job WHERE type=?;");
+                PreparedStatement pst7 = con.prepareStatement("SELECT * FROM Job WHERE isInternship=?;");
                 pst7.clearParameters();
                 pst7.setBoolean(1, search);
                 ResultSet rs = pst7.executeQuery();
@@ -1757,8 +1772,11 @@ public class Main
                         typeS = "Internship";
                     }
                     System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                            + " Type: " + type);
+                            + " Type: " + typeS);
                 }
+
+                System.out.println("Press enter to see some statistics for your search");
+                scan.nextLine();
 
                 if(!search)
                 {
@@ -1837,7 +1855,7 @@ public class Main
                 return false;
             }
 
-            PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
+            PreparedStatement pstType = con.prepareStatement("SELECT isInternship FROM Job WHERE jobId=?;");
             pstType.setInt(1, jobId);
             ResultSet rsType = pstType.executeQuery();
             boolean type = true;
@@ -1978,7 +1996,7 @@ public class Main
 
             if(selectOption == 3)
             {
-                PreparedStatement pstType = con.prepareStatement("SELECT type FROM Job WHERE jobId=?;");
+                PreparedStatement pstType = con.prepareStatement("SELECT isInternship FROM Job WHERE jobId=?;");
                 pstType.setInt(1, jobId);
                 ResultSet rsType = pstType.executeQuery();
                 boolean type = true;
@@ -2115,12 +2133,12 @@ public class Main
                 System.out.println("Location Area: " + rsComLoc.getString(1) + " Number of Companies: " + rsComLoc.getInt(2) + " Average Yearly Revenue: " + rsComLoc.getFloat(3) + " Average Number of Employees: " + rsComLoc.getFloat(4) + " Average Stock Price: " + rsComLoc.getFloat(5));
             }
 
-            System.out.println("\nAverage Competition by Company: ");
-            PreparedStatement pstComp = con.prepareStatement("SELECT j.companyId, AVG(c.numOpenSpots), AVG(c.numApplicants) FROM Competition c, Job j WHERE j.jobId = c.jobId GROUP BY j.companyId;");
+            System.out.println("\nAverage Competition by Industry: ");
+            PreparedStatement pstComp = con.prepareStatement("SELECT j.industry, AVG(c.numOpenSpots), AVG(c.numApplicants) FROM Competition c, Job j WHERE j.jobId = c.jobId GROUP BY j.industry;");
             ResultSet rsComp = pstComp.executeQuery();
             while(rsComp.next())
             {
-                System.out.println("Company: " + rsComp.getString(1) + " Average Open Spots: " + rsComp.getFloat(2) + " Average Applicants: " + rsComp.getFloat(3));
+                System.out.println("Industry: " + rsComp.getString(1) + " Average Open Spots: " + rsComp.getFloat(2) + " Average Applicants: " + rsComp.getFloat(3));
             }
 
             return true;
