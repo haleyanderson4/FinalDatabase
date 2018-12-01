@@ -32,6 +32,7 @@ public class GUI extends JPanel
   private JFormattedTextField numEmployees;
   private JFormattedTextField revenue;
   private JFormattedTextField stockPrice;
+  private JTextField locationArea, streetAddress, city, state;
   private JButton createCompany = new JButton("New company");
 
   private JTextField managerName;
@@ -43,9 +44,14 @@ public class GUI extends JPanel
   private JButton deleteCompany = new JButton("Delete company");
   private JButton deleteManager = new JButton("Delete manager");
 
+  private JButton displayAllJobs = new JButton("Display all jobs");
+  private JButton searchJobs = new JButton("Search jobs");
+
+  private JRadioButton internship, fullTime, eitherType;
+
   private NumberFormat intFormat;
 
-  //private Main main;
+  private Main main;
 
   public static void main(String[] args)
   {
@@ -76,6 +82,10 @@ public class GUI extends JPanel
     revenue.setValue(new Float(0));
     stockPrice = new JFormattedTextField(intFormat);
     stockPrice.setValue(new Float(0));
+    locationArea = new JTextField(25);
+    streetAddress = new JTextField(100);
+    city = new JTextField(25);
+    state = new JTextField(2);
     managerName = new JTextField(50);
     yearsAtCompany = new JFormattedTextField(intFormat);
     yearsAtCompany.setValue(new Float(0));
@@ -111,18 +121,23 @@ public class GUI extends JPanel
   private JPanel initButtons()
   {
     JPanel panel = new JPanel();
+    panel.add(displayAllJobs);
+    displayAllJobs.addActionListener(new ButtonHandler());
     panel.add(createJob);
     createJob.addActionListener(new ButtonHandler());
     panel.add(createCompany);
     createCompany.addActionListener(new ButtonHandler());
     panel.add(createManager);
     createManager.addActionListener(new ButtonHandler());
+    panel.add(searchJobs);
+    searchJobs.addActionListener(new ButtonHandler());
     panel.add(deleteJob);
     deleteJob.addActionListener(new ButtonHandler());
-    panel.add(deleteCompany);
-    deleteCompany.addActionListener(new ButtonHandler());
+    // panel.add(deleteCompany);
+    // deleteCompany.addActionListener(new ButtonHandler());
     panel.add(deleteManager);
     deleteManager.addActionListener(new ButtonHandler());
+
     return panel;
   }
 
@@ -153,8 +168,6 @@ public class GUI extends JPanel
     panel.add(description, "wrap");
     panel.add(new JLabel("Company ID"), "align label");
     panel.add(cID, "wrap");
-    panel.add(new JLabel("Manager ID"), "align label");
-    panel.add(mID, "wrap");
     panel.add(new JLabel("Type (I for internship, F for full-time)"), "align label");
     panel.add(type, "wrap");
     return panel;
@@ -172,6 +185,14 @@ public class GUI extends JPanel
     panel.add(revenue, "wrap");
     panel.add(new JLabel("Stock price"), "align label");
     panel.add(stockPrice, "wrap");
+    panel.add(new JLabel("Location area"), "align label");
+    panel.add(locationArea, "wrap");
+    panel.add(new JLabel("Street address"), "align label");
+    panel.add(streetAddress, "wrap");
+    panel.add(new JLabel("City"), "align label");
+    panel.add(city, "wrap");
+    panel.add(new JLabel("State (2-letter abbreviation)"), "align label");
+    panel.add(state, "wrap");
     return panel;
   }
 
@@ -183,6 +204,28 @@ public class GUI extends JPanel
     panel.add(managerName, "wrap");
     panel.add(new JLabel("Years at company"), "align label");
     panel.add(yearsAtCompany, "wrap");
+    return panel;
+  }
+
+  private JPanel searchInfo()
+  {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(new JLabel("Search by location, company, and/or type"));
+    panel.add(new JLabel("State: (2-letter abbreviation)"), "align label");
+    panel.add(new JLabel("Company:"), "align label");
+    panel.add(new JLabel("Type:"), "align label");
+    ButtonGroup typeButtons = new ButtonGroup();
+    internship = new JRadioButton("Internship");
+    fullTime = new JRadioButton("Full time");
+    eitherType = new JRadioButton("Either");
+    eitherType.setSelected(true);
+    typeButtons.add(eitherType);
+    typeButtons.add(internship);
+    typeButtons.add(fullTime);
+    panel.add(eitherType);
+    panel.add(internship);
+    panel.add(fullTime);
     return panel;
   }
 
@@ -210,7 +253,7 @@ public class GUI extends JPanel
     createCompany.setText("New company");
     deleteJob.setText("Delete job");
     deleteManager.setText("Delete manager");
-    deleteCompany.setText("Delete company");
+    //deleteCompany.setText("Delete company");
   }
 
   /**
@@ -378,6 +421,22 @@ public class GUI extends JPanel
         case("Confirm delete job"):
           deleteJob.setText("Delete job");
           //@TODO call main's delete call
+          break;
+        case("Display all jobs"):
+          break;
+        case("Search jobs"):
+          add(searchInfo(), BorderLayout.NORTH);
+          searchJobs.setText("Search");
+          boolean checkType = true;
+          boolean isInternship = false;
+          if (internship.isSelected())
+          {
+            isInternship = true;
+          }
+          else if (eitherType.isSelected())
+          {
+            checkType = false;
+          }
           break;
         default:
           break;
