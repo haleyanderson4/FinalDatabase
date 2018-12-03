@@ -10,4 +10,3 @@ TO DO:
 - undo
 - go through all project requirements 
 - delete manager method
-- merge update methods (loc & comp, comp & job)
