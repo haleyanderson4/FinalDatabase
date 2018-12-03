@@ -1,7 +1,6 @@
 /**
  * @TODO
  * Front-end stuff
- * Populate our db with actual data (low priority)
  * Testing!!!
  *      1 - 9 are tested and work
  * Report Generation
@@ -369,6 +368,9 @@ public class Main
             PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
             pstEnd.execute();
             return true;
+
+            //PreparedStatement pstRoll = con.prepareStatement("ROLLBACK");
+            //            pstRoll.execute();
         }
         catch (Exception e)
         {
@@ -724,7 +726,7 @@ public class Main
         try
         {
             System.out.println("What would you like to update?");
-            System.out.println("1. Company Information \n2. Competition Information \n3. Full Time Information \n4. Internship Information \n5. Job Information \n6. Location Information \n7. Manager Information \n8. Related Job Information");
+            System.out.println("1. Company Information \n2. Full Time Information \n3. Internship Information \n4. Job Information \n5. Manager Information \n6. Related Job Information");
             int selectOption = scan.nextInt();
             scan.nextLine();
 
@@ -735,42 +737,32 @@ public class Main
             }
             else if(selectOption == 2)
             {
-                boolean success = updateCompetition(con, scan);
+                boolean success = updateFullTime(con, scan);
                 return success;
             }
             else if(selectOption == 3)
             {
-                boolean success = updateFullTime(con, scan);
+                boolean success = updateInternship(con, scan);
                 return success;
             }
             else if(selectOption == 4)
             {
-                boolean success = updateInternship(con, scan);
+                boolean success = updateJob(con, scan);
                 return success;
             }
             else if(selectOption == 5)
             {
-                boolean success = updateJob(con, scan);
-                return success;
-            }
-            else if(selectOption == 6)
-            {
-                boolean success = updateLocation(con, scan);
-                return success;
-            }
-            else if(selectOption == 7)
-            {
                 boolean success = updateManager(con, scan);
                 return success;
             }
-            else if(selectOption == 8)
+            else if(selectOption == 6)
             {
                 boolean success = updateRelatedJobs(con, scan);
                 return success;
             }
             else
             {
-                System.out.println("Please enter a number between 1 and 8.");
+                System.out.println("Please enter a number between 1 and 6.");
                 return false;
             }
         }
@@ -807,117 +799,149 @@ public class Main
                 System.out.println("Company ID: " + rs.getInt(1) + " Company Name: " + rs.getString(2) + " Number of Employees: " + rs.getInt(3) + " Yearly Revenue: " + rs.getFloat(4) + " Stock Price: " + rs.getFloat(5));
             }
 
-            System.out.println("Which field would you like to update? \n1. Company Name \n2. Number of Employees \n3. Yearly Revenue \n4. Stock Price");
+            System.out.println("Which field would you like to update? \n1. Company Name \n2. Number of Employees \n3. Yearly Revenue \n4. Stock Price \n5. None");
             int updateId = scan.nextInt();
             scan.nextLine();
 
-            if (updateId < 1 || updateId > 4)
+            if (updateId < 1 || updateId > 5)
             {
-                System.out.println("Please enter a number between 1 and 4.");
+                System.out.println("Please enter a number between 1 and 5.");
                 return false;
+            }
+            if(updateId != 5)
+            {
+                String field = "";
+                String answer = "";
+                int intAnswer = -1;
+                float floatAnswer = -1;
+
+                System.out.println("What would you like this field to up updated to?");
+                if (updateId == 1)
+                {
+                    field = "companyName";
+                    answer = scan.nextLine();
+                    if (!inputCheck(answer, 50))
+                    {
+                        return false;
+                    }
+                }
+                else if (updateId == 2)
+                {
+                    field = "numEmployees";
+                    intAnswer = scan.nextInt();
+                }
+                else if (updateId == 3)
+                {
+                    field = "yearlyRevenue";
+                    floatAnswer = scan.nextFloat();
+                }
+                else if (updateId == 4)
+                {
+                    field = "stockPrice";
+                    floatAnswer = scan.nextFloat();
+                }
+
+                PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET " + field + "=? WHERE companyId=?;");
+                if (!answer.equals(""))
+                {
+                    updateStringField(pstJ, answer, companyId);
+                }
+                else if (intAnswer != -1)
+                {
+                    updateIntField(pstJ, intAnswer, companyId);
+                }
+                else if (floatAnswer != -1)
+                {
+                    updateFloatField(pstJ, floatAnswer, companyId);
+                }
+            }
+
+            System.out.println("Continue to Location Update.");
+            return updateLocation(con, scan, companyId);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Please enter a valid input.");
+            return false;
+        }
+    }
+
+    /**
+     * Updates a table, where the user selected LOCATION.
+     * @return true if the update was successful, false otherwise
+     */
+    public static boolean updateLocation(Connection con, Scanner scan, int companyId)
+    {
+        try
+        {
+            System.out.println("The current information for this Company's Location is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Location WHERE companyId=?;");
+            pstM.clearParameters();
+            pstM.setInt(1, companyId);
+            ResultSet rs = pstM.executeQuery();
+            while(rs.next())
+            {
+                System.out.println("Company ID: " + rs.getInt(1)+ " Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + ", " + rs.getString(5) + "\n");
+            }
+
+            System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State \n5. None");
+            int updateId = scan.nextInt();
+            scan.nextLine();
+
+            if(updateId < 1 || updateId > 5)
+            {
+                System.out.println("Please enter a number between 1 and 5.");
+                return false;
+            }
+            if(updateId == 5)
+            {
+                System.out.println("Thank you for your Update.");
+                return true;
             }
 
             String field = "";
             String answer = "";
-            int intAnswer = -1;
-            float floatAnswer = -1;
 
             System.out.println("What would you like this field to up updated to?");
-            if (updateId == 1) {
-                field = "companyName";
+            if(updateId == 1)
+            {
+                field = "locationArea";
                 answer = scan.nextLine();
-                if (!inputCheck(answer, 50))
-                {
-                    return false;
-                }
+
+                if(!inputCheck(answer, 25)) return false;
             }
-            else if (updateId == 2)
+            else if(updateId == 2)
             {
-                field = "numEmployees";
-                intAnswer = scan.nextInt();
+                field = "street";
+                answer = scan.nextLine();
+
+                if(!inputCheck(answer, 100)) return false;
             }
-            else if (updateId == 3)
+            else if(updateId == 3)
             {
-                field = "yearlyRevenue";
-                floatAnswer = scan.nextFloat();
+                field = "city";
+                answer = scan.nextLine();
+
+                if(!inputCheck(answer, 25)) return false;
             }
-            else if (updateId == 4)
+            else if(updateId == 4)
             {
-                field = "stockPrice";
-                floatAnswer = scan.nextFloat();
+                field = "state";
+                answer = scan.nextLine();
+
+                if(!inputCheck(answer, 2)) return false;
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET " + field + "=? WHERE companyId=?;");
-            if (!answer.equals("")) {
-                updateStringField(pstJ, answer, companyId);
-            } else if (intAnswer != -1) {
-                updateIntField(pstJ, intAnswer, companyId);
-            } else if (floatAnswer != -1) {
-                updateFloatField(pstJ, floatAnswer, companyId);
-            }
+            PreparedStatement pstL = con.prepareStatement("UPDATE Location SET " + field + "=? WHERE companyId=?;");
+            updateStringField(pstL, answer, companyId);
+
+            return true;
         }
         catch (Exception e)
         {
-            System.out.println("Please enter a valid input.");
+            System.out.println("Please enter a valid input. Try again.");
             return false;
         }
-        return true;
-    }
-
-    /**
-     * Updates a table, where the user selected COMPETITION.
-     * @return true if the update was successful, false otherwise
-     */
-    public static boolean updateCompetition(Connection con, Scanner scan)
-    {
-        try {
-            System.out.println("What is the ID of the Job you would like to update the Competition to?");
-            int jobId = scan.nextInt();
-            scan.nextLine();
-            if(!checkID(con, jobId))
-            {
-                return false;
-            }
-
-            System.out.println("The current information for this Job's Competition is: ");
-            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?;");
-            pstM.clearParameters();
-            pstM.setInt(1, jobId);
-            ResultSet rs = pstM.executeQuery();
-            while (rs.next()) {
-                System.out.println("Job ID: " + rs.getInt(1) + " Number of Open Spots: " + rs.getInt(2) + " Number of Applicants: " + rs.getInt(3));
-            }
-
-            System.out.println("Which field would you like to update? \n1. Number of Open Spots \n2. Number of Applicants ");
-            int updateId = scan.nextInt();
-            scan.nextLine();
-
-            if (updateId < 1 || updateId > 2) {
-                System.out.println("Please enter a number between 1 and 2.");
-                return false;
-            }
-
-            String field = "";
-            int answer = -1;
-
-            System.out.println("What would you like this field to up updated to?");
-            if (updateId == 1) {
-                field = "numOpenSpots";
-                answer = scan.nextInt();
-            } else if (updateId == 2) {
-                field = "numApplicants";
-                answer = scan.nextInt();
-            }
-
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET " + field + "=? WHERE jobId=?;");
-            updateIntField(pstJ, answer, jobId);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Please enter a valid input.");
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -1103,50 +1127,54 @@ public class Main
                         + " Type: " + type + "\n");
             }
 
-            System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description");
+            System.out.println("Which field would you like to update? \n1. Job Title \n2. Industry \n3. Description \n4. None");
             System.out.println("Company ID and Type are not an allowed to be updated.");
             int updateId = scan.nextInt();
             scan.nextLine();
 
-            if(updateId < 1 || updateId > 3)
+            if(updateId < 1 || updateId > 4)
             {
-                System.out.println("Please enter a number between 1 and 3.");
+                System.out.println("Please enter a number between 1 and 4.");
                 return false;
             }
-
-            String field = "";
-            String answer = "";
-
-            System.out.println("What would you like this field to up updated to?");
-            if(updateId == 1)
+            if(updateId != 4)
             {
-                field = "jobTitle";
-                answer = scan.nextLine();
+                String field = "";
+                String answer = "";
 
-                if(!inputCheck(answer, 50)) return false;
-            }
-            else if(updateId == 2)
-            {
-                field = "industry";
-                answer = scan.nextLine();
+                System.out.println("What would you like this field to up updated to?");
+                if(updateId == 1)
+                {
+                    field = "jobTitle";
+                    answer = scan.nextLine();
 
-                if(!inputCheck(answer, 25)) return false;
-            }
-            else if(updateId == 3)
-            {
-                field = "description";
-                answer = scan.nextLine();
+                    if(!inputCheck(answer, 50)) return false;
+                }
+                else if(updateId == 2)
+                {
+                    field = "industry";
+                    answer = scan.nextLine();
 
-                if(!inputCheck(answer, 100)) return false;
+                    if(!inputCheck(answer, 25)) return false;
+                }
+                else if(updateId == 3)
+                {
+                    field = "description";
+                    answer = scan.nextLine();
+
+                    if(!inputCheck(answer, 100)) return false;
+                }
+
+                PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET " + field + " =? WHERE jobID=?;");
+                if (!updateStringField(pstJ, answer, jobId))
+                {
+                    System.out.println("There was an error updating.");
+                    return false;
+                }
             }
 
-            PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET " + field + " =? WHERE jobID=?;");
-            if (!updateStringField(pstJ, answer, jobId))
-            {
-                System.out.println("There was an error updating.");
-                return false;
-            }
-            return true;
+            System.out.println("Continue to Competition Update.");
+            return updateCompetition(con, scan, jobId);
         }
         catch (Exception e)
         {
@@ -1156,85 +1184,60 @@ public class Main
     }
 
     /**
-     * Updates a table, where the user selected LOCATION.
+     * Updates a table, where the user selected COMPETITION.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateLocation(Connection con, Scanner scan)
+    public static boolean updateCompetition(Connection con, Scanner scan, int jobId)
     {
-        try
-        {
-            System.out.println("What is the ID of the Company you would like to update the Location of?");
-            int companyId = scan.nextInt();
-            scan.nextLine();
-
-            if(!checkCompanyID(con, companyId))
-            {
-                return false;
-            }
-
-            System.out.println("The current information for this Company's Location is: ");
-            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Location WHERE companyId=?;");
+        try {
+            System.out.println("The current information for this Job's Competition is: ");
+            PreparedStatement pstM = con.prepareStatement("SELECT * FROM Competition WHERE jobId=?;");
             pstM.clearParameters();
-            pstM.setInt(1, companyId);
+            pstM.setInt(1, jobId);
             ResultSet rs = pstM.executeQuery();
-            while(rs.next())
-            {
-                System.out.println("Company ID: " + rs.getInt(1)+ " Location Area: " + rs.getString(2) + " Address: " + rs.getString(3) + " " + rs.getString(4) + ", " + rs.getString(5) + "\n");
+            while (rs.next()) {
+                System.out.println("Job ID: " + rs.getInt(1) + " Number of Open Spots: " + rs.getInt(2) + " Number of Applicants: " + rs.getInt(3));
             }
 
-            System.out.println("Which field would you like to update? \n1. Location Area \n2. Street Address \n3. City \n4. State");
+            System.out.println("Which field would you like to update? \n1. Number of Open Spots \n2. Number of Applicants \n3. None");
             int updateId = scan.nextInt();
             scan.nextLine();
 
-            if(updateId < 1 || updateId > 4)
+            if (updateId < 1 || updateId > 3)
             {
-                System.out.println("Please enter a number between 1 and 4.");
+                System.out.println("Please enter a number between 1 and 3.");
                 return false;
+            }
+            if(updateId == 3)
+            {
+                System.out.println("Thank you for your Update.");
+                return true;
             }
 
             String field = "";
-            String answer = "";
+            int answer = -1;
 
             System.out.println("What would you like this field to up updated to?");
-            if(updateId == 1)
+            if (updateId == 1)
             {
-                field = "locationArea";
-                answer = scan.nextLine();
-
-                if(!inputCheck(answer, 25)) return false;
+                field = "numOpenSpots";
+                answer = scan.nextInt();
             }
-            else if(updateId == 2)
+            else if (updateId == 2)
             {
-                field = "street";
-                answer = scan.nextLine();
-
-                if(!inputCheck(answer, 100)) return false;
-            }
-            else if(updateId == 3)
-            {
-                field = "city";
-                answer = scan.nextLine();
-
-                if(!inputCheck(answer, 25)) return false;
-            }
-            else if(updateId == 4)
-            {
-                field = "state";
-                answer = scan.nextLine();
-
-                if(!inputCheck(answer, 2)) return false;
+                field = "numApplicants";
+                answer = scan.nextInt();
             }
 
-            PreparedStatement pstL = con.prepareStatement("UPDATE Location SET " + field + "=? WHERE companyId=?;");
-            updateStringField(pstL, answer, companyId);
-
-            return true;
+            PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET " + field + "=? WHERE jobId=?;");
+            updateIntField(pstJ, answer, jobId);
         }
         catch (Exception e)
         {
-            System.out.println("Please enter a valid input. Try again.");
+            System.out.println("Please enter a valid input.");
             return false;
         }
+        return true;
     }
 
     /**
