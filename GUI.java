@@ -254,6 +254,7 @@ public class GUI extends JPanel
     panel.add(jID, "wrap");
     searchButton.setText("SEARCH FOR JOB");
     panel.add(searchButton);
+    searchButton.addActionListener(new ButtonHandler());
     return panel;
   }
 
@@ -290,7 +291,7 @@ public class GUI extends JPanel
   * @param rs the ResultSet to be displayed; will be obtained from main.
   * @TODO test
   */
-  private JPanel showTable(ResultSet rs)
+  public JPanel showTable(ResultSet rs)
   {
     JPanel panel = new JPanel();
     JTable table = new JTable();
@@ -504,10 +505,9 @@ public class GUI extends JPanel
           add(getJobInfoFields(), BorderLayout.NORTH);
           break;
         case("SEARCH FOR JOB"):
-          System.out.println("...");
           resetButtons();
+          System.out.println(((Number)jID.getValue()).intValue());
           Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true);
-          System.out.println("yay?");
           break;
         default:
           System.out.println("default");
