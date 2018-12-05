@@ -213,7 +213,10 @@ public class GUI extends JPanel
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(new JLabel("Search by location, company, and/or type"));
     panel.add(new JLabel("State: (2-letter abbreviation)"), "align label");
+    panel.add(state, "wrap");
     panel.add(new JLabel("Company:"), "align label");
+    panel.add(companyName, "wrap");
+    //@TODO id, name, or either?
     panel.add(new JLabel("Type:"), "align label");
     ButtonGroup typeButtons = new ButtonGroup();
     internship = new JRadioButton("Internship");
@@ -284,6 +287,7 @@ public class GUI extends JPanel
     }
 
   }
+
 
   //@TODO add more exception handling for save cases
   //@TODO deal with repainting
@@ -436,6 +440,32 @@ public class GUI extends JPanel
           else if (eitherType.isSelected())
           {
             checkType = false;
+          }
+          boolean searchByState, searchByCompany;
+          searchByState = searchByCompany = false;
+          String pstSearchString = "SELECT jobId, jobTitle, description FROM Job j, Company c, Location l WHERE"
+                + "c.companyId = j.companyId AND j.companyId = l.companyId";
+          if (state.getText().length() == 2)
+          {
+            pstSearchString += " AND l.state=?";
+            searchByState = true;
+          }
+          if (companyName.getText().length() > 0)
+          {
+            pstSearchString += " AND c.companyName=?";
+            searchByCompany = true;
+          }
+          if (checkType)
+          {
+            if (isInternship)
+            {
+              pstSearchString += " AND j.isInternship = 1";
+            }
+            else
+            {
+              pstSearchString += " AND j.isInternship = 0";
+            }
+            //@TODO prepareStatement
           }
           break;
         default:
