@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 import java.lang.NumberFormatException;
+import java.util.Scanner;
 
 /**
 * @TODO list for GUI
@@ -46,24 +47,33 @@ public class GUI extends JPanel
 
   private JButton displayAllJobs = new JButton("Display all jobs");
   private JButton searchJobs = new JButton("Search jobs");
+  private JButton getJobInfo = new JButton("Get info on a job");
 
   private JRadioButton internship, fullTime, eitherType;
 
   private NumberFormat intFormat;
 
-  private Main main;
+  private JButton searchButton = new JButton("SEARCH");
 
-  public static void main(String[] args)
+  private Main main;
+  Connection con;
+  Scanner scan;
+
+  // public static void main(String[] args)
+  // {
+  //   JFrame f = new JFrame();
+  //   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  //   f.getContentPane().add(new GUI());
+  //   f.setSize(600, 600);
+  //   f.setVisible(true);
+  // }
+
+  public GUI(Connection con, Scanner scan)
   {
+    this.con = con;
+    this.scan = scan;
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    f.getContentPane().add(new GUI());
-    f.setSize(600, 600);
-    f.setVisible(true);
-  }
-
-  public GUI()
-  {
     jobField = new JTextField(50);
     industry = new JTextField(25);
     description = new JTextField(100);
@@ -92,6 +102,9 @@ public class GUI extends JPanel
     setLayout(new BorderLayout(5, 5));
     //add(initFields(), BorderLayout.NORTH);
     add(initButtons(), BorderLayout.CENTER);
+    f.getContentPane().add(this);
+    f.setSize(600, 600);
+    f.setVisible(true);
   }
 
   public boolean jobFieldsEmpty()
@@ -137,6 +150,8 @@ public class GUI extends JPanel
     // deleteCompany.addActionListener(new ButtonHandler());
     panel.add(deleteManager);
     deleteManager.addActionListener(new ButtonHandler());
+    panel.add(getJobInfo);
+    getJobInfo.addActionListener(new ButtonHandler());
 
     return panel;
   }
@@ -232,6 +247,16 @@ public class GUI extends JPanel
     return panel;
   }
 
+  private JPanel getJobInfoFields()
+  {
+    JPanel panel = new JPanel();
+    panel.add(new JLabel("Job Id:"), "align label");
+    panel.add(jID, "wrap");
+    searchButton.setText("SEARCH FOR JOB");
+    panel.add(searchButton);
+    return panel;
+  }
+
   /**
   * Sets all buttons back to their original state except the current button.
   * @TODO may not be necessary - check
@@ -256,6 +281,7 @@ public class GUI extends JPanel
     createCompany.setText("New company");
     deleteJob.setText("Delete job");
     deleteManager.setText("Delete manager");
+    getJobInfo.setText("Get info on a job");
     //deleteCompany.setText("Delete company");
   }
 
@@ -264,8 +290,9 @@ public class GUI extends JPanel
   * @param rs the ResultSet to be displayed; will be obtained from main.
   * @TODO test
   */
-  private void showTable(ResultSet rs)
+  private JPanel showTable(ResultSet rs)
   {
+    JPanel panel = new JPanel();
     JTable table = new JTable();
     try
     {
@@ -280,11 +307,13 @@ public class GUI extends JPanel
         }
         rowCount++;
       }
+      panel.add(table);
     }
     catch (Exception e)
     {
       JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
     }
+    return panel;
 
   }
 
@@ -427,8 +456,10 @@ public class GUI extends JPanel
           //@TODO call main's delete call
           break;
         case("Display all jobs"):
+          resetButtons();
           break;
         case("Search jobs"):
+          resetButtons();
           add(searchInfo(), BorderLayout.NORTH);
           searchJobs.setText("Search");
           boolean checkType = true;
@@ -468,7 +499,18 @@ public class GUI extends JPanel
             //@TODO prepareStatement
           }
           break;
+        case("Get info on a job"):
+          resetButtons();
+          add(getJobInfoFields(), BorderLayout.NORTH);
+          break;
+        case("SEARCH FOR JOB"):
+          System.out.println("...");
+          resetButtons();
+          Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true);
+          System.out.println("yay?");
+          break;
         default:
+          System.out.println("default");
           break;
       }
     }

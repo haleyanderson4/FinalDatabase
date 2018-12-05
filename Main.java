@@ -22,6 +22,7 @@ public class Main
 
         try {
             con = Config.getMySqlConnection(); //connect to database
+            GUI gui = new GUI(con, scan); //GUI TEST
             boolean loop = true;
             boolean isNotFirst = false;
             while(loop)
@@ -115,7 +116,7 @@ public class Main
 
                 if(editOption == 6) //prelim completed
                 {
-                    boolean success = jobInfo(con, scan);
+                    boolean success = jobInfo(con, scan, 0, false);
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -1846,17 +1847,20 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
-    public static boolean jobInfo(Connection con, Scanner scan)
+    public static boolean jobInfo(Connection con, Scanner scan, int jobId, boolean fromGUI)
     {
         try
         {
+          if(!fromGUI)
+          {
             System.out.println("What is the ID number of the job you are looking for?");
-            int jobId = scan.nextInt();
+            jobId = scan.nextInt();
             scan.nextLine();
             if(!checkID(con, jobId))
             {
                 return false;
             }
+          }
 
             PreparedStatement pstType = con.prepareStatement("SELECT isInternship FROM Job WHERE jobId=?;");
             pstType.setInt(1, jobId);
