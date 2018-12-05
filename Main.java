@@ -11,6 +11,7 @@
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.*;
 
 public class Main
 {
@@ -20,9 +21,27 @@ public class Main
         Scanner scan = new Scanner(System.in);
         int editOption = 0;
 
+        Logger logger = Logger.getLogger("com.mysql.cj.jdbc.Driver");
+        logger.setLevel(Level.FINER);
+        FileHandler fh;
+        try
+        {
+          fh = new FileHandler("JDBCLog.log");
+          logger.addHandler(fh);
+          SimpleFormatter formatter = new SimpleFormatter();
+          fh.setFormatter(formatter);
+          logger.info("test");
+        }
+        catch (Exception e)
+        {
+          System.out.println("Error logging: " + e);
+        }
+
+
+
         try {
             con = Config.getMySqlConnection(); //connect to database
-            GUI gui = new GUI(con, scan); //GUI TEST
+            //GUI gui = new GUI(con, scan); //GUI TEST
             boolean loop = true;
             boolean isNotFirst = false;
             while(loop)
