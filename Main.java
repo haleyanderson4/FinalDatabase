@@ -115,7 +115,7 @@ public class Main
 
                 if(editOption == 4) //prelim completed
                 {
-                    boolean success = deleteCall(con, scan);
+                    boolean success = deleteCall(con, scan, false, 0);
                     if(success)
                     {
                         System.out.println("The entry was successfully deleted.");
@@ -1467,16 +1467,19 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the delete is successful, false otherwise
      */
-    public static boolean deleteCall(Connection con, Scanner scan)
+    public static boolean deleteCall(Connection con, Scanner scan, boolean fromGUI, int jobId)
     {
         try
         {
-            System.out.println("Please enter the Job's Id");
-            int jobId = scan.nextInt();
-            scan.nextLine();
-            if(!checkID(con, jobId))
+            if (!fromGUI)
             {
-                return false;
+              System.out.println("Please enter the Job's Id");
+              jobId = scan.nextInt();
+              scan.nextLine();
+              if(!checkID(con, jobId))
+              {
+                  return false;
+              }
             }
 
             PreparedStatement pstCompID = con.prepareStatement("SELECT companyId FROM Job WHERE jobId=?");
@@ -1897,7 +1900,6 @@ public class Main
           PreparedStatement pst8F = con.prepareStatement(pstString);
           pst8F.clearParameters();
           pst8F.setInt(1, jobId);
-          System.out.println(pstString);
           ResultSet rs = pst8F.executeQuery();
           while (rs.next()) //update
           {

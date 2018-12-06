@@ -454,7 +454,16 @@ public class GUI extends JPanel
           break;
         case("Confirm delete job"):
           deleteJob.setText("Delete job");
-          //@TODO call main's delete call
+          if (Main.deleteCall(con, scan, true, ((Number)jID.getValue()).intValue()))
+          {
+            JOptionPane.showMessageDialog(null, "Job id " + jID.getValue() + " successfully deleted.");
+            break;
+            //@TODO sometimes appears multiple times. why?
+          }
+          else
+          {
+            JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
+          }
           break;
         case("Display all jobs"):
           resetButtons();
@@ -506,8 +515,10 @@ public class GUI extends JPanel
           break;
         case("SEARCH FOR JOB"):
           resetButtons();
-          System.out.println(((Number)jID.getValue()).intValue());
-          Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true);
+          if(!Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true))
+          {
+            JOptionPane.showMessageDialog(null, "There was an error with your request. Check to ensure your id number is valid.");
+          }
           break;
         default:
           System.out.println("default");
