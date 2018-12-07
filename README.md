@@ -7,4 +7,5 @@ TO DO:
 - GUI
 - transactions --> rollback
 - report generation 
-- go through all project requirements 
+- remeber to submit slides and paper with all source code!
+
