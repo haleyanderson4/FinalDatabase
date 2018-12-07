@@ -6,7 +6,5 @@ This project is a database of jobs.
 TO DO:
 - GUI
 - transactions --> rollback
-- report generation (logging)
-- undo
+- report generation 
 - go through all project requirements 
-- delete manager method
