@@ -1,9 +1,10 @@
 /**
  * @TODO
  * Front-end stuff
- * It works!
+ * Testing!!!
+ *      1 - 9 are tested and work
  * Report Generation
- * Rollback
+ * Rollback / Undo
  */
 
 //import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
@@ -87,7 +88,7 @@ public class Main
 
                 if(editOption == 2) //prelim completed
                 {
-                    boolean success = createNewPosting(con, scan);
+                    boolean success = createNewPosting(con, scan, logger);
                     if(success)
                     {
                         System.out.println("The new Posting was successfully added to the Job Board.");
@@ -100,7 +101,7 @@ public class Main
 
                 if(editOption == 3) //need to add input checks
                 {
-                    boolean success = updateField(con, scan);
+                    boolean success = updateField(con, scan, logger);
                     if(success)
                     {
                         System.out.println("The Update was successfully added to the Job Board.");
@@ -113,7 +114,7 @@ public class Main
 
                 if(editOption == 4) //prelim completed
                 {
-                    boolean success = deleteCall(con, scan, false, 0);
+                    boolean success = deleteCall(con, scan, false, 0, logger);
                     if(success)
                     {
                         System.out.println("The entry was successfully deleted.");
@@ -153,7 +154,7 @@ public class Main
 
                 if(editOption == 8)
                 {
-                    boolean success = statistics(con, scan);
+                    boolean success = statistics(con);
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -162,7 +163,7 @@ public class Main
 
                 if (editOption == 9)
                 {
-                    boolean success = createNewManager(con, scan);
+                    boolean success = createNewManager(con, scan, logger);
                     if (success)
                     {
                         System.out.println("Manager successfully added.");
@@ -175,19 +176,6 @@ public class Main
 
                 if(editOption == 10)
                 {
-                    boolean success = undo(con);
-                    if(success)
-                    {
-                        System.out.println("Undo Successful.");
-                    }
-                    if(!success)
-                    {
-                        System.out.println("Undo Failed. Please try again.");
-                    }
-                }
-
-                if(editOption == 11)
-                {
                     boolean success = generateReport(con);
                     if(success)
                     {
@@ -198,7 +186,7 @@ public class Main
                         System.out.println("Report Generation Failed. Please try again.");
                     }
                 }
-                if(editOption == 12) //done lol
+                if(editOption == 11) //done lol
                 {
                     loop = false;
                 }
@@ -254,7 +242,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createNewPosting(Connection con, Scanner scan)
+    public static boolean createNewPosting(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -388,23 +376,23 @@ public class Main
             PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
             if(createCompany)
             {
-                logger.info(pstC);
-                logger.info(pstL);
+                logger.info("" + pstC);
+                logger.info("" + pstL);
             }
-            logger.info(pstJ);
-            logger.info(pstComp);
+            logger.info("" + pstJ);
+            logger.info("" + pstComp);
             if(type)
             {
-                logger.info(pstI);
+                logger.info("" + pstI);
             }
             else
             {
-                logger.info(pstF);
+                logger.info("" + pstF);
             }
 
             if(createRelated)
             {
-                logger.info(pstR);
+                logger.info("" + pstR);
             }
 
             pstEnd.execute();
@@ -724,7 +712,7 @@ public class Main
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(PreparedStatement pstM, Scanner scan)
+    public static boolean createManager(PreparedStatement pstM, Scanner scan, Logger logger)
     {
         try
         {
@@ -762,7 +750,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateField(Connection con, Scanner scan)
+    public static boolean updateField(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -773,32 +761,32 @@ public class Main
 
             if(selectOption == 1)
             {
-                boolean success = updateCompany(con, scan);
+                boolean success = updateCompany(con, scan, logger);
                 return success;
             }
             else if(selectOption == 2)
             {
-                boolean success = updateFullTime(con, scan);
+                boolean success = updateFullTime(con, scan, logger);
                 return success;
             }
             else if(selectOption == 3)
             {
-                boolean success = updateInternship(con, scan);
+                boolean success = updateInternship(con, scan, logger);
                 return success;
             }
             else if(selectOption == 4)
             {
-                boolean success = updateJob(con, scan);
+                boolean success = updateJob(con, scan, logger);
                 return success;
             }
             else if(selectOption == 5)
             {
-                boolean success = updateManager(con, scan);
+                boolean success = updateManager(con, scan, logger);
                 return success;
             }
             else if(selectOption == 6)
             {
-                boolean success = updateRelatedJobs(con, scan);
+                boolean success = updateRelatedJobs(con, scan, logger);
                 return success;
             }
             else
@@ -818,7 +806,7 @@ public class Main
      * Updates a table, where the user selected COMPANY.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateCompany(Connection con, Scanner scan)
+    public static boolean updateCompany(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -895,11 +883,11 @@ public class Main
                 {
                     updateFloatField(pstJ, floatAnswer, companyId);
                 }
-                logger.info(pstJ);
+                logger.info("" + pstJ);
             }
 
             System.out.println("Continue to Location Update.");
-            return updateLocation(con, scan, companyId);
+            return updateLocation(con, scan, companyId, logger);
         }
         catch (Exception e)
         {
@@ -912,7 +900,7 @@ public class Main
      * Updates a table, where the user selected LOCATION.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateLocation(Connection con, Scanner scan, int companyId)
+    public static boolean updateLocation(Connection con, Scanner scan, int companyId, Logger logger)
     {
         try
         {
@@ -976,7 +964,7 @@ public class Main
 
             PreparedStatement pstL = con.prepareStatement("UPDATE Location SET " + field + "=? WHERE companyId=?;");
             updateStringField(pstL, answer, companyId);
-            logger.info(pstL);
+            logger.info("" + pstL);
 
             return true;
         }
@@ -991,7 +979,7 @@ public class Main
      * Updates a table, where the user selected FULL TIME.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateFullTime(Connection con, Scanner scan)
+    public static boolean updateFullTime(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -1053,7 +1041,7 @@ public class Main
             {
                 updateFloatField(pstJ, floatAnswer, jobId);
             }
-            logger.info(pstJ);
+            logger.info("" + pstJ);
         }
         catch (Exception e)
         {
@@ -1067,7 +1055,7 @@ public class Main
      * Updates a table, where the user selected INTERNSHIP.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateInternship(Connection con, Scanner scan)
+    public static boolean updateInternship(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -1134,7 +1122,7 @@ public class Main
             {
                 updateFloatField(pstJ, floatAnswer, jobId);
             }
-            logger.info(pstJ);
+            logger.info("" + pstJ);
             return true;
         }
         catch (Exception e)
@@ -1148,7 +1136,7 @@ public class Main
      * Updates a table, where the user selected JOB.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateJob(Connection con, Scanner scan)
+    public static boolean updateJob(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -1216,11 +1204,11 @@ public class Main
                     System.out.println("There was an error updating.");
                     return false;
                 }
-                logger.info(pstJ);
+                logger.info("" + pstJ);
             }
 
             System.out.println("Continue to Competition Update.");
-            return updateCompetition(con, scan, jobId);
+            return updateCompetition(con, scan, jobId, logger);
         }
         catch (Exception e)
         {
@@ -1233,7 +1221,7 @@ public class Main
      * Updates a table, where the user selected COMPETITION.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateCompetition(Connection con, Scanner scan, int jobId)
+    public static boolean updateCompetition(Connection con, Scanner scan, int jobId, Logger logger)
     {
         try {
             System.out.println("The current information for this Job's Competition is: ");
@@ -1277,7 +1265,7 @@ public class Main
 
             PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET " + field + "=? WHERE jobId=?;");
             updateIntField(pstJ, answer, jobId);
-            logger.info(pstJ);
+            logger.info("" + pstJ);
         }
         catch (Exception e)
         {
@@ -1291,7 +1279,7 @@ public class Main
      * Updates a table, where the user selected MANAGER.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateManager(Connection con, Scanner scan)
+    public static boolean updateManager(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -1358,7 +1346,7 @@ public class Main
 
             PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET " + field + "=? WHERE managerId=?;");
             updateStringField(pstRJ, answer, managerId);
-            logger.info(pstJ);
+            logger.info("" + pstRJ);
             return true;
         }
         catch (Exception e)
@@ -1372,7 +1360,7 @@ public class Main
      * Updates a table, where the user selected RELATED JOBS.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateRelatedJobs(Connection con, Scanner scan)
+    public static boolean updateRelatedJobs(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -1409,7 +1397,7 @@ public class Main
 
             PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET " + updateString + "=? WHERE jobId=?;");
             updateIntField(pstRJ, relatedJob, jobId);
-            logger.info(pstJ);
+            logger.info("" + pstRJ);
         }
         catch (Exception e)
         {
@@ -1494,7 +1482,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the delete is successful, false otherwise
      */
-    public static boolean deleteCall(Connection con, Scanner scan, boolean fromGUI, int jobId)
+    public static boolean deleteCall(Connection con, Scanner scan, boolean fromGUI, int jobId, Logger logger)
     {
         try
         {
@@ -1619,22 +1607,22 @@ public class Main
 
             System.out.println("The record has been completely deleted.");
 
-            logger.info(pstJ);
-            logger.info(pstCom);
-            logger.info(pstRJ);
+            logger.info("" + pstJ);
+            logger.info("" + pstCom);
+            logger.info("" + pstRJ);
             if(company)
             {
-                logger.info(pstComP);
-                logger.info(pstLoc);
-                logger.info(pstManager);
+                logger.info("" + pstComP);
+                logger.info("" + pstLoc);
+                logger.info("" + pstManager);
             }
             if(type)
             {
-                logger.info(pstIn);
+                logger.info("" + pstIn);
             }
             else
             {
-                logger.info(pstF);
+                logger.info("" + pstF);
             }
 
             return true;
@@ -2193,7 +2181,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
-    public static boolean statistics(Connection con, Scanner scan)
+    public static boolean statistics(Connection con)
     {
         try
         {
@@ -2248,7 +2236,7 @@ public class Main
      * @param scan Scanner object
      * @return true if creation was successful, false otherwise
      */
-    public static boolean createNewManager(Connection con, Scanner scan)
+    public static boolean createNewManager(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -2302,7 +2290,7 @@ public class Main
             PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(companyId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?);");
             pstM.clearParameters();
             pstM.setInt(1, companyId);
-            success = createManager(pstM, scan);
+            success = createManager(pstM, scan, logger);
             if (!success)
             {
                 System.out.println("The manager creation failed. Please try again.");
@@ -2314,10 +2302,10 @@ public class Main
 
             if(companyCreate)
             {
-                logger.info(pstC);
-                logger.info(pstL);
+                logger.info("" + pstC);
+                logger.info("" + pstL);
             }
-            logger.info(pstM);
+            logger.info("" + pstM);
 
             return true;
         }
