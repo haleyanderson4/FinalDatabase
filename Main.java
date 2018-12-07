@@ -1977,6 +1977,10 @@ public class Main
             pst8F3.clearParameters();
             pst8F3.setInt(1, jobId);
             rs = pst8F3.executeQuery();
+            if (fromGUI)
+            {
+                gui.setRS(rs);
+            }
             while(rs.next())
             {
                 if(rs.getInt(1) == 0)
@@ -1989,10 +1993,6 @@ public class Main
                     System.out.println("Related Job 1: " + rs.getInt(2) + " Related Job 2: " + rs.getInt(3) + " Related Job 3: " + rs.getInt(4) + " Related Job 4: " + rs.getInt(5) + " Related Job 5: " + rs.getInt(6));
 
                 }
-            }
-            if (fromGUI)
-            {
-                gui.showTable(rs);
             }
 
             return true;

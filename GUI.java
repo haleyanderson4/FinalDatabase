@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 import java.lang.NumberFormatException;
@@ -20,6 +21,9 @@ import java.util.Scanner;
 
 public class GUI extends JPanel
 {
+  private JFrame f;
+  private JTable table;
+
   private JTextField jobField;
   private JTextField industry;
   private JTextField description;
@@ -53,6 +57,8 @@ public class GUI extends JPanel
 
   private NumberFormat intFormat;
 
+  private ResultSet rs;
+
   private JButton searchButton = new JButton("SEARCH");
 
   private Main main;
@@ -72,7 +78,7 @@ public class GUI extends JPanel
   {
     this.con = con;
     this.scan = scan;
-    JFrame f = new JFrame();
+    f = new JFrame();
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jobField = new JTextField(50);
     industry = new JTextField(25);
@@ -286,29 +292,38 @@ public class GUI extends JPanel
     //deleteCompany.setText("Delete company");
   }
 
+  public void setRS(ResultSet results)
+  {
+    this.rs = results;
+  }
+
   /**
   * Displays a result set that can be obtained via a select statement.
-  * @param rs the ResultSet to be displayed; will be obtained from main.
+  * The result set is a global variable that will be initialized from main when appropriate.
   * @TODO test
   */
-  public JPanel showTable(ResultSet rs)
+  private JPanel showTable(int rows, int cols)
   {
     JPanel panel = new JPanel();
-    JTable table = new JTable();
+    TableModel dataModel = new DefaultTableModel(rows, cols);
+    table = new JTable(dataModel);
     try
     {
       int numColumns = rs.getMetaData().getColumnCount();
+      rs.first();
       int rowCount = 1;
-      while (rs.next())
+      do
       {
-        Object[] row = new Object[numColumns];
+        System.out.println("next exists");
         for (int col = 0; col < numColumns; ++col)
         {
-          table.getModel().setValueAt(rs.getObject(col+1), rowCount, col);
+          table.getModel().setValueAt(rs.getObject(col+1), table.convertRowIndexToModel(rowCount), col);
+          //System.out.println("Hey " + table.getModel().getValueAt(rowCount, col));
         }
         rowCount++;
-      }
+      } while (rs.next());
       panel.add(table);
+      table.setVisible(true);
     }
     catch (Exception e)
     {
@@ -320,7 +335,6 @@ public class GUI extends JPanel
 
 
   //@TODO add more exception handling for save cases
-  //@TODO deal with repainting
   private class ButtonHandler implements ActionListener
   {
     @Override
@@ -454,16 +468,16 @@ public class GUI extends JPanel
           break;
         case("Confirm delete job"):
           deleteJob.setText("Delete job");
-          if (Main.deleteCall(con, scan, true, ((Number)jID.getValue()).intValue()))
-          {
-            JOptionPane.showMessageDialog(null, "Job id " + jID.getValue() + " successfully deleted.");
-            break;
-            //@TODO sometimes appears multiple times. why?
-          }
-          else
-          {
-            JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
-          }
+          // if (Main.deleteCall(con, scan, true, ((Number)jID.getValue()).intValue()))
+          // {
+          //   JOptionPane.showMessageDialog(null, "Job id " + jID.getValue() + " successfully deleted.");
+          //   break;
+          //   //@TODO sometimes appears multiple times. why?
+          // }
+          // else
+          // {
+          //   JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
+          // }
           break;
         case("Display all jobs"):
           resetButtons();
@@ -518,6 +532,10 @@ public class GUI extends JPanel
           if(!Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true))
           {
             JOptionPane.showMessageDialog(null, "There was an error with your request. Check to ensure your id number is valid.");
+          }
+          else
+          {
+            add(showTable(2, 6));
           }
           break;
         default:
