@@ -79,7 +79,7 @@ public class Main
 
                 if(editOption == 1) //prelim completed
                 {
-                    boolean success = queryMethod(con, scan);
+                    boolean success = queryMethod(con, scan, false);
                     if(!success)
                     {
                         System.out.println("The Query failed. Please try again.");
@@ -207,7 +207,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the call was successful, false otherwise
      */
-    public static boolean queryMethod(Connection con, Scanner scan)
+    public static boolean queryMethod(Connection con, Scanner scan, boolean fromGUI)
     {
         try
         {
@@ -216,16 +216,25 @@ public class Main
             ResultSet rs = pst1.executeQuery();
             String type = "Full Time";
 
-            while (rs.next())
+            if (fromGUI)
             {
-                if(rs.getBoolean(6))
-                {
-                    type = "Internship";
-                }
-                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                        + " Type: " + type);
+              String[] columnNames = {"Job ID", "Title", "Industry", "Description", "Company ID", "Type"};
+              rs.last();
+              gui.add(gui.showTable(rs, rs.getRow()+1, 6, columnNames));
             }
-            System.out.println("");
+            else
+            {
+              while (rs.next())
+              {
+                  if(rs.getBoolean(6))
+                  {
+                      type = "Internship";
+                  }
+                  System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
+                          + " Type: " + type);
+              }
+              System.out.println("");
+            }
             return true;
         }
         catch(Exception e)

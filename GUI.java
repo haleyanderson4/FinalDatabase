@@ -316,11 +316,19 @@ public class GUI extends JPanel
   * @param rs The result set to be displayed
   * @TODO test
   */
-  private JPanel showTable(ResultSet rs, int rows, int cols)
+  public JPanel showTable(ResultSet rs, int rows, int cols, String[] columnNames)
   {
     JPanel panel = new JPanel();
-    TableModel dataModel = new DefaultTableModel(rows, cols);
+    TableModel dataModel = new DefaultTableModel(rows, cols) {
+      @Override
+      public String getColumnName(int index)
+      {
+        return columnNames[index];
+      }
+    };
     table = new JTable(dataModel);
+    JScrollPane scrollpane = new JScrollPane(table);
+    scrollpane.setPreferredSize(new Dimension(600,400));
     try
     {
       int numColumns = rs.getMetaData().getColumnCount();
@@ -328,15 +336,14 @@ public class GUI extends JPanel
       int rowCount = 1;
       do
       {
-        System.out.println("next exists");
         for (int col = 0; col < numColumns; ++col)
         {
           table.getModel().setValueAt(rs.getObject(col+1), table.convertRowIndexToModel(rowCount), col);
         }
         rowCount++;
       } while (rs.next());
-      panel.add(table);
-      table.setVisible(true);
+      //panel.add(table);
+      panel.add(scrollpane);
     }
     catch (Exception e)
     {
@@ -579,6 +586,7 @@ public class GUI extends JPanel
           break;
         case("Display all jobs"):
           resetButtons();
+          Main.queryMethod(con, scan, true);
           break;
         case("Search jobs"):
           resetButtons();
