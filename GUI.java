@@ -60,6 +60,7 @@ public class GUI extends JPanel
   private ResultSet rsInfo;
   private ResultSet rsType;
   private ResultSet rsRelated;
+  private boolean isInternship;
 
   private JButton searchButton = new JButton("SEARCH");
 
@@ -299,9 +300,10 @@ public class GUI extends JPanel
     rsInfo = rs;
   }
 
-  public void setRSType(ResultSet rs)
+  public void setRSType(ResultSet rs, boolean isInternship)
   {
     rsType = rs;
+    this.isInternship = isInternship;
   }
 
   public void setRSRelated(ResultSet rs)
@@ -344,16 +346,41 @@ public class GUI extends JPanel
 
   }
 
+  private String isInternship(boolean isInternship)
+  {
+    if (isInternship) return "Internship";
+    else return "Full time";
+  }
+
   private JPanel displayInfo()
   {
     JPanel panel = new JPanel();
     try
     {
       rsInfo.first();
+      rsRelated.first();
       String info = "<html><b>Job ID:</b> " + rsInfo.getInt(1) + " <br><b>Job Title:</b> " + rsInfo.getString(2) + "<br><b>Industry:</b> " + rsInfo.getString(3) + "<br><b>Description:</b> " + rsInfo.getString(4) + "<br><b>Company ID:</b> " + rsInfo.getInt(5)
-              + "<br><b>Type:</b> Full Time<br>"
+              + "<br><b>Type:</b>" + isInternship(isInternship) + "<br>"
               + "<b>Company Name:</b> " + rsInfo.getString(6) + "<br><b>Number of Employees:</b> " + rsInfo.getInt(7) + "<br><b>Yearly Revenue:</b> " + rsInfo.getFloat(8) + "<br><b>Stock Price:</b> " + rsInfo.getFloat(9) + "<br>"
               + "<b>Location Area:</b> " + rsInfo.getString(10) + "<br><b>Address:</b> " + rsInfo.getString(11) + ", " + rsInfo.getString(12) + "</html>";
+      panel.add(new JLabel(info), "align label");
+      if (isInternship)
+      {
+        rsType.first();
+        info = "<html><br><b>Internship Pay Period:</b> " + rsType.getString(1) + "<br><b>Hourly Rate: </b>" + rsType.getFloat(2) + "<br><b>Season:</b> " + rsType.getString(3) + "</html>";
+      }
+      else
+      {
+        rsType.first();
+        info = "<html><br><b>Yearly Salary:</b>" + rsType.getFloat(1) + "<br><b>Number of Stock Options: </b>" + rsType.getInt(2) + "<br><b>Signing Bonus: </b> " + rsType.getFloat(3) + "</html>";
+      }
+      if (rsRelated.getInt(1) != 0)
+      {
+        info = "<html><br><b>Related Job 1:</b> " + rsRelated.getInt(2) + " <br><b>Related Job 2:</b> " + rsRelated.getInt(3) + " <br><b>Related Job 3:</b> " + rsRelated.getInt(4) + "<br><b>Related Job 4:</b> " + rsRelated.getInt(5) + " <br><b>Related Job 5: </b>" + rsRelated.getInt(6) + "</html>";
+      }
+      else {
+        info = "No related jobs.";
+      }
       panel.add(new JLabel(info), "align label");
     }
     catch (Exception e)

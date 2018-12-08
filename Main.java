@@ -1935,6 +1935,7 @@ public class Main
             {
                 type = rsType.getBoolean(1);
             }
+            System.out.println(type);
 
             //@TODO deal with locationArea
             String pstString = "SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, c.companyName, c.numEmployees, c.yearlyRevenue, c.stockPrice, l.locationArea, l.street, l.city, l.state FROM Job j, Company c, Competition co, Location l WHERE j.jobId=co.jobId AND j.companyId=c.companyId AND j.companyId=l.companyId AND j.jobId=?;";
@@ -1978,7 +1979,8 @@ public class Main
             }
             if (fromGUI)
             {
-              gui.setRSType(rs);
+              System.out.println("set type");
+              gui.setRSType(rs, type);
             }
 
             PreparedStatement pst8F3 = con.prepareStatement("SELECT COUNT(*), related1, related2, related3, related4, related5 FROM RelatedJobs WHERE jobId=?;");
