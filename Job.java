@@ -7,22 +7,23 @@ public class Job
   int companyId;
   int managerId;
   String type; //@TODO change to char
+  int numOpenSpots;
+  int numApplicants;
 
   public Job()
   {
 
   }
-
-  public Job(int jobId, String jobTitle, String industry, String description, int companyId, int managerId, String type)
-  {
-    this.jobId = jobId;
-    this.jobTitle = jobTitle;
-    this.industry = industry;
-    this.description = description;
-    this.companyId = companyId;
-    this.managerId = managerId;
-    this.type = type;
-  }
+  // 
+  // public Job(String jobTitle, String industry, String description, int companyId, int managerId, String type)
+  // {
+  //   this.jobTitle = jobTitle;
+  //   this.industry = industry;
+  //   this.description = description;
+  //   this.companyId = companyId;
+  //   this.managerId = managerId;
+  //   this.type = type;
+  // }
 
   public void jobCreated()
   {

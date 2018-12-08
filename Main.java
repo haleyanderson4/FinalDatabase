@@ -42,7 +42,7 @@ public class Main
 
         try {
             con = Config.getMySqlConnection(); //connect to database
-            gui = new GUI(con, scan); //GUI TEST
+            gui = new GUI(con, scan, logger); //GUI TEST
             boolean loop = true;
             boolean isNotFirst = false;
             while(loop)
@@ -289,7 +289,7 @@ public class Main
             PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, isInternship) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
-            success = createJob(pstJ, pstComp, scan);
+            success = createJob(pstJ, pstComp, scan, new Job(), false);
             String typeS = getType(scan, pstJ);
             if(!success || typeS.equals("nope"))
             {
@@ -496,9 +496,11 @@ public class Main
      * Gathers information for the company field.
      * @param pstJ is the Prepared Statement for the Job table.
      * @param pstComp is the Prepared Statement for the Competition table.
+     * @param job is a Job object that contains the appropriate data, if gotten from GUI.
+     * @param fromGUI is set to true if called from the GUI, false if called from command line.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan)
+    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan, Job job, boolean fromGUI)
     {
         try
         {
@@ -506,12 +508,22 @@ public class Main
             String industry = "";
             String description = "";
 
-            System.out.println("Enter the Job's Title (length 25)");
-            jobTitle = scan.nextLine();
-            System.out.println("Enter the Job's Industry (length 25)");
-            industry = scan.nextLine();
-            System.out.println("Enter the Job's Description (length 100)");
-            description = scan.nextLine();
+            if (!fromGUI)
+            {
+              System.out.println("Enter the Job's Title (length 25)");
+              jobTitle = scan.nextLine();
+              System.out.println("Enter the Job's Industry (length 25)");
+              industry = scan.nextLine();
+              System.out.println("Enter the Job's Description (length 100)");
+              description = scan.nextLine();
+            }
+
+            if (fromGUI)
+            {
+              jobTitle = job.jobTitle;
+              industry = job.industry;
+              description = job.description;
+            }
 
             if(!inputCheck(description, 100) || !inputCheck(jobTitle, 25) || !inputCheck(industry, 25))
             {
@@ -526,12 +538,21 @@ public class Main
             int numOpenSpots;
             int numApplicants;
 
-            System.out.println("Enter the Job's Number of Open Spots");
-            numOpenSpots = scan.nextInt();
-            scan.nextLine();
-            System.out.println("Enter the Job's Number of Applicants");
-            numApplicants = scan.nextInt();
-            scan.nextLine();
+            if (!fromGUI)
+            {
+              System.out.println("Enter the Job's Number of Open Spots");
+              numOpenSpots = scan.nextInt();
+              scan.nextLine();
+              System.out.println("Enter the Job's Number of Applicants");
+              numApplicants = scan.nextInt();
+              scan.nextLine();
+            }
+
+            if (fromGUI)
+            {
+              numOpenSpots = job.numOpenSpots;
+              numApplicants = job.numApplicants;
+            }
 
             pstComp.clearParameters();
             pstComp.setInt(2, numOpenSpots);

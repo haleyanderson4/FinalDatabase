@@ -24,13 +24,16 @@ public class GUI extends JPanel
   private JFrame f;
   private JTable table;
 
-  private JTextField jobField;
-  private JTextField industry;
-  private JTextField description;
   private JFormattedTextField jID;
   private JFormattedTextField cID;
   private JFormattedTextField mID;
+
+  private JTextField jobField;
+  private JTextField industry;
+  private JTextField description;
   private JTextField type;
+  private JFormattedTextField numOpenSpots;
+  private JFormattedTextField numApplicants;
   private JButton createJob = new JButton("New job");
 
   private JTextField companyName;
@@ -68,9 +71,12 @@ public class GUI extends JPanel
 
   private JButton searchButton = new JButton("SEARCH");
 
+  //private JComboBox categories; //@TODO possibly delete
+
   private Main main;
   Connection con;
   Scanner scan;
+  Logger logger;
 
   // public static void main(String[] args)
   // {
@@ -81,10 +87,11 @@ public class GUI extends JPanel
   //   f.setVisible(true);
   // }
 
-  public GUI(Connection con, Scanner scan)
+  public GUI(Connection con, Scanner scan, Logger logger)
   {
     this.con = con;
     this.scan = scan;
+    this.logger = logger;
     f = new JFrame();
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jobField = new JTextField(50);
@@ -97,6 +104,10 @@ public class GUI extends JPanel
     cID.setValue(new Integer(1)); //@TODO don't have a default int value, or commit
     mID = new JFormattedTextField(intFormat);
     mID.setValue(new Integer(1));
+    numOpenSpots = new JFormattedTextField(intFormat);
+    numOpenSpots.setValue(new Integer(0));
+    numApplicants = new JFormattedTextField(intFormat);
+    numApplicants.setValue(new Integer(0));
     type = new JTextField(1);
     companyName = new JTextField(50);
     numEmployees = new JFormattedTextField(intFormat);
@@ -126,7 +137,8 @@ public class GUI extends JPanel
             || industry.getText().trim().isEmpty()
             || description.getText().trim().isEmpty()
             || cID.getText().trim().isEmpty()
-            || mID.getText().trim().isEmpty()
+            || numOpenSpots.getText().trim().isEmpty()
+            || numApplicants.getText().trim().isEmpty()
             || type.getText().trim().isEmpty());
   }
 
@@ -202,6 +214,10 @@ public class GUI extends JPanel
     panel.add(description, "wrap");
     panel.add(new JLabel("Company ID"), "align label");
     panel.add(cID, "wrap");
+    panel.add(new JLabel("Number of open spots"), "align label");
+    panel.add(numOpenSpots, "wrap");
+    panel.add(new JLabel("Current number of applicants"), "align label");
+    panel.add(numApplicants, "wrap");
     panel.add(new JLabel("Type (I for internship, F for full-time)"), "align label");
     panel.add(type, "wrap");
     return panel;
@@ -287,8 +303,8 @@ public class GUI extends JPanel
     // searchButton.addActionListener(new ButtonHandler());
     panel.add(new JLabel("Choose a category to update:"), "align label");
     String[] options = {"General information", "Full-time specific info", "Internship specific info", "Related jobs"};
-    JComboBox jobCategories = new JComboBox(options);
-    panel.add(jobCategories);
+    categories = new JComboBox(options);
+    panel.add(categories);
     return panel;
   }
 
@@ -318,19 +334,6 @@ public class GUI extends JPanel
   //   panel.add(specificCategories);
   // }
 
-  /**
-  * Sets all buttons back to their original state except the current button.
-  * @TODO may not be necessary - check
-  */
-  private void resetButtonsExcept(JButton button)
-  {
-    if (!button.equals(createJob)) createJob.setText("Create job");
-    if (!button.equals(createManager)) createManager.setText("Create manager");
-    if (!button.equals(createCompany)) createCompany.setText("Create company");
-    if (!button.equals(deleteJob)) deleteJob.setText("Delete job");
-    if (!button.equals(deleteManager)) deleteManager.setText("Delete manager");
-    if (!button.equals(deleteCompany)) deleteCompany.setText("Delete company");
-  }
 
   private void resetButtons()
   {
@@ -395,6 +398,7 @@ public class GUI extends JPanel
       } while (rs.next());
       //panel.add(table);
       panel.add(scrollpane);
+      panel.add(initButtons(), BorderLayout.CENTER);
     }
     catch (Exception e)
     {
@@ -523,7 +527,6 @@ public class GUI extends JPanel
             j.industry = industry.getText();
             j.description = description.getText();
             j.companyId = ((Number)cID.getValue()).intValue();
-            j.managerId = ((Number)mID.getValue()).intValue();
             j.type = type.getText();
             j.jobCreated();
             //main.getJobInfo(j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type);
