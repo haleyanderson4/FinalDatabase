@@ -53,6 +53,10 @@ public class GUI extends JPanel
   private JButton searchJobs = new JButton("Search jobs");
   private JButton getJobInfo = new JButton("Get info on a job");
 
+  private JButton updateJob = new JButton("Update job");
+  private JButton updateCompany = new JButton("Update company");
+  private JButton updateManager = new JButton("Update manager");
+
   private JRadioButton internship, fullTime, eitherType;
 
   private NumberFormat intFormat;
@@ -151,6 +155,12 @@ public class GUI extends JPanel
     createCompany.addActionListener(new ButtonHandler());
     panel.add(createManager);
     createManager.addActionListener(new ButtonHandler());
+    panel.add(updateJob);
+    updateJob.addActionListener(new ButtonHandler());
+    panel.add(updateCompany);
+    updateCompany.addActionListener(new ButtonHandler());
+    panel.add(updateManager);
+    updateManager.addActionListener(new ButtonHandler());
     panel.add(searchJobs);
     searchJobs.addActionListener(new ButtonHandler());
     panel.add(deleteJob);
@@ -259,13 +269,54 @@ public class GUI extends JPanel
   private JPanel getJobInfoFields()
   {
     JPanel panel = new JPanel();
-    panel.add(new JLabel("Job Id:"), "align label");
+    panel.add(new JLabel("Job ID:"), "align label");
     panel.add(jID, "wrap");
     searchButton.setText("SEARCH FOR JOB");
     panel.add(searchButton);
     searchButton.addActionListener(new ButtonHandler());
     return panel;
   }
+
+  private JPanel updateJobFields()
+  {
+    JPanel panel = new JPanel();
+    panel.add(new JLabel("Job ID to update:"), "align label");
+    panel.add(jID, "wrap");
+    // searchButton.setText("GET CURRENT JOB INFO");
+    // panel.add(searchButton);
+    // searchButton.addActionListener(new ButtonHandler());
+    panel.add(new JLabel("Choose a category to update:"), "align label");
+    String[] options = {"General information", "Full-time specific info", "Internship specific info", "Related jobs"};
+    JComboBox jobCategories = new JComboBox(options);
+    panel.add(jobCategories);
+    return panel;
+  }
+
+  // private void test()
+  // {
+  //   panel.add(new JLabel("Choose a specific field to update:"), "align label");
+  //   JComboBox specificCategories;
+  //   String[] specificOptions;
+  //   switch(jobCategories.getSelectedOption())
+  //   {
+  //     case "General information":
+  //       specificOptions = {"Title", "Industry", "Description"};
+  //       break;
+  //     case "Full-time specific info":
+  //       specificOptions = {"Number of stock options", "Signing bonus", "Salary"};
+  //       break;
+  //     case "Internship specific info":
+  //       specificOptions = {"Pay period", "Rate", "Season"};
+  //       break;
+  //     case "Related jobs":
+  //       specificOptions = {"Related job 1", "Related job 2", "Related job 3", "Related job 4", "Related job 5"};
+  //       break;
+  //     case default:
+  //       break;
+  //   }
+  //   specificCategories = new JComboBox(specificOptions);
+  //   panel.add(specificCategories);
+  // }
 
   /**
   * Sets all buttons back to their original state except the current button.
@@ -584,9 +635,17 @@ public class GUI extends JPanel
           //   JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
           // }
           break;
+        case("Update job"):
+          resetButtons();
+          updateJob.setText("Confirm update job");
+          add(updateJobFields());
+          break;
         case("Display all jobs"):
           resetButtons();
-          Main.queryMethod(con, scan, true);
+          if (!Main.queryMethod(con, scan, true))
+          {
+            JOptionPane.showMessageDialog(null, "There was an error with your request. Please try again later.");
+          }
           break;
         case("Search jobs"):
           resetButtons();
