@@ -57,7 +57,9 @@ public class GUI extends JPanel
 
   private NumberFormat intFormat;
 
-  private ResultSet rs;
+  private ResultSet rsInfo;
+  private ResultSet rsType;
+  private ResultSet rsRelated;
 
   private JButton searchButton = new JButton("SEARCH");
 
@@ -292,17 +294,27 @@ public class GUI extends JPanel
     //deleteCompany.setText("Delete company");
   }
 
-  public void setRS(ResultSet results)
+  public void setRSInfo(ResultSet rs)
   {
-    this.rs = results;
+    rsInfo = rs;
+  }
+
+  public void setRSType(ResultSet rs)
+  {
+    rsType = rs;
+  }
+
+  public void setRSRelated(ResultSet rs)
+  {
+    rsRelated = rs;
   }
 
   /**
   * Displays a result set that can be obtained via a select statement.
-  * The result set is a global variable that will be initialized from main when appropriate.
+  * @param rs The result set to be displayed
   * @TODO test
   */
-  private JPanel showTable(int rows, int cols)
+  private JPanel showTable(ResultSet rs, int rows, int cols)
   {
     JPanel panel = new JPanel();
     TableModel dataModel = new DefaultTableModel(rows, cols);
@@ -318,7 +330,6 @@ public class GUI extends JPanel
         for (int col = 0; col < numColumns; ++col)
         {
           table.getModel().setValueAt(rs.getObject(col+1), table.convertRowIndexToModel(rowCount), col);
-          //System.out.println("Hey " + table.getModel().getValueAt(rowCount, col));
         }
         rowCount++;
       } while (rs.next());
@@ -331,6 +342,25 @@ public class GUI extends JPanel
     }
     return panel;
 
+  }
+
+  private JPanel displayInfo()
+  {
+    JPanel panel = new JPanel();
+    try
+    {
+      rsInfo.first();
+      String info = "<html><b>Job ID:</b> " + rsInfo.getInt(1) + " <br><b>Job Title:</b> " + rsInfo.getString(2) + "<br><b>Industry:</b> " + rsInfo.getString(3) + "<br><b>Description:</b> " + rsInfo.getString(4) + "<br><b>Company ID:</b> " + rsInfo.getInt(5)
+              + "<br><b>Type:</b> Full Time<br>"
+              + "<b>Company Name:</b> " + rsInfo.getString(6) + "<br><b>Number of Employees:</b> " + rsInfo.getInt(7) + "<br><b>Yearly Revenue:</b> " + rsInfo.getFloat(8) + "<br><b>Stock Price:</b> " + rsInfo.getFloat(9) + "<br>"
+              + "<b>Location Area:</b> " + rsInfo.getString(10) + "<br><b>Address:</b> " + rsInfo.getString(11) + ", " + rsInfo.getString(12) + "</html>";
+      panel.add(new JLabel(info), "align label");
+    }
+    catch (Exception e)
+    {
+      JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
+    }
+    return panel;
   }
 
 
@@ -535,7 +565,7 @@ public class GUI extends JPanel
           }
           else
           {
-            add(showTable(2, 6));
+            add(displayInfo());
           }
           break;
         default:

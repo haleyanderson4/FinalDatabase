@@ -1942,6 +1942,10 @@ public class Main
             pst8F.clearParameters();
             pst8F.setInt(1, jobId);
             ResultSet rs = pst8F.executeQuery();
+            if (fromGUI)
+            {
+              gui.setRSInfo(rs);
+            }
             while (rs.next()) //update
             {
                 System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
@@ -1972,6 +1976,10 @@ public class Main
                     System.out.println("Internship Pay Period: " + rs.getString(1) + " Rate: " + rs.getFloat(2) + " Season: " + rs.getString(3));
                 }
             }
+            if (fromGUI)
+            {
+              gui.setRSType(rs);
+            }
 
             PreparedStatement pst8F3 = con.prepareStatement("SELECT COUNT(*), related1, related2, related3, related4, related5 FROM RelatedJobs WHERE jobId=?;");
             pst8F3.clearParameters();
@@ -1979,7 +1987,7 @@ public class Main
             rs = pst8F3.executeQuery();
             if (fromGUI)
             {
-                gui.setRS(rs);
+                gui.setRSRelated(rs);
             }
             while(rs.next())
             {
