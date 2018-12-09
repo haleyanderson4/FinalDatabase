@@ -627,16 +627,16 @@ public class GUI extends JPanel
           break;
         case("Confirm delete job"):
           deleteJob.setText("Delete job");
-          // if (Main.deleteCall(con, scan, true, ((Number)jID.getValue()).intValue()))
-          // {
-          //   JOptionPane.showMessageDialog(null, "Job id " + jID.getValue() + " successfully deleted.");
-          //   break;
-          //   //@TODO sometimes appears multiple times. why?
-          // }
-          // else
-          // {
-          //   JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
-          // }
+          if (Main.deleteCall(con, scan, true, ((Number)jID.getValue()).intValue(), logger))
+          {
+            JOptionPane.showMessageDialog(null, "Job id " + jID.getValue() + " successfully deleted.");
+            break;
+            //@TODO sometimes appears multiple times. why?
+          }
+          else
+          {
+            JOptionPane.showMessageDialog(null, "There was an error with your delete request. Check to ensure your id number is valid.");
+          }
           break;
         case("Update job"):
           resetButtons();

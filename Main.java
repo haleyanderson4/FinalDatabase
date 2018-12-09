@@ -2488,14 +2488,14 @@ public class Main
         return true;
     }
 
-
-    //GUI METHODS
-    /**
-     * Gets info from the GUI about job components.
-     * @TODO figure out what we're doing with said data.
-     */
-    public static void getJobInfo(String jobTitle, String industry, String description, int companyId, int managerId, String type)
+    public static void writeAllToCSV(Connection con)
     {
-
+      FileWriter fw = new FileWriter("CompanyDatabase.csv");
+      PreparedStatement pst = con.prepareStatement("SELECT * FROM Company");
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())
+      {
+        fw.append();
+      }
     }
 }
