@@ -8,6 +8,10 @@ public class csvGenerator
 {
     public static boolean write(Connection con) throws FileNotFoundException
     {
+      System.out.println("JobWriter" + jobWriter(con));
+      System.out.println("Company" + companyWriter(con));
+      System.out.println("Manager" + managerWriter(con));
+      System.out.println("Internship" + internshipWriter(con));
         if(!jobWriter(con) || !companyWriter(con) || !managerWriter(con) || !internshipWriter(con) || !fullTimeWriter(con))
         {
             return false;
@@ -50,27 +54,39 @@ public class csvGenerator
             sb.append("Related Job 5");
             sb.append('\n');
 
-            PreparedStatement pst = con.prepareStatement("SELECT j.jobdId, j.jobTitle, j.industry, j.description, j.companyId, j.isInternship, c.numOpenSpots, c.numApplicants, r.related1, r.related2, r.related3, r.related4, r.related5 FROM Job j, Competition c, RelatedJobs r");
+            PreparedStatement pst = con.prepareStatement("SELECT j.jobdId, j.jobTitle, j.industry, j.description, j.companyId, j.isInternship, c.numOpenSpots, c.numApplicants, r.related1, r.related2, r.related3, r.related4, r.related5 FROM Job j, Competition c, RelatedJobs r WHERE j.jobID = c.jobID AND j.jobID = r.jobID");
             ResultSet rs = pst.executeQuery();
             while(rs.next())
             {
                 sb.append(rs.getInt(1));
+                sb.append(',');
                 sb.append(rs.getString(2));
+                sb.append(',');
                 sb.append(rs.getString(3));
+                sb.append(',');
                 sb.append(rs.getString(4));
+                sb.append(',');
                 sb.append(rs.getInt(5));
+                sb.append(',');
                 String isInternship = "Full Time";
                 if(rs.getBoolean(6))
                 {
                     isInternship = "Internship";
                 }
                 sb.append(isInternship);
+                sb.append(',');
                 sb.append(rs.getInt(6));
+                sb.append(',');
                 sb.append(rs.getInt(7));
+                sb.append(',');
                 sb.append(rs.getInt(8));
+                sb.append(',');
                 sb.append(rs.getInt(9));
+                sb.append(',');
                 sb.append(rs.getInt(10));
+                sb.append(',');
                 sb.append(rs.getInt(11));
+                sb.append(',');
                 sb.append(rs.getInt(12));
                 sb.append('\n');
             }
@@ -116,13 +132,21 @@ public class csvGenerator
             while(rs.next())
             {
                 sb.append(rs.getInt(1));
+                sb.append(',');
                 sb.append(rs.getString(2));
+                sb.append(',');
                 sb.append(rs.getInt(3));
+                sb.append(',');
                 sb.append(rs.getFloat(4));
+                sb.append(',');
                 sb.append(rs.getFloat(5));
+                sb.append(',');
                 sb.append(rs.getString(6));
+                sb.append(',');
                 sb.append(rs.getString(7));
+                sb.append(',');
                 sb.append(rs.getString(8));
+                sb.append(',');
                 sb.append(rs.getString(9));
                 sb.append('\n');
             }
@@ -160,14 +184,18 @@ public class csvGenerator
             while(rs.next())
             {
                 sb.append(rs.getInt(1));
+                sb.append(',');
                 sb.append(rs.getInt(2));
+                sb.append(',');
                 sb.append(rs.getString(3));
+                sb.append(',');
                 String isInternship = "No";
                 if(rs.getBoolean(4))
                 {
                     isInternship = "Yes";
                 }
                 sb.append(isInternship);
+                sb.append(',');
                 sb.append(rs.getInt(5));
                 sb.append('\n');
             }
@@ -203,8 +231,11 @@ public class csvGenerator
             while(rs.next())
             {
                 sb.append(rs.getInt(1));
+                sb.append(',');
                 sb.append(rs.getFloat(2));
+                sb.append(',');
                 sb.append(rs.getString(3));
+                sb.append(',');
                 sb.append(rs.getString(4));
                 sb.append('\n');
             }
@@ -240,8 +271,11 @@ public class csvGenerator
             while(rs.next())
             {
                 sb.append(rs.getInt(1));
+                sb.append(',');
                 sb.append(rs.getInt(2));
+                sb.append(',');
                 sb.append(rs.getFloat(3));
+                sb.append(',');
                 sb.append(rs.getFloat(4));
                 sb.append('\n');
             }
