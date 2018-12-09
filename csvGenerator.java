@@ -37,7 +37,7 @@ public class csvGenerator
       sb.append("Related Job 5");
       sb.append('\n');
 
-      PreparedStatement pst = con.prepareStatement("SELECT r.jobID, r.related1, r.related2, r.related3, r.related4, r.related5 FROM RelatedJobs r");
+      PreparedStatement pst = con.prepareStatement("SELECT r.jobId, r.related1, r.related2, r.related3, r.related4, r.related5 FROM RelatedJobs r");
       ResultSet rs = pst.executeQuery();
 
       while (rs.next())
@@ -116,7 +116,7 @@ public class csvGenerator
       sb.append("Is Internship");
       sb.append('\n');
 
-      PreparedStatement pst = con.prepareStatement("SELECT j.jobdId, j.jobTitle, j.industry, j.description, j.companyId, j.isInternship FROM Job j");
+      PreparedStatement pst = con.prepareStatement("SELECT j.jobId, j.jobTitle, j.industry, j.description, j.companyId, j.isInternship FROM Job j");
       ResultSet rs = pst.executeQuery();
       while(rs.next())
       {
@@ -255,7 +255,7 @@ public class csvGenerator
       sb.append("Years at Company");
       sb.append('\n');
 
-      PreparedStatement pst = con.prepareStatement("SELECT * FROM Manager");
+      PreparedStatement pst = con.prepareStatement("SELECT managerId, companyId, name, technicalExperience, yearsAtCompany FROM Manager");
       ResultSet rs = pst.executeQuery();
       while(rs.next())
       {
@@ -265,12 +265,12 @@ public class csvGenerator
         sb.append(',');
         sb.append(rs.getString(3));
         sb.append(',');
-        String isInternship = "No";
+        String hasExperience = "No";
         if(rs.getBoolean(4))
         {
-          isInternship = "Yes";
+          hasExperience = "Yes";
         }
-        sb.append(isInternship);
+        sb.append(hasExperience);
         sb.append(',');
         sb.append(rs.getInt(5));
         sb.append('\n');
@@ -302,15 +302,15 @@ public class csvGenerator
       sb.append("Season");
       sb.append('\n');
 
-      PreparedStatement pst = con.prepareStatement("SELECT * FROM Internship");
+      PreparedStatement pst = con.prepareStatement("SELECT jobId, payPeriod, rate, season FROM Internship");
       ResultSet rs = pst.executeQuery();
       while(rs.next())
       {
         sb.append(rs.getInt(1));
         sb.append(',');
-        sb.append(rs.getFloat(2));
+        sb.append(rs.getString(2));
         sb.append(',');
-        sb.append(rs.getString(3));
+        sb.append(rs.getFloat(3));
         sb.append(',');
         sb.append(rs.getString(4));
         sb.append('\n');
@@ -335,9 +335,9 @@ public class csvGenerator
       StringBuilder sb = new StringBuilder();
       sb.append("Job ID");
       sb.append(',');
-      sb.append("Number of Stock Options");
-      sb.append(',');
       sb.append("Signing Bonus");
+      sb.append(',');
+      sb.append("Number of Stock Options");
       sb.append(',');
       sb.append("Salary");
       sb.append('\n');
@@ -348,9 +348,9 @@ public class csvGenerator
       {
         sb.append(rs.getInt(1));
         sb.append(',');
-        sb.append(rs.getInt(2));
+        sb.append(rs.getFloat(2));
         sb.append(',');
-        sb.append(rs.getFloat(3));
+        sb.append(rs.getInt(3));
         sb.append(',');
         sb.append(rs.getFloat(4));
         sb.append('\n');
