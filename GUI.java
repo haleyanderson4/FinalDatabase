@@ -71,7 +71,7 @@ public class GUI extends JPanel
 
   private JButton searchButton = new JButton("SEARCH");
 
-  //private JComboBox categories; //@TODO possibly delete
+  private JComboBox categories;
 
   private Main main;
   Connection con;
@@ -308,6 +308,19 @@ public class GUI extends JPanel
     return panel;
   }
 
+  private JPanel updateManagerFields()
+  {
+    JPanel panel = new Jpanel();
+    panel.add(new JLabel("Manager ID to update:"), "align label");
+    panel.add(mID, "wrap");
+    panel.add(new JLabel("Updatable fields: Only fill in data for the fields you wish to update."), "align label");
+    panel.add(new JLabel("Manager name"), "align label");
+    panel.add(managerName);
+    panel.add(new JLabel("Years at company"), "align label");
+    panel.add(yearsAtCompany);
+    return panel;
+  }
+
   // private void test()
   // {
   //   panel.add(new JLabel("Choose a specific field to update:"), "align label");
@@ -484,6 +497,11 @@ public class GUI extends JPanel
     return panel;
   }
 
+  public void displayMessage(String msg)
+  {
+    JOptionPane.showMessageDialog(null, msg);
+  }
+
   /**
   * @TODO
   */
@@ -643,6 +661,18 @@ public class GUI extends JPanel
           updateJob.setText("Confirm update job");
           add(updateJobFields());
           break;
+        case("Update manager"):
+          resetButtons();
+          updateManager.setText("Confirm update manager");
+          add(updateManagerFields());
+          break;
+        case("Confirm update manager"):
+          if (!managerName.getText().trim().isEmpty())
+            Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET name= WHERE managerId=?"), ((Number)mID.getValue()).intValue(), false)
+          if (!yearsAtCompany.getText().trim().isEmpty())
+            Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET yearsAtCompany= WHERE managerID=?"))
+          resetButtons();
+
         case("Display all jobs"):
           resetButtons();
           if (!Main.queryMethod(con, scan, true))

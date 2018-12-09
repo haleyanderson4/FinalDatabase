@@ -57,7 +57,7 @@ public class Main
                     isNotFirst = true;
 
                     System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
-                            + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n11. Generate Database Report \n11. Quit");
+                            + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n10. Generate Database Report \n11. Quit");
 
                     System.out.println("What would you like to do: ");
                     editOption = scan.nextInt();
@@ -773,7 +773,7 @@ public class Main
     }
 
 
-    //OPTION 3 METHODS
+    // METHODS
     /**
      * Parent method to update database tables, where the user selected UPDATE INFORMATION.
      * Method calls updateTable methods to execute the requested updates.
@@ -2486,6 +2486,40 @@ public class Main
             return false;
         }
         return true;
+    }
+
+    /**
+    * Sometimes you just need to execute a prepared statement.
+    * This is only to be called from the GUI; as such, does not need a fromGUI variable.
+    * @param pst the PreparedStatement to be executed; to have one param (an id).
+    * @param id the id parameter, whatever it may be.
+    * @param needsResultSet if the query has a resultset or not.
+    * @return true if the execution was successful, false otherwise
+    */
+    public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id, boolean needsResultSet)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setInt(1, id);
+        if (needsResultSet)
+        {
+          ResultSet rs = pst.executeQuery();
+          gui.setRSInfo(rs);
+        }
+        else
+        {
+          pst.executeQuery();
+        }
+        logger.info("" + pst);
+        return true;
+      }
+      catch (Exception e)
+      {
+        gui.displayMessage("Error executing your query: " + e);
+        logger.info("ERROR " + e);
+        return false;
+      }
     }
 
     public static void writeAllToCSV(Connection con)
