@@ -57,7 +57,7 @@ public class Main
                     isNotFirst = true;
 
                     System.out.println("Options on what to do: \n1. Display all Jobs \n2. Add a new Job Posting \n3. Update a Job Posting \n4. Remove a Job \n5. Search by Location, Company, or Type "
-                            + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n11. Generate Database Report \n11. Quit");
+                            + "\n6. Find All Info for a Job \n7. Get Select Info for a Job \n8. Job Statistics \n9. Add a new Manager \n10. Generate Database Report \n11. Quit");
 
                     System.out.println("What would you like to do: ");
                     editOption = scan.nextInt();
