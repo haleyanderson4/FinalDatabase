@@ -8,11 +8,8 @@ public class csvGenerator
 {
   public static boolean write(Connection con) throws FileNotFoundException
   {
-    System.out.println("JobWriter" + jobWriter(con));
-    System.out.println("Company" + companyWriter(con));
-    System.out.println("Manager" + managerWriter(con));
-    System.out.println("Internship" + internshipWriter(con));
-    if(!jobWriter(con) || !companyWriter(con) || !managerWriter(con) || !internshipWriter(con) || !fullTimeWriter(con))
+    if(!jobWriter(con) || !companyWriter(con) || !managerWriter(con) || !internshipWriter(con)
+        || !fullTimeWriter(con) || !relatedJobWriter(con) || !competitionWriter(con) || !locationWriter(con))
     {
       return false;
     }
@@ -153,6 +150,50 @@ public class csvGenerator
     }
   }
 
+  public static boolean locationWriter(Connection con) throws FileNotFoundException
+  {
+    try
+    {
+      PrintWriter pw = new PrintWriter(new File("Location.csv"));
+      StringBuilder sb = new StringBuilder();
+      sb.append("Company ID");
+      sb.append(',');
+      sb.append("Location Area");
+      sb.append(',');
+      sb.append("Street");
+      sb.append(',');
+      sb.append("City");
+      sb.append(',');
+      sb.append("State");
+      sb.append('\n');
+
+      PreparedStatement pst = con.prepareStatement("SELECT companyId, locationArea, street, city, state FROM Location");
+      ResultSet rs = pst.executeQuery();
+      while (rs.next())
+      {
+        sb.append(rs.getInt(1));
+        sb.append(',');
+        sb.append(rs.getString(2));
+        sb.append(',');
+        sb.append(rs.getString(3));
+        sb.append(',');
+        sb.append(rs.getString(4));
+        sb.append(',');
+        sb.append(rs.getString(5));
+        sb.append('\n');
+      }
+      pw.write(sb.toString());
+      pw.close();
+      return true;
+    }
+    catch (Exception e)
+    {
+      System.out.println("There was an issue with the Location file creation.");
+      return false;
+    }
+
+  }
+
   public static boolean companyWriter(Connection con) throws FileNotFoundException
   {
     try
@@ -168,17 +209,9 @@ public class csvGenerator
       sb.append("Yearly Revenue");
       sb.append(',');
       sb.append("Stock Price");
-      sb.append(',');
-      sb.append("Location Area");
-      sb.append(',');
-      sb.append("Street");
-      sb.append(',');
-      sb.append("City");
-      sb.append(',');
-      sb.append("State");
       sb.append('\n');
 
-      PreparedStatement pst = con.prepareStatement("SELECT c.companyId, c.companyName, c.numEmployees, c.yearlyRevenue, c.stockPrice, l.locationArea, l.street, l.city, l.state  FROM Company c, Location l");
+      PreparedStatement pst = con.prepareStatement("SELECT c.companyId, c.companyName, c.numEmployees, c.yearlyRevenue, c.stockPrice FROM Company c");
       ResultSet rs = pst.executeQuery();
       while(rs.next())
       {
@@ -191,14 +224,6 @@ public class csvGenerator
         sb.append(rs.getFloat(4));
         sb.append(',');
         sb.append(rs.getFloat(5));
-        sb.append(',');
-        sb.append(rs.getString(6));
-        sb.append(',');
-        sb.append(rs.getString(7));
-        sb.append(',');
-        sb.append(rs.getString(8));
-        sb.append(',');
-        sb.append(rs.getString(9));
         sb.append('\n');
       }
 
@@ -257,7 +282,7 @@ public class csvGenerator
     }
     catch (Exception e)
     {
-      System.out.println("There was an issue with the file creation.");
+      System.out.println("There was an issue with the Manager file creation.");
       return false;
     }
   }
@@ -297,7 +322,7 @@ public class csvGenerator
     }
     catch (Exception e)
     {
-      System.out.println("There was an issue with the file creation.");
+      System.out.println("There was an issue with the Internship file creation.");
       return false;
     }
   }
@@ -337,7 +362,7 @@ public class csvGenerator
     }
     catch (Exception e)
     {
-      System.out.println("There was an issue with the file creation.");
+      System.out.println("There was an issue with the Full Time file creation.");
       return false;
     }
   }
