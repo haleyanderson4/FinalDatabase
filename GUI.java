@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.text.NumberFormat;
 import java.lang.NumberFormatException;
 import java.util.Scanner;
+import java.util.logging.*;
 
 /**
 * @TODO list for GUI
@@ -310,7 +311,7 @@ public class GUI extends JPanel
 
   private JPanel updateManagerFields()
   {
-    JPanel panel = new Jpanel();
+    JPanel panel = new JPanel();
     panel.add(new JLabel("Manager ID to update:"), "align label");
     panel.add(mID, "wrap");
     panel.add(new JLabel("Updatable fields: Only fill in data for the fields you wish to update."), "align label");
@@ -667,11 +668,11 @@ public class GUI extends JPanel
           add(updateManagerFields());
           break;
         case("Confirm update manager"):
-          if (!managerName.getText().trim().isEmpty())
-            Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET name= WHERE managerId=?"), ((Number)mID.getValue()).intValue(), false)
-          if (!yearsAtCompany.getText().trim().isEmpty())
-            Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET yearsAtCompany= WHERE managerID=?"))
-          resetButtons();
+          // if (!managerName.getText().trim().isEmpty())
+          //   Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET name= WHERE managerId=?"), ((Number)mID.getValue()).intValue(), false);
+          // if (!yearsAtCompany.getText().trim().isEmpty())
+          //   Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET yearsAtCompany= WHERE managerID=?"));
+          // resetButtons();
 
         case("Display all jobs"):
           resetButtons();

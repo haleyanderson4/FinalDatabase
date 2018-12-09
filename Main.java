@@ -548,7 +548,7 @@ public class Main
               scan.nextLine();
             }
 
-            if (fromGUI)
+            else
             {
               numOpenSpots = job.numOpenSpots;
               numApplicants = job.numApplicants;
@@ -2520,17 +2520,6 @@ public class Main
         gui.displayMessage("Error executing your query: " + e);
         logger.info("ERROR " + e);
         return false;
-      }
-    }
-
-    public static void writeAllToCSV(Connection con)
-    {
-      FileWriter fw = new FileWriter("CompanyDatabase.csv");
-      PreparedStatement pst = con.prepareStatement("SELECT * FROM Company");
-      ResultSet rs = pst.executeQuery();
-      while (rs.next())
-      {
-        fw.append();
       }
     }
 }
