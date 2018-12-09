@@ -2369,7 +2369,8 @@ public class Main
         try
         {
             //generate a report
-            return true;
+            csvGenerator csv = new csvGenerator();
+            return csv.write(con);
         }
         catch (Exception e)
         {
