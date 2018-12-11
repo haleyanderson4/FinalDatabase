@@ -22,6 +22,7 @@ public class Main
         Connection con; //database connection
         Scanner scan = new Scanner(System.in);
         int editOption = 0;
+        boolean useGUI = false;
 
         Logger logger = Logger.getLogger("com.mysql.cj.jdbc.Driver");
         logger.setLevel(Level.FINER);
@@ -38,12 +39,17 @@ public class Main
             System.out.println("Error logging: " + e);
         }
 
-
+        System.out.println("Would you like to use the GUI? Type y if so.");
+        if (scan.nextLine().toLowerCase().equals("y"))
+        {
+          useGUI = true;
+        }
 
         try {
             con = Config.getMySqlConnection(); //connect to database
-            gui = new GUI(con, scan, logger); //GUI TEST
-            boolean loop = true;
+            if (useGUI)
+              gui = new GUI(con, scan, logger);
+            boolean loop = !useGUI;
             boolean isNotFirst = false;
             while(loop)
             {
@@ -193,8 +199,8 @@ public class Main
 
                 System.out.println("");
             }
-
-            System.out.println("Thank you for using this database.");
+            if (!useGUI)
+              System.out.println("Thank you for using this database.");
             con.close();
         }
         catch(Exception e) { System.out.println(e); }
