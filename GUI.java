@@ -45,7 +45,7 @@ public class GUI extends JPanel
   private JButton createCompany = new JButton("New company");
 
   private JTextField managerName;
-  //@TODO - experience? figure out how booleans work
+  private JComboBox hasExperience;
   private JFormattedTextField yearsAtCompany;
   private JButton createManager = new JButton("New manager");
 
@@ -97,6 +97,7 @@ public class GUI extends JPanel
     this.logger = logger;
     f = new JFrame();
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    f.addWindowListener(new WindowAdapterModified());
     jobField = new JTextField(50);
     industry = new JTextField(25);
     description = new JTextField(100);
@@ -124,6 +125,8 @@ public class GUI extends JPanel
     city = new JTextField(25);
     state = new JTextField(2);
     managerName = new JTextField(50);
+    String[] yn = {"Yes", "No"};
+    hasExperience = new JComboBox(yn);
     yearsAtCompany = new JFormattedTextField(intFormat);
     yearsAtCompany.setValue(null);
     setLayout(new BorderLayout(5, 5));
@@ -248,8 +251,13 @@ public class GUI extends JPanel
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(new JLabel("Manager name"), "align label");
     panel.add(managerName, "wrap");
+    panel.add(new JLabel("Technical experience"), "align label");
+    panel.add(hasExperience, "wrap");
+    hasExperience.setSelectedIndex(0);
     panel.add(new JLabel("Years at company"), "align label");
     panel.add(yearsAtCompany, "wrap");
+    panel.add(new JLabel("Company ID"), "align label");
+    panel.add(cID, "wrap");
     return panel;
   }
 
@@ -554,6 +562,26 @@ public class GUI extends JPanel
     return panel;
   }
 
+  public boolean isOpen()
+  {
+    return true;
+  }
+
+  private class WindowAdapterModified extends WindowAdapter
+  {
+    public void windowClosing(WindowEvent e)
+    {
+      try
+      {
+        con.close();
+        System.out.println("Thank you for using this database.");
+      }
+      catch (Exception ex)
+      {
+        System.out.println("Error " + ex);
+      }
+    }
+  }
 
   //@TODO add more exception handling for save cases
   //@TODO null out fields after updates
@@ -642,13 +670,19 @@ public class GUI extends JPanel
           try
           {
             m.managerName = managerName.getText();
+            if(hasExperience.getSelectedItem().equals("Yes"))
+              m.hasExperience = true;
+            else
+              m.hasExperience = false;
             m.yearsAtCompany = ((Number)yearsAtCompany.getValue()).intValue();
-            createManager.setText("New manager");
+            m.companyId = ((Number)cID.getValue()).intValue();
+            Main.createManager(con.prepareStatement("INSERT INTO MANAGER(companyId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?);"), scan, logger, m, true);
           }
           catch (Exception ex)
           {
-            JOptionPane.showMessageDialog(null, "Error: " + ex);
+            JOptionPane.showMessageDialog(null, "Error creating manager: " + ex);
           }
+          createManager.setText("New manager");
         case("Delete company"):
           JPanel deletePanel = new JPanel();
           resetButtons();

@@ -4,4 +4,5 @@ public class Manager
   String managerName;
   boolean hasExperience;
   int yearsAtCompany;
+  int companyId;
 }

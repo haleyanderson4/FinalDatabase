@@ -49,12 +49,14 @@ public class Main
             con = Config.getMySqlConnection(); //connect to database
             if (useGUI)
               gui = new GUI(con, scan, logger);
-            boolean loop = !useGUI;
+            boolean loop = true;
             boolean isNotFirst = false;
             while(loop)
             {
                 try
                 {
+                  if (!useGUI)
+                  {
                     if(isNotFirst)
                     {
                         System.out.println("Press enter to continue");
@@ -74,6 +76,7 @@ public class Main
                         System.out.println("Please enter a number between 1 and 11\n");
                         continue;
                     }
+                  }
                 }
                 catch(Exception e)
                 {
@@ -196,12 +199,11 @@ public class Main
                 {
                     loop = false;
                 }
-
-                System.out.println("");
+                if (!useGUI)
+                  System.out.println("");
             }
-            if (!useGUI)
-              System.out.println("Thank you for using this database.");
             con.close();
+            System.out.println("Thank you for using this database.");
         }
         catch(Exception e) { System.out.println(e); }
     }
@@ -776,10 +778,12 @@ public class Main
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(PreparedStatement pstM, Scanner scan, Logger logger)
+    public static boolean createManager(PreparedStatement pstM, Scanner scan, Logger logger, Manager manager, boolean fromGUI)
     {
         try
         {
+          if (!fromGUI)
+          {
             System.out.println("Enter the Manager's name (length 100)");
             String name = scan.nextLine();
             System.out.println("Enter 'Y' if the Manager has technical experience");
@@ -796,13 +800,22 @@ public class Main
             pstM.setString(2, name);
             pstM.setBoolean(3, technicalExperience);
             pstM.setInt(4, yearsAtCompany);
-
+          }
+          else
+          {
+            pstM.setInt(1, manager.companyId);
+            pstM.setString(2, manager.managerName);
+            pstM.setBoolean(3, manager.hasExperience);
+            pstM.setInt(4, manager.yearsAtCompany);
+          }
             return true;
+
         }
         catch (Exception e)
         {
+          if (!fromGUI)
             System.out.println("Please enter a valid input. Try again.");
-            return false;
+          return false;
         }
     }
 
@@ -2364,7 +2377,7 @@ public class Main
             PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(companyId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?);");
             pstM.clearParameters();
             pstM.setInt(1, companyId);
-            success = createManager(pstM, scan, logger);
+            success = createManager(pstM, scan, logger, new Manager(), false);
             if (!success)
             {
                 System.out.println("The manager creation failed. Please try again.");
