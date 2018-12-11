@@ -188,14 +188,6 @@ public class GUI extends JPanel
     return panel;
   }
 
-  private JPanel initFields()
-  {
-    JPanel panel = new JPanel();
-    panel.add(new JLabel("Job info"), "align label");
-    panel.add(jobField, "wrap");
-    return panel;
-  }
-
   private Job getJobData()
   {
     Job j = new Job();
@@ -345,6 +337,24 @@ public class GUI extends JPanel
     panel.add(city);
     panel.add(new JLabel("State"), "align label");
     panel.add(state);
+    return panel;
+  }
+
+  private JPanel clearFields(JPanel panel)
+  {
+    for (Component component : panel.getComponents())
+    {
+      if (component instanceof JTextField)
+      {
+        JTextField field = (JTextField) component;
+        field.setText("");
+      }
+      else if (component instanceof JFormattedTextField)
+      {
+        JFormattedTextField field = (JFormattedTextField) component;
+        field.setText(null);
+      }
+    }
     return panel;
   }
 
@@ -557,7 +567,7 @@ public class GUI extends JPanel
       {
         case("New job"):
           resetButtons();
-          jobPanel = jobFields();
+          jobPanel = clearFields(jobFields());
           add(jobPanel, BorderLayout.NORTH);
           createJob.setText("Save job");
           break;
@@ -586,7 +596,7 @@ public class GUI extends JPanel
           break;
         case("New company"):
           resetButtons();
-          companyPanel = companyFields();
+          companyPanel = clearFields(companyFields());
           add(companyPanel, BorderLayout.NORTH);
           createCompany.setText("Save company");
           remove(jobPanel);
@@ -614,7 +624,7 @@ public class GUI extends JPanel
           break;
         case("New manager"):
           resetButtons();
-          managerPanel = managerFields();
+          managerPanel = clearFields(managerFields());
           add(managerPanel, BorderLayout.NORTH);
           createManager.setText("Save manager");
           remove(jobPanel);
@@ -638,11 +648,12 @@ public class GUI extends JPanel
             System.out.println("Error: " + ex);
           }
         case("Delete company"):
-          Panel deletePanel = new Panel();
+          JPanel deletePanel = new JPanel();
           resetButtons();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Company ID to be deleted"), "align label");
           deletePanel.add(cID, "wrap");
+          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteCompany.setText("Confirm delete company");
           break;
@@ -652,10 +663,11 @@ public class GUI extends JPanel
           break;
         case("Delete manager"):
           resetButtons();
-          deletePanel = new Panel();
+          deletePanel = new JPanel();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
+          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteManager.setText("Confirm delete manager");
           break;
@@ -665,10 +677,11 @@ public class GUI extends JPanel
           break;
         case("Delete job"):
           resetButtons();
-          deletePanel = new Panel();
+          deletePanel = new JPanel();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
+          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteJob.setText("Confirm delete job");
           break;
@@ -694,6 +707,7 @@ public class GUI extends JPanel
           resetButtons();
           updateManager.setText("Confirm update manager");
           managerPanel = updateManagerFields();
+          managerPanel = clearFields(managerPanel);
           managerPanel.setLayout(new BoxLayout(managerPanel, BoxLayout.Y_AXIS));
           add(managerPanel, BorderLayout.NORTH);
           break;
@@ -716,6 +730,7 @@ public class GUI extends JPanel
           resetButtons();
           updateCompany.setText("Confirm update company");
           companyPanel = updateCompanyFields();
+          companyPanel = clearFields(companyPanel);
           companyPanel.setLayout(new BoxLayout(companyPanel, BoxLayout.Y_AXIS));
           add(companyPanel, BorderLayout.NORTH);
           break;
@@ -796,7 +811,7 @@ public class GUI extends JPanel
           break;
         case("Get info on a job"):
           resetButtons();
-          add(getJobInfoFields(), BorderLayout.NORTH);
+          add(clearFields(getJobInfoFields()), BorderLayout.NORTH);
           break;
         case("SEARCH FOR JOB"):
           resetButtons();
