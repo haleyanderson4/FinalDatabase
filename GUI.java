@@ -100,30 +100,30 @@ public class GUI extends JPanel
     description = new JTextField(100);
     intFormat = NumberFormat.getNumberInstance();
     jID = new JFormattedTextField(intFormat);
-    jID.setValue(new Integer(1));
+    jID.setValue(null);
     cID = new JFormattedTextField(intFormat);
-    cID.setValue(new Integer(1)); //@TODO don't have a default int value, or commit
+    cID.setValue(null); //@TODO don't have a default int value, or commit
     mID = new JFormattedTextField(intFormat);
-    mID.setValue(new Integer(1));
+    mID.setValue(null);
     numOpenSpots = new JFormattedTextField(intFormat);
-    numOpenSpots.setValue(new Integer(0));
+    numOpenSpots.setValue(null);
     numApplicants = new JFormattedTextField(intFormat);
-    numApplicants.setValue(new Integer(0));
+    numApplicants.setValue(null);
     type = new JTextField(1);
     companyName = new JTextField(50);
     numEmployees = new JFormattedTextField(intFormat);
-    numEmployees.setValue(new Integer(0));
+    numEmployees.setValue(null);
     revenue = new JFormattedTextField(intFormat);
-    revenue.setValue(new Float(0));
+    revenue.setValue(null);
     stockPrice = new JFormattedTextField(intFormat);
-    stockPrice.setValue(new Float(0));
+    stockPrice.setValue(null);
     locationArea = new JTextField(25);
     streetAddress = new JTextField(100);
     city = new JTextField(25);
     state = new JTextField(2);
     managerName = new JTextField(50);
     yearsAtCompany = new JFormattedTextField(intFormat);
-    yearsAtCompany.setValue(new Float(0));
+    yearsAtCompany.setValue(null);
     setLayout(new BorderLayout(5, 5));
     //add(initFields(), BorderLayout.NORTH);
     add(initButtons(), BorderLayout.CENTER);
@@ -319,6 +319,32 @@ public class GUI extends JPanel
     panel.add(managerName);
     panel.add(new JLabel("Years at company"), "align label");
     panel.add(yearsAtCompany);
+    yearsAtCompany.setValue(null);
+    return panel;
+  }
+
+  private JPanel updateCompanyFields()
+  {
+    JPanel panel = new JPanel();
+    panel.add(new JLabel("Company ID to update:"), "align label");
+    panel.add(cID, "wrap");
+    panel.add(new JLabel("Updatable fields: Only fill in data for the fields you wish to update."), "align label");
+    panel.add(new JLabel("Company name"), "align label");
+    panel.add(companyName);
+    panel.add(new JLabel("Number of employees"), "align label");
+    panel.add(numEmployees);
+    panel.add(new JLabel("Yearly revenue"), "align label");
+    panel.add(revenue);
+    panel.add(new JLabel("Stock price"), "align label");
+    panel.add(stockPrice);
+    panel.add(new JLabel("Location area"), "align label");
+    panel.add(locationArea);
+    panel.add(new JLabel("Street address"), "align label");
+    panel.add(streetAddress);
+    panel.add(new JLabel("City"), "align label");
+    panel.add(city);
+    panel.add(new JLabel("State"), "align label");
+    panel.add(state);
     return panel;
   }
 
@@ -360,6 +386,9 @@ public class GUI extends JPanel
     deleteJob.setText("Delete job");
     deleteManager.setText("Delete manager");
     getJobInfo.setText("Get info on a job");
+    updateJob.setText("Update job");
+    updateManager.setText("Update manager");
+    updateCompany.setText("Update company");
     //deleteCompany.setText("Delete company");
   }
 
@@ -514,6 +543,7 @@ public class GUI extends JPanel
 
 
   //@TODO add more exception handling for save cases
+  //@TODO null out fields after updates
   private class ButtonHandler implements ActionListener
   {
     @Override
@@ -674,6 +704,40 @@ public class GUI extends JPanel
               Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET name=? WHERE managerId=?"), ((Number)mID.getValue()).intValue(), managerName.getText());
             if (!yearsAtCompany.getText().trim().isEmpty())
               Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET yearsAtCompany=? WHERE managerID=?"), ((Number)mID.getValue()).intValue(), ((Number)yearsAtCompany.getValue()).intValue());
+          }
+          catch (Exception ex)
+          {
+            JOptionPane.showMessageDialog(null, "There was an error updating: " + ex);
+            break;
+          }
+          resetButtons();
+          break;
+        case ("Update company"):
+          resetButtons();
+          updateCompany.setText("Confirm update company");
+          companyPanel = updateCompanyFields();
+          companyPanel.setLayout(new BoxLayout(companyPanel, BoxLayout.Y_AXIS));
+          add(companyPanel, BorderLayout.NORTH);
+          break;
+        case ("Confirm update company"):
+          try
+          {
+            if(!companyName.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Company SET companyName=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), companyName.getText());
+            if(!numEmployees.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Company SET numEmployees=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), ((Number)numEmployees.getValue()).intValue());
+            if(!revenue.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Company SET yearlyRevenue=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), ((Number)revenue.getValue()).floatValue());
+            if(!stockPrice.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Company SET stockPrice=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), ((Number)stockPrice.getValue()).floatValue());
+            if(!locationArea.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET locationArea=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), locationArea.getText());
+            if(!streetAddress.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET street=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), streetAddress.getText());
+            if(!city.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET city=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), city.getText());
+            if(!state.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET state=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), state.getText());
           }
           catch (Exception ex)
           {

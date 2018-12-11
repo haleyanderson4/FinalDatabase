@@ -2534,4 +2534,23 @@ public class Main
         return false;
       }
     }
+
+        public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id, float info)
+        {
+          try
+          {
+            pst.clearParameters();
+            pst.setFloat(1, info);
+            pst.setInt(2, id);
+            pst.executeUpdate();
+            logger.info("" + pst);
+            return true;
+          }
+          catch (Exception e)
+          {
+            gui.displayMessage("Error executing your query: " + e);
+            logger.info("ERROR " + e);
+            return false;
+          }
+        }
 }
