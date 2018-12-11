@@ -588,8 +588,7 @@ public class GUI extends JPanel
             j.description = description.getText();
             j.companyId = ((Number)cID.getValue()).intValue();
             j.type = type.getText();
-            j.jobCreated();
-            //main.getJobInfo(j.jobTitle, j.industry, j.description, j.companyId, j.managerId, j.type);
+            Main.createNewPosting(con, scan, logger, j, true);
             createJob.setText("New job");
           }
           catch (java.lang.NumberFormatException ex)
@@ -648,7 +647,7 @@ public class GUI extends JPanel
           }
           catch (Exception ex)
           {
-            System.out.println("Error: " + ex);
+            JOptionPane.showMessageDialog(null, "Error: " + ex);
           }
         case("Delete company"):
           JPanel deletePanel = new JPanel();

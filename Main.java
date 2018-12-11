@@ -94,7 +94,7 @@ public class Main
 
                 if(editOption == 2) //prelim completed
                 {
-                    boolean success = createNewPosting(con, scan, logger);
+                    boolean success = createNewPosting(con, scan, logger, new Job(), false);
                     if(success)
                     {
                         System.out.println("The new Posting was successfully added to the Job Board.");
@@ -257,50 +257,66 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createNewPosting(Connection con, Scanner scan, Logger logger)
+    public static boolean createNewPosting(Connection con, Scanner scan, Logger logger, Job j, boolean fromGUI)
     {
         try
         {
             boolean success = true;
             int jobId = 0;
             int companyId = 0;
+            boolean createCompany = false;
 
             PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES(?,?,?,?);");
             PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES(?,?,?,?,?);");
-            System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
-            String company = scan.nextLine();
-            boolean createCompany = false;
-            if(company.toLowerCase().equals("y"))
+            if (!fromGUI)
             {
-                createCompany = true;
-                success = createCompany(pstC, pstL, scan);
-                if(!success)
-                {
-                    System.out.println("The Company creation failed. Please try again.");
-                    return false;
-                }
-            }
-            else
-            {
-                System.out.println("Enter the Job's Company Id");
-                companyId = scan.nextInt();
-                scan.nextLine();
+              System.out.println("Do you need to create a new Company? Enter 'y' for yes.");
 
-                if(!checkCompanyID(con, companyId))
-                {
-                    return false;
-                }
+              String company = scan.nextLine();
+
+              if(company.toLowerCase().equals("y"))
+              {
+                  createCompany = true;
+                  success = createCompany(pstC, pstL, scan);
+                  if(!success)
+                  {
+                      System.out.println("The Company creation failed. Please try again.");
+                      return false;
+                  }
+              }
+              else
+              {
+                  System.out.println("Enter the Job's Company Id");
+                  companyId = scan.nextInt();
+                  scan.nextLine();
+
+                  if(!checkCompanyID(con, companyId))
+                  {
+                      return false;
+                  }
+              }
             }
+            // if (fromGUI)
+            // {
+            //   if (!checkCompanyID)
+            //   {
+            //     gui.displayMessage(null, "Company does not exist. Try again.");
+            //     return false;
+            //   }
+            // }
 
             PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, isInternship) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
-            success = createJob(pstJ, pstComp, scan, new Job(), false);
+            success = createJob(pstJ, pstComp, scan, j, fromGUI);
             String typeS = getType(scan, pstJ);
             if(!success || typeS.equals("nope"))
             {
+              if (!fromGUI)
                 System.out.println("The Job creation failed. Please try again.");
-                return false;
+              else
+                gui.displayMessage("The Job creation failed. Please try again.");
+              return false;
             }
             if(typeS.equals("false"))
             {
