@@ -530,8 +530,6 @@ public class GUI extends JPanel
           jobPanel = jobFields();
           add(jobPanel, BorderLayout.NORTH);
           createJob.setText("Save job");
-          remove(companyPanel);
-          remove(managerPanel);
           break;
         case("Save job"):
           if (jobFieldsEmpty())
@@ -665,15 +663,25 @@ public class GUI extends JPanel
         case("Update manager"):
           resetButtons();
           updateManager.setText("Confirm update manager");
-          add(updateManagerFields());
+          managerPanel = updateManagerFields();
+          managerPanel.setLayout(new BoxLayout(managerPanel, BoxLayout.Y_AXIS));
+          add(managerPanel, BorderLayout.NORTH);
           break;
         case("Confirm update manager"):
-          // if (!managerName.getText().trim().isEmpty())
-          //   Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET name= WHERE managerId=?"), ((Number)mID.getValue()).intValue(), false);
-          // if (!yearsAtCompany.getText().trim().isEmpty())
-          //   Main.executePST(con, logger, new PreparedStatement("UPDATE Manager SET yearsAtCompany= WHERE managerID=?"));
-          // resetButtons();
-
+          try
+          {
+            if (!managerName.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET name=? WHERE managerId=?"), ((Number)mID.getValue()).intValue(), managerName.getText());
+            if (!yearsAtCompany.getText().trim().isEmpty())
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET yearsAtCompany=? WHERE managerID=?"), ((Number)mID.getValue()).intValue(), ((Number)yearsAtCompany.getValue()).intValue());
+          }
+          catch (Exception ex)
+          {
+            JOptionPane.showMessageDialog(null, "There was an error updating: " + ex);
+            break;
+          }
+          resetButtons();
+          break;
         case("Display all jobs"):
           resetButtons();
           if (!Main.queryMethod(con, scan, true))

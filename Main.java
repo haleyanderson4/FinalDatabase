@@ -2497,21 +2497,33 @@ public class Main
     * @param needsResultSet if the query has a resultset or not.
     * @return true if the execution was successful, false otherwise
     */
-    public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id, boolean needsResultSet)
+    public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id, String info)
     {
       try
       {
         pst.clearParameters();
-        pst.setInt(1, id);
-        if (needsResultSet)
-        {
-          ResultSet rs = pst.executeQuery();
-          gui.setRSInfo(rs);
-        }
-        else
-        {
-          pst.executeQuery();
-        }
+        pst.setString(1, info);
+        pst.setInt(2, id);
+        pst.executeUpdate();
+        logger.info("" + pst);
+        return true;
+      }
+      catch (Exception e)
+      {
+        gui.displayMessage("Error executing your query: " + e);
+        logger.info("ERROR " + e);
+        return false;
+      }
+    }
+
+    public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id, int info)
+    {
+      try
+      {
+        pst.clearParameters();
+        pst.setInt(1, info);
+        pst.setInt(2, id);
+        pst.executeUpdate();
         logger.info("" + pst);
         return true;
       }
