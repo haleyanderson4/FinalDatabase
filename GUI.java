@@ -61,6 +61,8 @@ public class GUI extends JPanel
   private JButton updateCompany = new JButton("Update company");
   private JButton updateManager = new JButton("Update manager");
 
+  private JButton generateReport = new JButton("Generate database report");
+
   private JRadioButton internship, fullTime, eitherType;
 
   private NumberFormat intFormat;
@@ -184,7 +186,8 @@ public class GUI extends JPanel
     deleteManager.addActionListener(new ButtonHandler());
     panel.add(getJobInfo);
     getJobInfo.addActionListener(new ButtonHandler());
-
+    panel.add(generateReport);
+    generateReport.addActionListener(new ButtonHandler());
     return panel;
   }
 
@@ -824,6 +827,12 @@ public class GUI extends JPanel
             add(displayInfo());
           }
           break;
+        case("Generate database report"):
+          resetButtons();
+          if (Main.generateReport(con))
+            JOptionPane.showMessageDialog(null, "Reports generated.");
+          else
+            JOptionPane.showMessageDialog(null, "There was an error generating your report.");
         default:
           System.out.println("default");
           break;
