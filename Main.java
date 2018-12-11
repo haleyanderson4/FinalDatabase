@@ -325,7 +325,7 @@ public class Main
 
             PreparedStatement pstF = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus, salary) VALUES(?,?,?,?);");
             PreparedStatement pstI = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, rate, season) VALUES(?,?,?,?);");
-            success = createType(pstF, pstI, type, scan);
+            success = createType(pstF, pstI, type, scan, j, fromGUI);
             if(!success)
             {
                 System.out.println("The Full Time or Internship creation failed. Please try again.");
@@ -703,7 +703,7 @@ public class Main
      * @param type is the boolean set in the Job field on whether it is full time or internship.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createType(PreparedStatement pstF, PreparedStatement pstI, boolean type, Scanner scan)
+    public static boolean createType(PreparedStatement pstF, PreparedStatement pstI, boolean type, Scanner scan, Job job, boolean fromGUI)
     {
         try
         {
@@ -714,7 +714,7 @@ public class Main
             float rate = 0;
             String season = "";
 
-            if(!type)
+            if(!type && !fromGUI)
             {
                 System.out.println("Enter the Job's Number of Stock Options");
                 stockOptions = scan.nextInt();
@@ -730,7 +730,7 @@ public class Main
                 pstF.setFloat(3, signingBonus);
                 pstF.setFloat(4, salary);
             }
-            else if(type)
+            else if(type && !fromGUI)
             {
                 System.out.println("Enter the Job's Pay Period (length 10)");
                 payPeriod = scan.nextLine();
@@ -748,6 +748,18 @@ public class Main
                 pstI.setString(2, payPeriod);
                 pstI.setFloat(3, rate);
                 pstI.setString(4, season);
+            }
+            else if (!type && fromGUI)
+            {
+              pstF.setInt(2, job.stockOptions);
+              pstF.setFloat(3, job.signingBonus);
+              pstF.setFloat(4, job.salary);
+            }
+            else
+            {
+              pstI.setString(2, job.payPeriod);
+              pstI.setFloat(3, job.rate);
+              pstI.setString(4, job.season);
             }
 
             return true;

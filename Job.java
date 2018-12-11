@@ -9,12 +9,18 @@ public class Job
   String type; //@TODO change to char
   int numOpenSpots;
   int numApplicants;
+  int stockOptions;
+  float signingBonus;
+  float salary;
+  String payPeriod;
+  float rate;
+  String season;
 
   public Job()
   {
 
   }
-  // 
+  //
   // public Job(String jobTitle, String industry, String description, int companyId, int managerId, String type)
   // {
   //   this.jobTitle = jobTitle;
@@ -25,12 +31,4 @@ public class Job
   //   this.type = type;
   // }
 
-  public void jobCreated()
-  {
-    System.out.println("Job created.");
-    System.out.println("Job title: " + jobTitle);
-    System.out.println("Industry: " + industry);
-    System.out.println("CID: " + companyId + " MID: " + managerId);
-    System.out.println("Description: " + description);
-  }
 }
