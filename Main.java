@@ -198,6 +198,15 @@ public class Main
                 if(editOption == 11) //done lol
                 {
                     loop = false;
+                    boolean success = generateReport(con);
+                    if(success)
+                    {
+                        System.out.println("End of Use Report Generation Successful.");
+                    }
+                    if(!success)
+                    {
+                        System.out.println("Report Generation Failed.");
+                    }
                 }
                 if (!useGUI)
                   System.out.println("");
