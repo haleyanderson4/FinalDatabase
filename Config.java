@@ -1,3 +1,8 @@
+/**
+* Sarah Lasman and Haley Anderson
+* Config.java
+*/
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
