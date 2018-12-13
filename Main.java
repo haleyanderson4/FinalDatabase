@@ -2019,6 +2019,7 @@ public class Main
     }
 
 
+
     //OPTION 6 METHODS
     /**
      * Selects all relevant job information across all tables in the database.

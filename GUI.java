@@ -1024,6 +1024,10 @@ public class GUI extends JPanel
           resetButtons();
           add(searchInfo(), BorderLayout.NORTH);
           searchJobs.setText("Search");
+
+          break;
+        case ("Search"):
+          resetButtons();
           boolean checkType = true;
           boolean isInternship = false;
           if (internship.isSelected())
@@ -1034,10 +1038,10 @@ public class GUI extends JPanel
           {
             checkType = false;
           }
-          boolean searchByState, searchByCompany;
-          searchByState = searchByCompany = false;
-          String pstSearchString = "SELECT jobId, jobTitle, description FROM Job j, Company c, Location l WHERE"
-                + "c.companyId = j.companyId AND j.companyId = l.companyId";
+          boolean searchByState, searchByCompany, searchByIndustry;
+          searchByState = searchByCompany = searchByIndustry = false;
+          String pstSearchString = "SELECT jobId, industry, jobTitle, description, c.companyName, l.state FROM Job j, Company c, Location l WHERE"
+                + " c.companyId = j.companyId AND j.companyId = l.companyId";
           if (state.getText().length() == 2)
           {
             pstSearchString += " AND l.state=?";
@@ -1047,6 +1051,11 @@ public class GUI extends JPanel
           {
             pstSearchString += " AND c.companyName=?";
             searchByCompany = true;
+          }
+          if (industry.getText().length() > 0)
+          {
+            pstSearchString += " AND j.industry=?";
+            searchByIndustry = true;
           }
           if (checkType)
           {
@@ -1058,9 +1067,42 @@ public class GUI extends JPanel
             {
               pstSearchString += " AND j.isInternship = 0";
             }
-            //@TODO prepareStatement
+          }
+          try
+          {
+            int currentValue = 1;
+            PreparedStatement pst = con.prepareStatement(pstSearchString);
+            if (searchByState)
+            {
+              pst.setString(currentValue, state.getText());
+              currentValue++;
+            }
+            if (searchByCompany)
+            {
+              pst.setString(currentValue, companyName.getText());
+              currentValue++;
+            }
+            if (searchByIndustry)
+            {
+              pst.setString(currentValue, industry.getText());
+              currentValue++;
+            }
+            if (checkType)
+            {
+              pst.setBoolean(currentValue, isInternship);
+            }
+            ResultSet rs = pst.executeQuery();
+            rs.last();
+            String[] columnNames = {"Job ID", "Job Title", "Industry", "Description", "Company", "State"};
+            add(showTable(rs, rs.getRow()+1, 6, columnNames), BorderLayout.NORTH);
+          }
+          catch (Exception ex)
+          {
+            JOptionPane.showMessageDialog(null, "There was an error with your search.");
+            logger.info("" + ex);
           }
           break;
+
         case("Get info on a job"): //DONE
           resetButtons();
           add(getJobInfoFields(), BorderLayout.NORTH);
@@ -1084,7 +1126,6 @@ public class GUI extends JPanel
             JOptionPane.showMessageDialog(null, "There was an error generating your report.");
           break;
         default:
-          System.out.println("default");
           break;
       }
     }
