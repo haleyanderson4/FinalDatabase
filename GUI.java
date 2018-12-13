@@ -1139,7 +1139,7 @@ public class GUI extends JPanel
           break;
         case("SEARCH FOR JOB"): //DONE
           resetButtons();
-          if(!Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true))
+          if(!Main.jobInfo(con, scan, ((Number)jID.getValue()).intValue(), true, logger))
           {
             JOptionPane.showMessageDialog(null, "There was an error with your request. Check to ensure your id number is valid.");
           }
@@ -1150,7 +1150,7 @@ public class GUI extends JPanel
           break;
         case("Generate database report"):
           resetButtons();
-          if (Main.generateReport(con))
+          if (Main.generateReport(con, logger))
             JOptionPane.showMessageDialog(null, "Reports generated.");
           else
             JOptionPane.showMessageDialog(null, "There was an error generating your report.");

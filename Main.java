@@ -145,7 +145,7 @@ public class Main
 
                 if(editOption == 6) //prelim completed
                 {
-                    boolean success = jobInfo(con, scan, 0, false);
+                    boolean success = jobInfo(con, scan, 0, false, logger);
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -154,7 +154,7 @@ public class Main
 
                 if(editOption == 7) //prelim completed
                 {
-                    boolean success = lookup(con, scan);
+                    boolean success = lookup(con, scan, logger);
                     if(!success)
                     {
                         System.out.println("The look up failed. Please try again.");
@@ -185,7 +185,7 @@ public class Main
 
                 if(editOption == 10)
                 {
-                    boolean success = generateReport(con);
+                    boolean success = generateReport(con, logger);
                     if(success)
                     {
                         System.out.println("Report Generation Successful.");
@@ -198,7 +198,7 @@ public class Main
                 if(editOption == 11) //done lol
                 {
                     loop = false;
-                    boolean success = generateReport(con);
+                    boolean success = generateReport(con, logger);
                     if(success)
                     {
                         System.out.println("End of Use Report Generation Successful.");
@@ -848,6 +848,7 @@ public class Main
         {
           if (!fromGUI)
             System.out.println("Please enter a valid input. Try again.");
+          logger.info(""+e);
           return false;
         }
     }
@@ -908,6 +909,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -983,15 +985,15 @@ public class Main
                 PreparedStatement pstJ = con.prepareStatement("UPDATE Company SET " + field + "=? WHERE companyId=?;");
                 if (!answer.equals(""))
                 {
-                    updateStringField(pstJ, answer, companyId);
+                    updateStringField(pstJ, answer, companyId, logger);
                 }
                 else if (intAnswer != -1)
                 {
-                    updateIntField(pstJ, intAnswer, companyId);
+                    updateIntField(pstJ, intAnswer, companyId, logger);
                 }
                 else if (floatAnswer != -1)
                 {
-                    updateFloatField(pstJ, floatAnswer, companyId);
+                    updateFloatField(pstJ, floatAnswer, companyId, logger);
                 }
                 logger.info("" + pstJ);
             }
@@ -1002,6 +1004,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
             return false;
         }
     }
@@ -1073,7 +1076,7 @@ public class Main
             }
 
             PreparedStatement pstL = con.prepareStatement("UPDATE Location SET " + field + "=? WHERE companyId=?;");
-            updateStringField(pstL, answer, companyId);
+            updateStringField(pstL, answer, companyId, logger);
             logger.info("" + pstL);
 
             return true;
@@ -1081,6 +1084,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+            logger.info("" + e);
             return false;
         }
     }
@@ -1145,17 +1149,18 @@ public class Main
             PreparedStatement pstJ = con.prepareStatement("UPDATE FullTime SET " + field + "=? WHERE jobId=?;");
             if (intAnswer != -1)
             {
-                updateIntField(pstJ, intAnswer, jobId);
+                updateIntField(pstJ, intAnswer, jobId, logger);
             }
             if (floatAnswer != -1)
             {
-                updateFloatField(pstJ, floatAnswer, jobId);
+                updateFloatField(pstJ, floatAnswer, jobId, logger);
             }
             logger.info("" + pstJ);
         }
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
             return false;
         }
         return true;
@@ -1226,11 +1231,11 @@ public class Main
             PreparedStatement pstJ = con.prepareStatement("UPDATE Internship SET " + field + "=? WHERE jobId=?;");
             if (!answer.equals(""))
             {
-                updateStringField(pstJ, answer, jobId);
+                updateStringField(pstJ, answer, jobId, logger);
             }
             else if (floatAnswer != -1)
             {
-                updateFloatField(pstJ, floatAnswer, jobId);
+                updateFloatField(pstJ, floatAnswer, jobId, logger);
             }
             logger.info("" + pstJ);
             return true;
@@ -1238,6 +1243,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+            logger.info("" + e);
             return false;
         }
     }
@@ -1309,7 +1315,7 @@ public class Main
                 }
 
                 PreparedStatement pstJ = con.prepareStatement("UPDATE Job SET " + field + " =? WHERE jobID=?;");
-                if (!updateStringField(pstJ, answer, jobId))
+                if (!updateStringField(pstJ, answer, jobId, logger))
                 {
                     System.out.println("There was an error updating.");
                     return false;
@@ -1323,6 +1329,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+            logger.info("" + e);
             return false;
         }
     }
@@ -1374,12 +1381,13 @@ public class Main
             }
 
             PreparedStatement pstJ = con.prepareStatement("UPDATE Competition SET " + field + "=? WHERE jobId=?;");
-            updateIntField(pstJ, answer, jobId);
+            updateIntField(pstJ, answer, jobId, logger);
             logger.info("" + pstJ);
         }
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
             return false;
         }
         return true;
@@ -1455,13 +1463,14 @@ public class Main
             }
 
             PreparedStatement pstRJ = con.prepareStatement("UPDATE Manager SET " + field + "=? WHERE managerId=?;");
-            updateStringField(pstRJ, answer, managerId);
+            updateStringField(pstRJ, answer, managerId, logger);
             logger.info("" + pstRJ);
             return true;
         }
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
             return false;
         }
     }
@@ -1506,12 +1515,13 @@ public class Main
             scan.nextLine();
 
             PreparedStatement pstRJ = con.prepareStatement("UPDATE RelatedJobs SET " + updateString + "=? WHERE jobId=?;");
-            updateIntField(pstRJ, relatedJob, jobId);
+            updateIntField(pstRJ, relatedJob, jobId, logger);
             logger.info("" + pstRJ);
         }
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
             return false;
         }
         return true;
@@ -1523,7 +1533,7 @@ public class Main
      * Updates an entry, where the field we are updating wants a STRING.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateStringField(PreparedStatement pst, String answer, int id)
+    public static boolean updateStringField(PreparedStatement pst, String answer, int id, Logger logger)
     {
         try
         {
@@ -1537,6 +1547,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Error updating: " + e);
+            logger.info("" + e);
             return false;
         }
     }
@@ -1545,7 +1556,7 @@ public class Main
      * Updates an entry, where the field we are updating wants an INT.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateIntField(PreparedStatement pst, int answer, int id)
+    public static boolean updateIntField(PreparedStatement pst, int answer, int id, Logger logger)
     {
         try
         {
@@ -1559,6 +1570,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Error updating: " + e);
+            logger.info("" + e);
             return false;
         }
     }
@@ -1567,7 +1579,7 @@ public class Main
      * Updates an entry, where the field we are updating wants a FLOAT.
      * @return true if the update was successful, false otherwise
      */
-    public static boolean updateFloatField(PreparedStatement pst, float answer, int id)
+    public static boolean updateFloatField(PreparedStatement pst, float answer, int id, Logger logger)
     {
         try
         {
@@ -1581,6 +1593,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Error updating: " + e);
+            logger.info("" + e);
             return false;
         }
     }
@@ -1740,6 +1753,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -2023,7 +2037,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
-    public static boolean jobInfo(Connection con, Scanner scan, int jobId, boolean fromGUI)
+    public static boolean jobInfo(Connection con, Scanner scan, int jobId, boolean fromGUI, Logger logger)
     {
         try
         {
@@ -2128,6 +2142,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid ID number. Try again.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -2139,7 +2154,7 @@ public class Main
      * @param con and scan as input to assist in executing the SQL commands.
      * @return true if there were no issues, false otherwise
      */
-    public static boolean lookup(Connection con, Scanner scan)
+    public static boolean lookup(Connection con, Scanner scan, Logger logger)
     {
         try
         {
@@ -2298,6 +2313,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -2441,6 +2457,7 @@ public class Main
         {
             System.out.println(e);
             System.out.println("There was an error creating the manager. Try again.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -2452,7 +2469,7 @@ public class Main
      * @param con as input to assist in executing the SQL commands.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean generateReport(Connection con)
+    public static boolean generateReport(Connection con, Logger logger)
     {
         try
         {
@@ -2462,7 +2479,8 @@ public class Main
         }
         catch (Exception e)
         {
-            System.out.println("Something went wrong.");
+            System.out.println("Something went wrong with the report generation.");
+            logger.info(""+e);
         }
         return false;
     }
@@ -2599,7 +2617,7 @@ public class Main
       catch (Exception e)
       {
         gui.displayMessage("Error executing your query: " + e);
-        logger.info("ERROR " + e);
+        logger.info("" + e);
         return false;
       }
     }
@@ -2618,7 +2636,7 @@ public class Main
       catch (Exception e)
       {
         gui.displayMessage("Error executing your query: " + e);
-        logger.info("ERROR " + e);
+        logger.info("" + e);
         return false;
       }
     }
@@ -2637,7 +2655,7 @@ public class Main
           catch (Exception e)
           {
             gui.displayMessage("Error executing your query: " + e);
-            logger.info("ERROR " + e);
+            logger.info("" + e);
             return false;
           }
         }
@@ -2655,7 +2673,7 @@ public class Main
           catch (Exception e)
           {
             gui.displayMessage("Error executing your query: " + e);
-            logger.info("ERROR " + e);
+            logger.info("" + e);
             return false;
           }
         }
