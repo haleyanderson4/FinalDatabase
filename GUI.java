@@ -1,3 +1,8 @@
+/**
+* Sarah Lasman and Haley Anderson
+* GUI.java
+*/
+
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
@@ -7,18 +12,6 @@ import java.text.NumberFormat;
 import java.lang.NumberFormatException;
 import java.util.Scanner;
 import java.util.logging.*;
-
-/**
-* @TODO list for GUI
-* [X] Add job/manager/company
-* [] Delete job/manager/company
-* [] Search
-* [] Update
-* Bugs:
-* [X] Repainting!!!!!!!!!!!!
-* [X] A more efficient way of dealing with re-naming buttons
-* [] Shit I have a lot to do
-*/
 
 public class GUI extends JPanel
 {
@@ -56,7 +49,6 @@ public class GUI extends JPanel
 
   private JButton deleteJob = new JButton("Delete job");
   private JButton deleteCompany = new JButton("Delete company");
-  private JButton deleteManager = new JButton("Delete manager");
 
   private JButton displayAllJobs = new JButton("Display all jobs");
   private JButton searchJobs = new JButton("Search jobs");
@@ -86,6 +78,10 @@ public class GUI extends JPanel
   Scanner scan;
   Logger logger;
 
+  /**
+  * Initializes GUI and all common variables.
+  * Also sets connection, scanner, and logger, to communicate with Main.
+  */
   public GUI(Connection con, Scanner scan, Logger logger)
   {
     this.con = con;
@@ -145,6 +141,9 @@ public class GUI extends JPanel
     addButtonHandlers();
   }
 
+  /**
+  * Creates all actionlisteners for the buttons.
+  */
   public void addButtonHandlers()
   {
     displayAllJobs.addActionListener(new ButtonHandler());
@@ -156,12 +155,14 @@ public class GUI extends JPanel
     updateManager.addActionListener(new ButtonHandler());
     searchJobs.addActionListener(new ButtonHandler());
     deleteJob.addActionListener(new ButtonHandler());
-    deleteManager.addActionListener(new ButtonHandler());
     getJobInfo.addActionListener(new ButtonHandler());
     generateReport.addActionListener(new ButtonHandler());
     searchButton.addActionListener(new ButtonHandler());
   }
 
+  /**
+  * Checks if there are any empty job fields.
+  */
   public boolean jobFieldsEmpty()
   {
     return (jobField.getText().trim().isEmpty()
@@ -173,6 +174,9 @@ public class GUI extends JPanel
             || type.getText().trim().isEmpty());
   }
 
+  /**
+  * Checks if there are any empty company fields.
+  */
   public boolean companyFieldsEmpty()
   {
     return (companyName.getText().trim().isEmpty()
@@ -181,12 +185,18 @@ public class GUI extends JPanel
             || stockPrice.getText().trim().isEmpty());
   }
 
+  /**
+  * Checks if there are any empty manager fields.
+  */
   public boolean managerFieldsEmpty()
   {
     return (managerName.getText().trim().isEmpty()
           || yearsAtCompany.getText().trim().isEmpty());
   }
 
+  /**
+  * Initializes buttons.
+  */
   private JPanel initButtons()
   {
     JPanel panel = new JPanel();
@@ -199,13 +209,14 @@ public class GUI extends JPanel
     panel.add(updateManager);
     panel.add(searchJobs);
     panel.add(deleteJob);
-    panel.add(deleteManager);
     panel.add(getJobInfo);
     panel.add(generateReport);
     return panel;
   }
 
-  //@TODO work with main class to type-validate
+  /**
+  * Sets the fields for creating a new job.
+  */
   private JPanel jobFields()
   {
     JPanel panel = new JPanel();
@@ -236,6 +247,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Sets fields for creating a new internship.
+  */
   private JPanel internshipFields()
   {
     JPanel panel = new JPanel();
@@ -250,6 +264,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Sets fields for creating a new full-time job.
+  */
   private JPanel fullTimeFields()
   {
     JPanel panel = new JPanel();
@@ -264,6 +281,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Sets fields for creating anew company.
+  */
   private JPanel companyFields()
   {
     JPanel panel = new JPanel();
@@ -288,6 +308,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Sets fields for new manager.
+  */
   private JPanel managerFields()
   {
     JPanel panel = new JPanel();
@@ -305,6 +328,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Gets information for someone conducting a search.
+  */
   private JPanel searchInfo()
   {
     JPanel panel = new JPanel();
@@ -332,6 +358,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Gets info for someone searching for a speciic job.
+  */
   private JPanel getJobInfoFields()
   {
     JPanel panel = new JPanel();
@@ -344,6 +373,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Called when updating a job.
+  */
   private JPanel updateJobFields()
   {
     JPanel panel = new JPanel();
@@ -473,6 +505,9 @@ public class GUI extends JPanel
     return panel;
   }
 
+  /**
+  * Clears fields of any data that may have already been there.
+  */
   private JPanel clearFields(JPanel panel)
   {
     for (Component component : panel.getComponents())
@@ -491,20 +526,9 @@ public class GUI extends JPanel
     return panel;
   }
 
-  // private void test()
-  // {
-  //   panel.add(new JLabel("Choose a specific field to update:"), "align label");
-  //   JComboBox specificCategories;
-  //   String[] specificOptions;
-  //   switch(jobCategories.getSelectedOption())
-  //   {
-
-  //   }
-  //   specificCategories = new JComboBox(specificOptions);
-  //   panel.add(specificCategories);
-  // }
-
-
+  /**
+  * Resets button text and repaints the frame.
+  */
   private void resetButtons()
   {
     removeAll();
@@ -514,7 +538,6 @@ public class GUI extends JPanel
     createManager.setText("New manager");
     createCompany.setText("New company");
     deleteJob.setText("Delete job");
-    deleteManager.setText("Delete manager");
     getJobInfo.setText("Get info on a job");
     updateJob.setText("Update job");
     updateManager.setText("Update manager");
@@ -540,8 +563,7 @@ public class GUI extends JPanel
 
   /**
   * Displays a result set that can be obtained via a select statement.
-  * @param rs The result set to be displayed
-  * @TODO test
+  * @param rs The result set to be displayed\
   */
   public JPanel showTable(ResultSet rs, int rows, int cols, String[] columnNames)
   {
@@ -583,12 +605,18 @@ public class GUI extends JPanel
 
   }
 
+  /**
+  * Gets string representation of internship vs. full time jobs.
+  */
   private String isInternship(boolean isInternship)
   {
     if (isInternship) return "Internship";
     else return "Full time";
   }
 
+  /**
+  * Format basic info about a job.
+  */
   private String getBasicInfo() throws Exception
   {
     rsInfo.first();
@@ -599,6 +627,9 @@ public class GUI extends JPanel
     return info;
   }
 
+  /**
+  * Format type-specific info about a job.
+  */
   private String getTypeInfo() throws Exception
   {
     rsType.first();
@@ -614,6 +645,9 @@ public class GUI extends JPanel
     return info;
   }
 
+  /**
+  * Format related jobs about a job.
+  */
   private String getRelatedInfo() throws Exception
   {
     rsRelated.first();
@@ -628,6 +662,9 @@ public class GUI extends JPanel
     return info;
   }
 
+  /**
+  * Displays the info of a job.
+  */
   private JPanel displayInfo()
   {
     JPanel panel = new JPanel();
@@ -659,6 +696,10 @@ public class GUI extends JPanel
     return true;
   }
 
+  /**
+  * Runs the prepared statement for update.
+  * Different than in main, so has its own method here to avoid confusion.
+  */
   public void updateJobPST() throws SQLException
   {
     if(!jobField.getText().trim().isEmpty())
@@ -900,22 +941,9 @@ public class GUI extends JPanel
           }
           createManager.setText("New manager");
           break;
-        case("Delete manager"): //Deal with
-          resetButtons();
-          JPanel deletePanel = new JPanel();
-          deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
-          deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
-          deletePanel.add(jID, "wrap");
-          add(deletePanel, BorderLayout.NORTH);
-          deleteManager.setText("Confirm delete manager");
-          break;
-        case("Confirm delete manager"): //Deal with
-          deleteManager.setText("Delete manager");
-          //@TODO call main's delete call
-          break;
         case("Delete job"): //Done, test edge cases
           resetButtons();
-          deletePanel = new JPanel();
+          JPanel deletePanel = new JPanel();
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");

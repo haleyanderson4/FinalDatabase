@@ -1,3 +1,8 @@
+/**
+* Sarah Lasman and Haley Anderson
+* Job.java
+*/
+
 public class Job
 {
   int jobId;
