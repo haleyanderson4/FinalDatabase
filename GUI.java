@@ -761,6 +761,7 @@ public class GUI extends JPanel
           createJob.setText("Save job");
           break; //Return to
         case("Save job"): //Return to
+          boolean success;
           if (j.type == 'f')
           {
             try
@@ -768,7 +769,7 @@ public class GUI extends JPanel
               j.signingBonus = ((Number)signingBonus.getValue()).floatValue();
               j.stockOptions = ((Number)stockOptions.getValue()).intValue();
               j.salary = ((Number)salary.getValue()).floatValue();
-              Main.createNewPosting(con, scan, logger, j, true);
+              success = Main.createNewPosting(con, scan, logger, j, true);
             }
             catch(Exception ex)
             {
@@ -789,12 +790,13 @@ public class GUI extends JPanel
               j.season = salary.getText();
               j.rate = ((Number)rate.getValue()).floatValue();
               j.payPeriod = payPeriod.getText();
+              success = Main.createNewPosting(con, scan, logger, j, true);
             }
 
             catch(Exception ex)
             {
               JOptionPane.showMessageDialog(null, "Invalid format, try again");
-              System.out.println(ex);
+              logger.info(""+ex);
               return;
             }
             if (season.getText().trim().equals("") || rate.getText().trim().equals("")
@@ -804,35 +806,64 @@ public class GUI extends JPanel
               return;
             }
           }
-          JOptionPane.showMessageDialog(null, "Job created");
+          if (success)
+            JOptionPane.showMessageDialog(null, "Job created");
           createJob.setText("New job");
           remove(jobPanel);
           resetButtons();
           break;
-        case("New company"): //Return to
+        case("New company"): //DONE
           resetButtons();
           companyPanel = companyFields();
           add(companyPanel, BorderLayout.NORTH);
           createCompany.setText("Save company");
           break;
-        case("Save company"): //Return to
+        case("Save company"): //DONE
           if (companyFieldsEmpty())
           {
             JOptionPane.showMessageDialog(null, "All fields must have data.");
             return;
           }
-          Company c = new Company();
           try
           {
-            c.companyName = companyName.getText();
-            c.numEmployees = ((Number)numEmployees.getValue()).intValue();
-            c.yearlyRevenue = ((Number)revenue.getValue()).floatValue();
-            c.stockPrice = ((Number)stockPrice.getValue()).floatValue();
+            String companyNameS = companyName.getText();
+            int numEmployeesS = ((Number)numEmployees.getValue()).intValue();
+            float yearlyRevenueS = ((Number)revenue.getValue()).floatValue();
+            float stockPriceS = ((Number)stockPrice.getValue()).floatValue();
+            String locationAreaS = locationArea.getText();
+            String streetS = streetAddress.getText();
+            String cityS = city.getText();
+            String stateS = state.getText();
+            int companyId = 0;
+            PreparedStatement pstC = con.prepareStatement("INSERT INTO Company(companyName, numEmployees, yearlyRevenue, stockPrice) VALUES (?,?,?,?);");
+            pstC.clearParameters();
+            pstC.setString(1, companyNameS);
+            pstC.setInt(2, numEmployeesS);
+            pstC.setFloat(3, yearlyRevenueS);
+            pstC.setFloat(4, stockPriceS);
+            PreparedStatement pstL = con.prepareStatement("INSERT INTO Location(companyId, locationArea, street, city, state) VALUES (?,?,?,?,?);");
+            PreparedStatement pstId = con.prepareStatement("SELECT MAX(companyId) FROM Company;");
+            ResultSet rsId = pstId.executeQuery();
+            while(rsId.next())
+            {
+                companyId = rsId.getInt(1);
+            }
+            pstL.setInt(1, companyId);
+            pstL.setString(2, locationAreaS);
+            pstL.setString(3, streetS);
+            pstL.setString(4, cityS);
+            pstL.setString(5, stateS);
+            pstC.executeUpdate();
+            pstL.executeUpdate();
             createCompany.setText("New company");
+            logger.info(""+pstC);
+            logger.info(""+pstL);
+            JOptionPane.showMessageDialog(null, "Company successfully created");
           }
           catch (Exception ex)
           {
-            System.out.println("Error: " + ex);
+            JOptionPane.showMessageDialog(null, "Error: " + ex);
+            logger.info(""+ex);
           }
           break;
         case("New manager"): //DONE
@@ -1020,13 +1051,13 @@ public class GUI extends JPanel
             JOptionPane.showMessageDialog(null, "There was an error with your request. Please try again later.");
           }
           break;
-        case("Search jobs"): //@TODO
+        case("Search jobs"): //DONE
           resetButtons();
           add(searchInfo(), BorderLayout.NORTH);
           searchJobs.setText("Search");
 
           break;
-        case ("Search"):
+        case ("Search"): //Fix buttons
           resetButtons();
           boolean checkType = true;
           boolean isInternship = false;
@@ -1102,7 +1133,6 @@ public class GUI extends JPanel
             logger.info("" + ex);
           }
           break;
-
         case("Get info on a job"): //DONE
           resetButtons();
           add(getJobInfoFields(), BorderLayout.NORTH);

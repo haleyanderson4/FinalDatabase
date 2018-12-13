@@ -288,7 +288,7 @@ public class Main
               if(company.toLowerCase().equals("y"))
               {
                   createCompany = true;
-                  success = createCompany(pstC, pstL, scan);
+                  success = createCompany(pstC, pstL, scan, logger);
                   if(!success)
                   {
                       System.out.println("The Company creation failed. Please try again.");
@@ -306,20 +306,14 @@ public class Main
                       return false;
                   }
               }
+              System.out.println(companyId); //@DEBUG
+
             }
-            // if (fromGUI)
-            // {
-            //   if (!checkCompanyID)
-            //   {
-            //     gui.displayMessage(null, "Company does not exist. Try again.");
-            //     return false;
-            //   }
-            // }
 
             PreparedStatement pstJ = con.prepareStatement("INSERT INTO Job(jobTitle, industry, description, companyId, isInternship) VALUES(?,?,?,?,?);");
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
-            success = createJob(pstJ, pstComp, scan, j, fromGUI);
+            success = createJob(pstJ, pstComp, scan, j, fromGUI, logger);
             String typeS;
             if (!fromGUI)
               typeS = getType(scan, pstJ);
@@ -340,7 +334,7 @@ public class Main
 
             PreparedStatement pstF = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus, salary) VALUES(?,?,?,?);");
             PreparedStatement pstI = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, rate, season) VALUES(?,?,?,?);");
-            success = createType(pstF, pstI, type, scan, j, fromGUI);
+            success = createType(pstF, pstI, type, scan, j, fromGUI, logger);
             if(!success)
             {
                 System.out.println("The Full Time or Internship creation failed. Please try again.");
@@ -355,10 +349,12 @@ public class Main
               relatedMaybe = scan.nextLine();
             }
             boolean createRelated = false;
-            if(relatedMaybe.toLowerCase().equals("y") || (j.r1 != 0) || j.r2 != 0 || j.r3 != 0 || j.r4 != 0 || j.r5 != 0);
+            createRelated = (fromGUI && (j.r1 != 0 || j.r2 != 0 || j.r3 != 0 || j.r4 != 0 || j.r5 != 0));
+            createRelated = createRelated || relatedMaybe.toLowerCase().equals("y");
+            if(createRelated)
             {
                 createRelated = true;
-                success = createRelated(pstR, scan, j, fromGUI);
+                success = createRelated(pstR, scan, j, fromGUI, logger);
                 if (!success)
                 {
                   if (!fromGUI)
@@ -368,10 +364,8 @@ public class Main
                   return false;
                 }
             }
-
             PreparedStatement pstStart = con.prepareStatement("START TRANSACTION;");
             pstStart.execute();
-
             if(createCompany)
             {
                 pstC.executeUpdate();
@@ -388,17 +382,17 @@ public class Main
                 pstL.executeUpdate();
                 System.out.println("The Location has been created.");
             }
-
+            System.out.println(pstJ+""); //@DEBUG
+            System.out.println(companyId); //@DEBUG
             pstJ.setInt(4, companyId);
             pstJ.executeUpdate();
             System.out.println("The Job has been created.");
 
             PreparedStatement pstId = con.prepareStatement("SELECT MAX(jobId) FROM Job;");
             ResultSet rsId = pstId.executeQuery();
-            while(rsId.next())
-            {
-                jobId = rsId.getInt(1);
-            }
+            rsId.first();
+            jobId = rsId.getInt(1);
+            System.out.println(jobId); //@DEBUG
 
             pstComp.setInt(1, jobId);
             pstComp.executeUpdate();
@@ -451,12 +445,11 @@ public class Main
             pstEnd.execute();
             return true;
 
-            //PreparedStatement pstRoll = con.prepareStatement("ROLLBACK");
-            //            pstRoll.execute();
         }
         catch (Exception e)
         {
             System.out.println("Please enter this information again, and be sure that all information is correct.");
+            logger.info("" + e);
         }
         return false;
     }
@@ -467,7 +460,7 @@ public class Main
      * @param pstL is the Prepared Statement for the Location table.
      * @return true if the creation was successful, false otherwise.
      */
-    public static boolean createCompany(PreparedStatement pstC, PreparedStatement pstL, Scanner scan)
+    public static boolean createCompany(PreparedStatement pstC, PreparedStatement pstL, Scanner scan, Logger logger)
     {
         try
         {
@@ -532,6 +525,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+            logger.info(""+e);
         }
         return false;
     }
@@ -544,7 +538,7 @@ public class Main
      * @param fromGUI is set to true if called from the GUI, false if called from command line.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan, Job job, boolean fromGUI)
+    public static boolean createJob(PreparedStatement pstJ, PreparedStatement pstComp, Scanner scan, Job job, boolean fromGUI, Logger logger)
     {
         try
         {
@@ -607,6 +601,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info(""+e);
         }
         return false;
     }
@@ -655,7 +650,7 @@ public class Main
      * @param pstR is the Prepared Statement for the Related Jobs table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createRelated(PreparedStatement pstR, Scanner scan, Job job, boolean fromGUI)
+    public static boolean createRelated(PreparedStatement pstR, Scanner scan, Job job, boolean fromGUI, Logger logger)
     {
         try
         {
@@ -725,18 +720,19 @@ public class Main
         catch(Exception e)
         {
             System.out.println("Please enter a valid input.");
+            logger.info("" + e);
         }
         return false;
     }
 
     /**
-     * Gathers information for the company field.
+     * Gathers information for the type field.
      * @param pstF is the Prepared Statement for the Full Time table.
      * @param pstI is the Prepared Statement for the Internship table.
      * @param type is the boolean set in the Job field on whether it is full time or internship.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createType(PreparedStatement pstF, PreparedStatement pstI, boolean type, Scanner scan, Job job, boolean fromGUI)
+    public static boolean createType(PreparedStatement pstF, PreparedStatement pstI, boolean type, Scanner scan, Job job, boolean fromGUI, Logger logger)
     {
         try
         {
@@ -800,6 +796,7 @@ public class Main
         catch (Exception e)
         {
             System.out.println("Please enter a valid input. Try again.");
+            logger.info(""+e);
         }
         return false;
     }
@@ -2383,7 +2380,7 @@ public class Main
             {
                 companyCreate = true;
 
-                success = createCompany(pstC, pstL, scan);
+                success = createCompany(pstC, pstL, scan, logger);
                 if(!success)
                 {
                     System.out.println("The Company creation failed. Please try again.");
