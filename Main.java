@@ -237,7 +237,7 @@ public class Main
             {
               String[] columnNames = {"Job ID", "Title", "Industry", "Description", "Company ID", "Type"};
               rs.last();
-              gui.add(gui.showTable(rs, rs.getRow()+1, 6, columnNames));
+              gui.showTable(rs, rs.getRow()+1, 6, columnNames);
             }
             else
             {
@@ -355,14 +355,17 @@ public class Main
               relatedMaybe = scan.nextLine();
             }
             boolean createRelated = false;
-            if(!fromGUI && relatedMaybe.toLowerCase().equals("y"))
+            if(relatedMaybe.toLowerCase().equals("y") || (j.r1 != 0) || j.r2 != 0 || j.r3 != 0 || j.r4 != 0 || j.r5 != 0);
             {
                 createRelated = true;
-                success = createRelated(pstR, scan);
+                success = createRelated(pstR, scan, j, fromGUI);
                 if (!success)
                 {
+                  if (!fromGUI)
                     System.out.println("The Related Jobs creation failed. Please try again.");
-                    return false;
+                  else
+                    gui.displayMessage("The Related Jobs creation failed. Please try again.");
+                  return false;
                 }
             }
 
@@ -652,7 +655,7 @@ public class Main
      * @param pstR is the Prepared Statement for the Related Jobs table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createRelated(PreparedStatement pstR, Scanner scan)
+    public static boolean createRelated(PreparedStatement pstR, Scanner scan, Job job, boolean fromGUI)
     {
         try
         {
@@ -662,41 +665,52 @@ public class Main
             int related4 = 0;
             int related5 = 0;
 
-            System.out.println("How many? Enter a number between 1 and 5.");
-            int numOfRelated = scan.nextInt();
-
-            if(numOfRelated < 1 || numOfRelated > 5)
+            if (!fromGUI)
             {
-                System.out.println("Please enter a please between 1 and 5. Try again.");
-                return false;
+              System.out.println("How many? Enter a number between 1 and 5.");
+              int numOfRelated = scan.nextInt();
+
+              if(numOfRelated < 1 || numOfRelated > 5)
+              {
+                  System.out.println("Please enter a please between 1 and 5. Try again.");
+                  return false;
+              }
+
+              for(int i = 1; i <= numOfRelated; i++)
+              {
+                  System.out.println("What is the ID number of the related job");
+                  int tempRJ = scan.nextInt();
+                  scan.nextLine();
+
+                  if(i == 1)
+                  {
+                      related1 = tempRJ;
+                  }
+                  else if(i == 2)
+                  {
+                      related2 = tempRJ;
+                  }
+                  else if(i == 3)
+                  {
+                      related3 = tempRJ;
+                  }
+                  else if(i == 4)
+                  {
+                      related4 = tempRJ;
+                  }
+                  else if(i == 5)
+                  {
+                      related5 = tempRJ;
+                  }
+              }
             }
-
-            for(int i = 1; i <= numOfRelated; i++)
+            if (fromGUI)
             {
-                System.out.println("What is the ID number of the related job");
-                int tempRJ = scan.nextInt();
-                scan.nextLine();
-
-                if(i == 1)
-                {
-                    related1 = tempRJ;
-                }
-                else if(i == 2)
-                {
-                    related2 = tempRJ;
-                }
-                else if(i == 3)
-                {
-                    related3 = tempRJ;
-                }
-                else if(i == 4)
-                {
-                    related4 = tempRJ;
-                }
-                else if(i == 5)
-                {
-                    related5 = tempRJ;
-                }
+              related1 = job.r1;
+              related2 = job.r2;
+              related3 = job.r3;
+              related4 = job.r4;
+              related5 = job.r5;
             }
 
             pstR.clearParameters();
@@ -795,7 +809,7 @@ public class Main
      * @param pstM is the Prepared Statement for the Manager table.
      * @return true if the creation was successful, false otherwise
      */
-    public static boolean createManager(PreparedStatement pstM, Scanner scan, Logger logger, Manager manager, boolean fromGUI)
+    public static boolean createManager(PreparedStatement pstM, Scanner scan, Connection con, Logger logger, Manager manager, boolean fromGUI)
     {
         try
         {
@@ -824,6 +838,11 @@ public class Main
             pstM.setString(2, manager.managerName);
             pstM.setBoolean(3, manager.hasExperience);
             pstM.setInt(4, manager.yearsAtCompany);
+            pstM.executeUpdate();
+            PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+            pstEnd.execute();
+            logger.info(pstM + "");
+
           }
             return true;
 
@@ -2041,24 +2060,27 @@ public class Main
             {
               gui.setRSInfo(rs);
             }
-            while (rs.next()) //update
+            if (!fromGUI)
             {
-                System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
-                        + " Type: Full Time"
-                        + "\nCompany Name: " + rs.getString(6) + " Number of Employees: " + rs.getInt(7) + " Yearly Revenue: " + rs.getFloat(8) + " Stock Price: " + rs.getFloat(9)
-                        + "\nLocation Area: " + rs.getString(10) + " Address: " + rs.getString(11) + " " + rs.getString(12));
+              while (rs.next()) //update
+              {
+                  System.out.println("Job ID: " + rs.getInt(1) + " Job Title: " + rs.getString(2) + " Industry: " + rs.getString(3) + " Description: " + rs.getString(4) + " Company ID: " + rs.getInt(5)
+                          + " Type: Full Time"
+                          + "\nCompany Name: " + rs.getString(6) + " Number of Employees: " + rs.getInt(7) + " Yearly Revenue: " + rs.getFloat(8) + " Stock Price: " + rs.getFloat(9)
+                          + "\nLocation Area: " + rs.getString(10) + " Address: " + rs.getString(11) + " " + rs.getString(12));
+              }
             }
-
             if (!type)
             {
                 PreparedStatement pst8F2 = con.prepareStatement("SELECT salary, numStockOptions, signingBonus FROM FullTime WHERE jobId=?;");
                 pst8F2.clearParameters();
                 pst8F2.setInt(1, jobId);
                 rs = pst8F2.executeQuery();
-                while(rs.next())
-                {
-                    System.out.println("Full Time Salary" + rs.getFloat(1) + "\nNumber of Stock Options: " + rs.getInt(2) + " Signing Bonus: " + rs.getFloat(3));
-                }
+                if (!fromGUI)
+                  while(rs.next())
+                  {
+                      System.out.println("Full Time Salary" + rs.getFloat(1) + "\nNumber of Stock Options: " + rs.getInt(2) + " Signing Bonus: " + rs.getFloat(3));
+                  }
             }
             if (type)
             {
@@ -2066,10 +2088,11 @@ public class Main
                 pst8I.clearParameters();
                 pst8I.setInt(1, jobId);
                 rs = pst8I.executeQuery();
-                while (rs.next())
-                {
-                    System.out.println("Internship Pay Period: " + rs.getString(1) + " Rate: " + rs.getFloat(2) + " Season: " + rs.getString(3));
-                }
+                if (!fromGUI)
+                  while (rs.next())
+                  {
+                      System.out.println("Internship Pay Period: " + rs.getString(1) + " Rate: " + rs.getFloat(2) + " Season: " + rs.getString(3));
+                  }
             }
             if (fromGUI)
             {
@@ -2085,17 +2108,20 @@ public class Main
             {
                 gui.setRSRelated(rs);
             }
-            while(rs.next())
+            if (!fromGUI)
             {
-                if(rs.getInt(1) == 0)
-                {
-                    System.out.println("No related Jobs have been added.");
-                    return true;
-                }
-                else
-                {
-                    System.out.println("Related Job 1: " + rs.getInt(2) + " Related Job 2: " + rs.getInt(3) + " Related Job 3: " + rs.getInt(4) + " Related Job 4: " + rs.getInt(5) + " Related Job 5: " + rs.getInt(6));
+              while(rs.next())
+              {
+                  if(rs.getInt(1) == 0)
+                  {
+                      System.out.println("No related Jobs have been added.");
+                      return true;
+                  }
+                  else
+                  {
+                      System.out.println("Related Job 1: " + rs.getInt(2) + " Related Job 2: " + rs.getInt(3) + " Related Job 3: " + rs.getInt(4) + " Related Job 4: " + rs.getInt(5) + " Related Job 5: " + rs.getInt(6));
 
+                  }
                 }
             }
 
@@ -2394,7 +2420,7 @@ public class Main
             PreparedStatement pstM = con.prepareStatement("INSERT INTO MANAGER(companyId, name, technicalExperience, yearsAtCompany) VALUES(?,?,?,?);");
             pstM.clearParameters();
             pstM.setInt(1, companyId);
-            success = createManager(pstM, scan, logger, new Manager(), false);
+            success = createManager(pstM, scan, con, logger, new Manager(), false);
             if (!success)
             {
                 System.out.println("The manager creation failed. Please try again.");

@@ -15,6 +15,7 @@ public class Job
   String payPeriod;
   float rate;
   String season;
+  int r1, r2, r3, r4, r5;
 
   public Job()
   {
