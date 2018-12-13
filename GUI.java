@@ -44,8 +44,12 @@ public class GUI extends JPanel
   private JTextField locationArea, streetAddress, city, state;
   private JButton createCompany = new JButton("New company");
 
+  private JFormattedTextField stockOptions;
+  private JFormattedTextField rate, signingBonus, salary;
+  private JTextField season, payPeriod;
+
   private JTextField managerName;
-  private JComboBox hasExperience;
+  private JComboBox<String> hasExperience;
   private JFormattedTextField yearsAtCompany;
   private JButton createManager = new JButton("New manager");
 
@@ -74,21 +78,12 @@ public class GUI extends JPanel
 
   private JButton searchButton = new JButton("SEARCH");
 
-  private JComboBox categories;
+  private JComboBox<String> categories;
 
   private Main main;
   Connection con;
   Scanner scan;
   Logger logger;
-
-  // public static void main(String[] args)
-  // {
-  //   JFrame f = new JFrame();
-  //   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  //   f.getContentPane().add(new GUI());
-  //   f.setSize(600, 600);
-  //   f.setVisible(true);
-  // }
 
   public GUI(Connection con, Scanner scan, Logger logger)
   {
@@ -126,8 +121,14 @@ public class GUI extends JPanel
     state = new JTextField(2);
     managerName = new JTextField(50);
     String[] yn = {"Yes", "No"};
-    hasExperience = new JComboBox(yn);
+    hasExperience = new JComboBox<String>(yn);
     yearsAtCompany = new JFormattedTextField(intFormat);
+    stockOptions = new JFormattedTextField(intFormat);
+    signingBonus = new JFormattedTextField(intFormat);
+    salary = new JFormattedTextField(intFormat);
+    payPeriod = new JTextField(25);
+    season = new JTextField(25);
+    rate = new JFormattedTextField(intFormat);
     yearsAtCompany.setValue(null);
     setLayout(new BorderLayout(5, 5));
     //add(initFields(), BorderLayout.NORTH);
@@ -135,6 +136,24 @@ public class GUI extends JPanel
     f.getContentPane().add(this);
     f.setSize(600, 600);
     f.setVisible(true);
+    addButtonHandlers();
+  }
+
+  public void addButtonHandlers()
+  {
+    displayAllJobs.addActionListener(new ButtonHandler());
+    createJob.addActionListener(new ButtonHandler());
+    createCompany.addActionListener(new ButtonHandler());
+    createManager.addActionListener(new ButtonHandler());
+    updateJob.addActionListener(new ButtonHandler());
+    updateCompany.addActionListener(new ButtonHandler());
+    updateManager.addActionListener(new ButtonHandler());
+    searchJobs.addActionListener(new ButtonHandler());
+    deleteJob.addActionListener(new ButtonHandler());
+    deleteManager.addActionListener(new ButtonHandler());
+    getJobInfo.addActionListener(new ButtonHandler());
+    generateReport.addActionListener(new ButtonHandler());
+    searchButton.addActionListener(new ButtonHandler());
   }
 
   public boolean jobFieldsEmpty()
@@ -166,38 +185,18 @@ public class GUI extends JPanel
   {
     JPanel panel = new JPanel();
     panel.add(displayAllJobs);
-    displayAllJobs.addActionListener(new ButtonHandler());
     panel.add(createJob);
-    createJob.addActionListener(new ButtonHandler());
     panel.add(createCompany);
-    createCompany.addActionListener(new ButtonHandler());
     panel.add(createManager);
-    createManager.addActionListener(new ButtonHandler());
     panel.add(updateJob);
-    updateJob.addActionListener(new ButtonHandler());
     panel.add(updateCompany);
-    updateCompany.addActionListener(new ButtonHandler());
     panel.add(updateManager);
-    updateManager.addActionListener(new ButtonHandler());
     panel.add(searchJobs);
-    searchJobs.addActionListener(new ButtonHandler());
     panel.add(deleteJob);
-    deleteJob.addActionListener(new ButtonHandler());
-    // panel.add(deleteCompany);
-    // deleteCompany.addActionListener(new ButtonHandler());
     panel.add(deleteManager);
-    deleteManager.addActionListener(new ButtonHandler());
     panel.add(getJobInfo);
-    getJobInfo.addActionListener(new ButtonHandler());
     panel.add(generateReport);
-    generateReport.addActionListener(new ButtonHandler());
     return panel;
-  }
-
-  private Job getJobData()
-  {
-    Job j = new Job();
-    return j;
   }
 
   //@TODO work with main class to type-validate
@@ -219,6 +218,37 @@ public class GUI extends JPanel
     panel.add(numApplicants, "wrap");
     panel.add(new JLabel("Type (I for internship, F for full-time)"), "align label");
     panel.add(type, "wrap");
+    searchButton.setText("Next");
+    panel.add(searchButton);
+    panel = clearFields(panel);
+    return panel;
+  }
+
+  private JPanel internshipFields()
+  {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(new JLabel("Pay period"));
+    panel.add(payPeriod, "wrap");
+    panel.add(new JLabel("Rate"));
+    panel.add(rate, "wrap");
+    panel.add(new JLabel("Season"));
+    panel.add(season, "wrap");
+    panel = clearFields(panel);
+    return panel;
+  }
+
+  private JPanel fullTimeFields()
+  {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(new JLabel("Stock Options"));
+    panel.add(stockOptions, "wrap");
+    panel.add(new JLabel("Signing Bonus"));
+    panel.add(signingBonus, "wrap");
+    panel.add(new JLabel("Salary"));
+    panel.add(salary, "wrap");
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -242,6 +272,7 @@ public class GUI extends JPanel
     panel.add(city, "wrap");
     panel.add(new JLabel("State (2-letter abbreviation)"), "align label");
     panel.add(state, "wrap");
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -258,6 +289,7 @@ public class GUI extends JPanel
     panel.add(yearsAtCompany, "wrap");
     panel.add(new JLabel("Company ID"), "align label");
     panel.add(cID, "wrap");
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -270,7 +302,8 @@ public class GUI extends JPanel
     panel.add(state, "wrap");
     panel.add(new JLabel("Company:"), "align label");
     panel.add(companyName, "wrap");
-    //@TODO id, name, or either?
+    panel.add(new JLabel("Industry:"), "align label");
+    panel.add(industry, "wrap");
     panel.add(new JLabel("Type:"), "align label");
     ButtonGroup typeButtons = new ButtonGroup();
     internship = new JRadioButton("Internship");
@@ -283,6 +316,7 @@ public class GUI extends JPanel
     panel.add(eitherType);
     panel.add(internship);
     panel.add(fullTime);
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -293,7 +327,7 @@ public class GUI extends JPanel
     panel.add(jID, "wrap");
     searchButton.setText("SEARCH FOR JOB");
     panel.add(searchButton);
-    searchButton.addActionListener(new ButtonHandler());
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -302,13 +336,13 @@ public class GUI extends JPanel
     JPanel panel = new JPanel();
     panel.add(new JLabel("Job ID to update:"), "align label");
     panel.add(jID, "wrap");
-    // searchButton.setText("GET CURRENT JOB INFO");
-    // panel.add(searchButton);
-    // searchButton.addActionListener(new ButtonHandler());
     panel.add(new JLabel("Choose a category to update:"), "align label");
     String[] options = {"General information", "Full-time specific info", "Internship specific info", "Related jobs"};
-    categories = new JComboBox(options);
+    categories = new JComboBox<String>(options);
     panel.add(categories);
+    searchButton.setText("CONTINUE");
+    panel.add(searchButton);
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -320,9 +354,11 @@ public class GUI extends JPanel
     panel.add(new JLabel("Updatable fields: Only fill in data for the fields you wish to update."), "align label");
     panel.add(new JLabel("Manager name"), "align label");
     panel.add(managerName);
+    panel.add(new JLabel("Technical experience"), "align label");
+    panel.add(hasExperience);
     panel.add(new JLabel("Years at company"), "align label");
     panel.add(yearsAtCompany);
-    yearsAtCompany.setValue(null);
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -348,6 +384,7 @@ public class GUI extends JPanel
     panel.add(city);
     panel.add(new JLabel("State"), "align label");
     panel.add(state);
+    panel = clearFields(panel);
     return panel;
   }
 
@@ -376,20 +413,7 @@ public class GUI extends JPanel
   //   String[] specificOptions;
   //   switch(jobCategories.getSelectedOption())
   //   {
-  //     case "General information":
-  //       specificOptions = {"Title", "Industry", "Description"};
-  //       break;
-  //     case "Full-time specific info":
-  //       specificOptions = {"Number of stock options", "Signing bonus", "Salary"};
-  //       break;
-  //     case "Internship specific info":
-  //       specificOptions = {"Pay period", "Rate", "Season"};
-  //       break;
-  //     case "Related jobs":
-  //       specificOptions = {"Related job 1", "Related job 2", "Related job 3", "Related job 4", "Related job 5"};
-  //       break;
-  //     case default:
-  //       break;
+
   //   }
   //   specificCategories = new JComboBox(specificOptions);
   //   panel.add(specificCategories);
@@ -468,6 +492,7 @@ public class GUI extends JPanel
     {
       JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
     }
+    panel = clearFields(panel);
     return panel;
 
   }
@@ -533,33 +558,13 @@ public class GUI extends JPanel
     {
       JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
     }
-    return panel;
-  }
-
-  /**
-  * @TODO
-  * Figures out which fields a person wants to search on.
-  */
-  private JPanel getSelectInfoFields()
-  {
-    JPanel panel = getJobInfoFields();
-    searchButton.setText("SEARCH FOR JOB INFO");
-    panel.add(new JLabel("Choose from the following:"));
+    panel = clearFields(panel);
     return panel;
   }
 
   public void displayMessage(String msg)
   {
     JOptionPane.showMessageDialog(null, msg);
-  }
-
-  /**
-  * @TODO
-  */
-  private JPanel displaySelectInfo()
-  {
-    JPanel panel = new JPanel();
-    return panel;
   }
 
   public boolean isOpen()
@@ -584,7 +589,6 @@ public class GUI extends JPanel
   }
 
   //@TODO add more exception handling for save cases
-  //@TODO null out fields after updates
   private class ButtonHandler implements ActionListener
   {
     @Override
@@ -594,43 +598,98 @@ public class GUI extends JPanel
       jobPanel = new JPanel();
       companyPanel = new JPanel();
       managerPanel = new JPanel();
+      Job j = new Job();
       switch(e.getActionCommand())
       {
         case("New job"):
           resetButtons();
-          jobPanel = clearFields(jobFields());
+          jobPanel = jobFields();
           add(jobPanel, BorderLayout.NORTH);
-          createJob.setText("Save job");
           break;
-        case("Save job"):
+        case("Next"):
           if (jobFieldsEmpty())
           {
             JOptionPane.showMessageDialog(null, "All fields must have data.");
             return;
           }
-          Job j = new Job();
           try
           {
             j.jobTitle = jobField.getText();
             j.industry = industry.getText();
             j.description = description.getText();
             j.companyId = ((Number)cID.getValue()).intValue();
-            j.type = type.getText();
+            j.type = type.getText().toLowerCase().charAt(0);
             Main.createNewPosting(con, scan, logger, j, true);
-            createJob.setText("New job");
           }
           catch (java.lang.NumberFormatException ex)
           {
-            System.out.println("Invalid ID format, try again");
+            JOptionPane.showMessageDialog(null, "Invalid format, try again");
+            return;
           }
+          resetButtons();
+          if (j.type == 'f')
+          {
+            add(fullTimeFields(), BorderLayout.NORTH);
+          }
+          else if (j.type == 'i')
+          {
+            add(internshipFields(), BorderLayout.NORTH);
+          }
+          else
+          {
+            JOptionPane.showMessageDialog(null, "Type field must be i or f.");
+            return;
+          }
+          createJob.setText("Save job");
+          break;
+        case("Save job"):
+          if (j.type == 'f')
+          {
+            try
+            {
+              j.signingBonus = ((Number)signingBonus.getValue()).floatValue();
+              j.stockOptions = ((Number)stockOptions.getValue()).intValue();
+              j.salary = ((Number)salary.getValue()).floatValue();
+            }
+            catch(Exception ex)
+            {
+              JOptionPane.showMessageDialog(null, "Invalid format, try again");
+              return;
+            }
+            if (signingBonus.getText().trim().equals("") || stockOptions.getText().trim().equals("")
+                || salary.getText().trim().equals(""))
+            {
+              JOptionPane.showMessageDialog(null, "All fields must have data");
+              return;
+            }
+          }
+          else
+          {
+            try
+            {
+              j.season = salary.getText();
+              j.rate = ((Number)rate.getValue()).floatValue();
+              j.payPeriod = payPeriod.getText();
+            }
+
+          catch(Exception ex)
+          {
+            JOptionPane.showMessageDialog(null, "Invalid format, try again");
+            return;
+          }
+          if (season.getText().trim().equals("") || rate.getText().trim().equals("")
+              || payPeriod.getText().trim().equals(""))
+          {
+            JOptionPane.showMessageDialog(null, "All fields must have data");
+            return;
+          }
+        }
           break;
         case("New company"):
           resetButtons();
-          companyPanel = clearFields(companyFields());
+          companyPanel = companyFields();
           add(companyPanel, BorderLayout.NORTH);
           createCompany.setText("Save company");
-          remove(jobPanel);
-          remove(managerPanel);
           break;
         case("Save company"):
           if (companyFieldsEmpty())
@@ -654,7 +713,7 @@ public class GUI extends JPanel
           break;
         case("New manager"):
           resetButtons();
-          managerPanel = clearFields(managerFields());
+          managerPanel = managerFields();
           add(managerPanel, BorderLayout.NORTH);
           createManager.setText("Save manager");
           remove(jobPanel);
@@ -689,7 +748,6 @@ public class GUI extends JPanel
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Company ID to be deleted"), "align label");
           deletePanel.add(cID, "wrap");
-          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteCompany.setText("Confirm delete company");
           break;
@@ -703,7 +761,6 @@ public class GUI extends JPanel
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Manager ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
-          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteManager.setText("Confirm delete manager");
           break;
@@ -717,7 +774,6 @@ public class GUI extends JPanel
           deletePanel.setLayout(new BoxLayout(deletePanel, BoxLayout.Y_AXIS));
           deletePanel.add(new JLabel("Job ID to be deleted"), "align label");
           deletePanel.add(jID, "wrap");
-          deletePanel = clearFields(deletePanel);
           add(deletePanel, BorderLayout.NORTH);
           deleteJob.setText("Confirm delete job");
           break;
@@ -736,14 +792,26 @@ public class GUI extends JPanel
           break;
         case("Update job"):
           resetButtons();
-          updateJob.setText("Confirm update job");
           add(updateJobFields());
+          break;
+        case("Continue"):
+          JComboBox<String> specificCategories;
+            if(categories.getSelectedItem().equals("General"))
+              {String[] moreOptions = {"Title", "Industry", "Description"};}
+            else if(categories.getSelectedItem().equals("Full-time specific info"))
+              {String[] moreOptions ={"Number of stock options", "Signing bonus", "Salary"};}
+            else if (categories.getSelectedItem().equals("Internship specific info"))
+              {String[] moreOptions ={"Pay period", "Rate", "Season"};}
+            else if(categories.getSelectedItem().equals("Related jobs"))
+            {
+              String[] moreOptions ={"Related job 1", "Related job 2", "Related job 3", "Related job 4", "Related job 5"};
+            }
+          updateJob.setText("Confirm update job");
           break;
         case("Update manager"):
           resetButtons();
           updateManager.setText("Confirm update manager");
           managerPanel = updateManagerFields();
-          managerPanel = clearFields(managerPanel);
           managerPanel.setLayout(new BoxLayout(managerPanel, BoxLayout.Y_AXIS));
           add(managerPanel, BorderLayout.NORTH);
           break;
@@ -752,8 +820,13 @@ public class GUI extends JPanel
           {
             if (!managerName.getText().trim().isEmpty())
               Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET name=? WHERE managerId=?"), ((Number)mID.getValue()).intValue(), managerName.getText());
+            if (hasExperience.getSelectedItem().equals("Yes"))
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET technicalExperience=TRUE WHERE managerId=?"), ((Number)mID.getValue()).intValue());
+            if (hasExperience.getSelectedItem().equals("No"))
+              Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET technicalExperience=FALSE WHERE managerId=?"), ((Number)mID.getValue()).intValue());
             if (!yearsAtCompany.getText().trim().isEmpty())
               Main.executePST(con, logger, con.prepareStatement("UPDATE Manager SET yearsAtCompany=? WHERE managerID=?"), ((Number)mID.getValue()).intValue(), ((Number)yearsAtCompany.getValue()).intValue());
+            JOptionPane.showMessageDialog(null, "Manager updated");
           }
           catch (Exception ex)
           {
@@ -766,7 +839,6 @@ public class GUI extends JPanel
           resetButtons();
           updateCompany.setText("Confirm update company");
           companyPanel = updateCompanyFields();
-          companyPanel = clearFields(companyPanel);
           companyPanel.setLayout(new BoxLayout(companyPanel, BoxLayout.Y_AXIS));
           add(companyPanel, BorderLayout.NORTH);
           break;
@@ -789,6 +861,7 @@ public class GUI extends JPanel
               Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET city=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), city.getText());
             if(!state.getText().trim().isEmpty())
               Main.executePST(con, logger, con.prepareStatement("UPDATE Location SET state=? WHERE companyId=?"), ((Number)cID.getValue()).intValue(), state.getText());
+            JOptionPane.showMessageDialog(null, "Company updated");
           }
           catch (Exception ex)
           {
@@ -797,7 +870,7 @@ public class GUI extends JPanel
           }
           resetButtons();
           break;
-        case("Display all jobs"):
+        case("Display all jobs"): //done for now
           resetButtons();
           if (!Main.queryMethod(con, scan, true))
           {
@@ -847,7 +920,7 @@ public class GUI extends JPanel
           break;
         case("Get info on a job"):
           resetButtons();
-          add(clearFields(getJobInfoFields()), BorderLayout.NORTH);
+          add(getJobInfoFields(), BorderLayout.NORTH);
           break;
         case("SEARCH FOR JOB"):
           resetButtons();
@@ -866,6 +939,7 @@ public class GUI extends JPanel
             JOptionPane.showMessageDialog(null, "Reports generated.");
           else
             JOptionPane.showMessageDialog(null, "There was an error generating your report.");
+          break;
         default:
           System.out.println("default");
           break;

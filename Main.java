@@ -320,7 +320,11 @@ public class Main
             PreparedStatement pstComp = con.prepareStatement("INSERT INTO Competition(jobId, numOpenSpots, numApplicants) VALUES(?,?,?);");
             boolean type = true;
             success = createJob(pstJ, pstComp, scan, j, fromGUI);
-            String typeS = getType(scan, pstJ);
+            String typeS;
+            if (!fromGUI)
+              typeS = getType(scan, pstJ);
+            else
+              typeS = j.type + "";
             if(!success || typeS.equals("nope"))
             {
               if (!fromGUI)
@@ -344,10 +348,14 @@ public class Main
             }
 
             PreparedStatement pstR = con.prepareStatement("INSERT INTO RelatedJobs(jobId, related1, related2, related3, related4, related5) VALUES(?,?,?,?,?,?);");
-            System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
-            String relatedMaybe = scan.nextLine();
+            String relatedMaybe = "";
+            if (!fromGUI)
+            {
+              System.out.println("Does the job you are creating have any related jobs? Enter 'Y' for yes.");
+              relatedMaybe = scan.nextLine();
+            }
             boolean createRelated = false;
-            if(relatedMaybe.toLowerCase().equals("y"))
+            if(!fromGUI && relatedMaybe.toLowerCase().equals("y"))
             {
                 createRelated = true;
                 success = createRelated(pstR, scan);
@@ -2598,6 +2606,24 @@ public class Main
             pst.clearParameters();
             pst.setFloat(1, info);
             pst.setInt(2, id);
+            pst.executeUpdate();
+            logger.info("" + pst);
+            return true;
+          }
+          catch (Exception e)
+          {
+            gui.displayMessage("Error executing your query: " + e);
+            logger.info("ERROR " + e);
+            return false;
+          }
+        }
+
+        public static boolean executePST(Connection con, Logger logger, PreparedStatement pst, int id)
+        {
+          try
+          {
+            pst.clearParameters();
+            pst.setInt(1, id);
             pst.executeUpdate();
             logger.info("" + pst);
             return true;
