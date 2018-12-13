@@ -416,7 +416,7 @@ public class Main
         System.out.println("The Related Job Posting has been created.");
       }
 
-      PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+      PreparedStatement pstEnd = con.prepareStatement("COMMIT OR ROLLBACK;");
       if(createCompany)
       {
         logger.info("" + pstC);
@@ -832,7 +832,7 @@ public class Main
         pstM.setBoolean(3, manager.hasExperience);
         pstM.setInt(4, manager.yearsAtCompany);
         pstM.executeUpdate();
-        PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+        PreparedStatement pstEnd = con.prepareStatement("COMMIT OR ROLLBQCK;");
         pstEnd.execute();
         logger.info(pstM + "");
 
@@ -1721,7 +1721,7 @@ public class Main
         System.out.println("The record has been deleted from Full Time.");
       }
 
-      PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+      PreparedStatement pstEnd = con.prepareStatement("COMMIT OR ROLLBACK;");
       pstEnd.execute();
 
       System.out.println("The record has been completely deleted.");
@@ -2437,7 +2437,7 @@ public class Main
         return false;
       }
       pstM.executeUpdate();
-      PreparedStatement pstEnd = con.prepareStatement("COMMIT;");
+      PreparedStatement pstEnd = con.prepareStatement("COMMIT OR ROLLBACK;");
       pstEnd.execute();
 
       if(companyCreate)
