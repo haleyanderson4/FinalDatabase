@@ -542,7 +542,7 @@ public class GUI extends JPanel
     updateJob.setText("Update job");
     updateManager.setText("Update manager");
     updateCompany.setText("Update company");
-    //deleteCompany.setText("Delete company");
+    searchJobs.setText("Search jobs");
   }
 
   public void setRSInfo(ResultSet rs)
@@ -592,15 +592,15 @@ public class GUI extends JPanel
         }
         rowCount++;
       } while (rs.next());
-      //panel.add(table);
       panel.add(scrollpane);
       panel.add(initButtons(), BorderLayout.CENTER);
     }
     catch (Exception e)
     {
-      JOptionPane.showMessageDialog(null, "Error showing the data: " + e);
+      JOptionPane.showMessageDialog(null, "No results found. ");
+      resetButtons();
+      logger.info("" + e);
     }
-    panel = clearFields(panel);
     return panel;
 
   }
@@ -1146,10 +1146,6 @@ public class GUI extends JPanel
               pst.setString(currentValue, industry.getText());
               currentValue++;
             }
-            if (checkType)
-            {
-              pst.setBoolean(currentValue, isInternship);
-            }
             ResultSet rs = pst.executeQuery();
             rs.last();
             String[] columnNames = {"Job ID", "Job Title", "Industry", "Description", "Company", "State"};
@@ -1159,6 +1155,7 @@ public class GUI extends JPanel
           {
             JOptionPane.showMessageDialog(null, "There was an error with your search.");
             logger.info("" + ex);
+            resetButtons();
           }
           break;
         case("Get info on a job"): //DONE

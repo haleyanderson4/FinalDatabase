@@ -224,7 +224,8 @@ public class Main
   {
     try
     {
-      System.out.println("The Job Database:");
+      if (!fromGUI)
+        System.out.println("The Job Database:");
       PreparedStatement pst1 = con.prepareStatement("select * from Job;");
       ResultSet rs = pst1.executeQuery();
       String type = "Full Time";
@@ -233,7 +234,7 @@ public class Main
       {
         String[] columnNames = {"Job ID", "Title", "Industry", "Description", "Company ID", "Type"};
         rs.last();
-        gui.showTable(rs, rs.getRow()+1, 6, columnNames);
+        gui.add(gui.showTable(rs, rs.getRow()+1, 6, columnNames));
       }
       else
       {
