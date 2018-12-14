@@ -74,6 +74,7 @@ public class GUI extends JPanel
   private JComboBox<String> categories;
 
   private Main main;
+  private Job j;
   Connection con;
   Scanner scan;
   Logger logger;
@@ -738,8 +739,13 @@ public class GUI extends JPanel
     {
       try
       {
+        boolean success = Main.generateReport(con, logger);
         con.close();
         System.out.println("Thank you for using this database.");
+        if(success)
+        {
+          System.out.println("End of Use Report Generation Successful.");
+        }
       }
       catch (Exception ex)
       {
@@ -758,10 +764,10 @@ public class GUI extends JPanel
       jobPanel = new JPanel();
       companyPanel = new JPanel();
       managerPanel = new JPanel();
-      Job j = new Job();
       switch(e.getActionCommand())
       {
         case("New job"):
+          j = new Job();
           resetButtons();
           jobPanel = jobFields();
           add(jobPanel, BorderLayout.NORTH);
@@ -800,8 +806,8 @@ public class GUI extends JPanel
             return;
           }
           createJob.setText("Save job");
-          break; //Return to
-        case("Save job"): //Return to
+          break;
+        case("Save job"):
           boolean success;
           if (j.type == 'f')
           {
@@ -815,6 +821,7 @@ public class GUI extends JPanel
             catch(Exception ex)
             {
               JOptionPane.showMessageDialog(null, "Invalid format, try again");
+              logger.info(""+ex);
               return;
             }
             if (signingBonus.getText().trim().equals("") || stockOptions.getText().trim().equals("")

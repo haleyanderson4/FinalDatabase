@@ -303,7 +303,6 @@ public class Main
             return false;
           }
         }
-        System.out.println(companyId); //@DEBUG
 
       }
 
@@ -313,21 +312,22 @@ public class Main
       success = createJob(pstJ, pstComp, scan, j, fromGUI, logger);
       String typeS;
       if (!fromGUI)
-      typeS = getType(scan, pstJ);
+        typeS = getType(scan, pstJ);
       else
-      typeS = j.type + "";
+        typeS = j.type + "";
       if(!success || typeS.equals("nope"))
       {
         if (!fromGUI)
-        System.out.println("The Job creation failed. Please try again.");
+          System.out.println("The Job creation failed. Please try again.");
         else
-        gui.displayMessage("The Job creation failed. Please try again.");
+          gui.displayMessage("The Job creation failed. Please try again.");
         return false;
       }
-      if(typeS.equals("false"))
+      if(typeS.equals("false") || typeS.equals("f"))
       {
         type = false;
       }
+      pstJ.setBoolean(5, type);
 
       PreparedStatement pstF = con.prepareStatement("INSERT INTO FullTime(jobId, numStockOptions, signingBonus, salary) VALUES(?,?,?,?);");
       PreparedStatement pstI = con.prepareStatement("INSERT INTO Internship(jobId, payPeriod, rate, season) VALUES(?,?,?,?);");
@@ -379,8 +379,10 @@ public class Main
         pstL.executeUpdate();
         System.out.println("The Location has been created.");
       }
-      System.out.println(pstJ+""); //@DEBUG
-      System.out.println(companyId); //@DEBUG
+      if (fromGUI)
+      {
+        companyId = j.companyId;
+      }
       pstJ.setInt(4, companyId);
       pstJ.executeUpdate();
       System.out.println("The Job has been created.");
@@ -389,7 +391,6 @@ public class Main
       ResultSet rsId = pstId.executeQuery();
       rsId.first();
       jobId = rsId.getInt(1);
-      System.out.println(jobId); //@DEBUG
 
       pstComp.setInt(1, jobId);
       pstComp.executeUpdate();
@@ -445,7 +446,10 @@ public class Main
     }
     catch (Exception e)
     {
-      System.out.println("Please enter this information again, and be sure that all information is correct.");
+      if (!fromGUI)
+        System.out.println("Please enter this information again, and be sure that all information is correct.");
+      else
+        gui.displayMessage("Please enter this information again, and be sure that all information is correct.");
       logger.info("" + e);
     }
     return false;
