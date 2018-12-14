@@ -1,18 +1,3 @@
-#
-# TABLE STRUCTURE FOR: Manager
-#
-
-DROP TABLE IF EXISTS `Manager`;
-
-CREATE TABLE `Manager` (
-  `managerId` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `companyId` int(11) DEFAULT NULL,
-  `technicalExperience` tinyint(1) DEFAULT NULL,
-  `yearsAtCompany` int(11) DEFAULT NULL,
-  PRIMARY KEY (`managerId`),
-  FOREIGN KEY (`companyId`) REFERENCES Company(`companyId`)
-) ENGINE=InnoDB AUTO_INCREMENT=501 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `Manager` (`managerId`, `name`, `companyId`, `technicalExperience`, `yearsAtCompany`) VALUES (1, 'Abernathy', 89, 0, 17);
 INSERT INTO `Manager` (`managerId`, `name`, `companyId`, `technicalExperience`, `yearsAtCompany`) VALUES (2, 'Glover', 51, 1, 15);

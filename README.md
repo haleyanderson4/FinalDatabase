@@ -3,7 +3,36 @@
 This is the final Project for Chapman University's CPSC 408: Database Management. 
 This project is a database of jobs.
 
-TO DO:
-- GUI
-- remeber to submit slides and paper with all source code!
+Sarah Lasman and Haley Anderson
 
+# How To Run
+
+Use Schema.sql to generate the database schema, and then use the other files in Data Files to generate some data.
+The files under Data Files are either in SQL format or CSV.
+
+Then, compile all the .java files and run Main.
+
+# Attached Files
+
+  ## Data Files
+  CompanyData.sql
+  CompetitonData.sql
+  FullTimeData.sql
+  Internship.csv
+  Job.csv
+  LocationData.sql
+  Manager.sql
+  RelatedJobs.sql
+  Schema.sql
+  
+  ## .java Files
+  Config.java
+  GUI.java
+  Job.java
+  Main.java
+  Manager.java
+  csvGenerator.java
+  
+  ## Other files
+  Job Search Database.pdf
+  Final Writeup.doc
