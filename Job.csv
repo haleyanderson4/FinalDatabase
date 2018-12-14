@@ -97,6 +97,7 @@ Job ID,Job Title,Industry,Description,Company ID,Is Internship
 96,Web Developer,Computer Sci,Computer Sci Web Developer,66,0
 97,Aerodynamics Engineer,Engineering,Engineering Aerodynamics Engineer,92,0
 98,Aeronautical Engineer,Engineering,Engineering Aeronautical Engineer,68,0
+99,Engine Designer,Engineering,Engineering Engine Designer,79,0
 100,Aircraft Design Engineer,Engineering,Engineering Aircraft Design Engineer,79,0
 101,Aircraft Designer,Engineering,Engineering Aircraft Designer,47,0
 102,Aircraft Engineer,Engineering,Engineering Aircraft Engineer,93,0
@@ -283,6 +284,7 @@ Job ID,Job Title,Industry,Description,Company ID,Is Internship
 283,Job Estimator,Finance,Finance Job Estimator,31,1
 284,Production Cost Estimator,Finance,Finance Production Cost Estimator,34,1
 285,Budget Analyst,Finance,Finance Budget Analyst,30,1
+286,Accoutant,Finance,Finance Accountant,30,1
 287,Budget Examiner,Finance,Finance Budget Examiner,94,1
 288,Budget Officer,Finance,Finance Budget Officer,57,1
 289,Cost Analyst,Finance,Finance Cost Analyst,32,1
