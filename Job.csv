@@ -1,301 +1,318 @@
-﻿jobId, jobTitle, industry, Description, companyId, type
-1,Administrative Services Manager,Management,Management Administrative Services Manager,78,1
-2,Business Office Manager,Management,Management Business Office Manager,76,1
-3,Business Unit Manager,Management,Management Business Unit Manager,33,1
-4,Facilities Manager,Management,Management Facilities Manager,51,1
-5,Records Management Director,Management,Management Records Management Director,16,1
-6,Records and Information Manager,Management,Management Records and Information Manager,62,0
-7,Child Welfare Director,Management,Management Child Welfare Director,31,0
-8,Community Service Director,Management,Management Community Service Director,66,0
-9,Community Service Organization Director,Management,Management Community Service Organization Director,44,1
-10,Family Service Center Director,Management,Management Family Service Center Director,27,0
-11,Neighborhood Service Center Director,Management,Management Neighborhood Service Center Director,86,0
-12,Social Service Director,Management,Management Social Service Director,95,0
-13,Social Services Director,Management,Management Social Services Director,70,1
-14,Youth Program Director,Management,Management Youth Program Director,99,1
-15,Logistician,Finance,Finance Logistician,90,0
-16,Logistics Analyst,Finance,Finance Logistics Analyst,31,1
-17,Logistics Coordinator,Finance,Finance Logistics Coordinator,86,0
-18,Logistics Planner,Finance,Finance Logistics Planner,48,1
-19,Logistics Specialist,Finance,Finance Logistics Specialist,14,1
-20,Account Auditor,Finance,Finance Account Auditor,13,0
-21,Accountant,Finance,Finance Accountant,22,1
-22,Auditor,Finance,Finance Auditor,51,0
-23,Auditor-In-Charge,Finance,Finance Auditor-In-Charge,21,1
-24,Certified Public Accountant,Finance,Finance Certified Public Accountant,12,1
-25,Cost Accountant,Finance,Finance Cost Accountant,6,0
-26,CPA,Finance,Finance CPA,48,0
-27,Field Auditor,Finance,Finance Field Auditor,35,0
-28,Financial Accountant,Finance,Finance Financial Accountant,21,1
-29,Financial Auditor,Finance,Finance Financial Auditor,23,0
-30,Fund Accountant,Finance,Finance Fund Accountant,25,1
-31,Internal Auditor,Finance,Finance Internal Auditor,78,0
-32,Payroll Auditor,Finance,Finance Payroll Auditor,28,1
-33,Tax Accountant,Finance,Finance Tax Accountant,28,0
-34,Chief Credit Analyst,Finance,Finance Chief Credit Analyst,12,0
-35,Credit Analyst,Finance,Finance Credit Analyst,19,1
-36,Credit Assessment Analyst,Finance,Finance Credit Assessment Analyst,13,1
-37,Credit Risk Analyst,Finance,Finance Credit Risk Analyst,36,1
-38,Factorer,Finance,Finance Factorer,52,1
-39,Auto Damage Insurance Appraiser,Finance,Finance Auto Damage Insurance Appraiser,13,1
-40,Auto Damage Appraiser,Finance,Finance Auto Damage Appraiser,41,1
-41,Automobile Damage Appraiser,Finance,Finance Automobile Damage Appraiser,85,1
-42,Vehicle Damage Appraiser,Finance,Finance Vehicle Damage Appraiser,79,0
-43,Applications Analyst,Computer Sci,Computer Sci Applications Analyst,98,1
-44,Computer Systems Analyst,Computer Sci,Computer Sci Computer Systems Analyst,87,0
-45,Computer Systems Consultant,Computer Sci,Computer Sci Computer Systems Consultant,10,0
-46,Data Processing Systems Analyst,Computer Sci,Computer Sci Data Processing Systems Analyst,18,1
-47,Information Systems Analyst,Computer Sci,Computer Sci Information Systems Analyst,58,0
-48,Information Systems Planner,Computer Sci,Computer Sci Information Systems Planner,83,0
-49,Programmer Analyst,Computer Sci,Computer Sci Programmer Analyst,42,0
-50,Systems Architect,Computer Sci,Computer Sci Systems Architect,42,0
-51,Applications Programmer,Computer Sci,Computer Sci Applications Programmer,5,0
-52,Computer Language Coder,Computer Sci,Computer Sci Computer Language Coder,94,1
-53,Computer Programmer,Computer Sci,Computer Sci Computer Programmer,29,0
-54,Junior Software Developer,Computer Sci,Computer Sci Junior Software Developer,71,1
-55,Mainframe Programmer,Computer Sci,Computer Sci Mainframe Programmer,66,1
-56,Systems Programmer,Computer Sci,Computer Sci Systems Programmer,96,1
-57,Application Integration Engineer,Computer Sci,Computer Sci Application Integration Engineer,19,1
-58,Applications Developer,Computer Sci,Computer Sci Applications Developer,68,0
-59,Computer Applications Developer,Computer Sci,Computer Sci Computer Applications Developer,100,1
-60,Computer Applications Engineer,Computer Sci,Computer Sci Computer Applications Engineer,41,0
-61,Database Developer,Computer Sci,Computer Sci Database Developer,78,0
-62,Software Applications Architect,Computer Sci,Computer Sci Software Applications Architect,13,0
-63,Software Applications Designer,Computer Sci,Computer Sci Software Applications Designer,22,0
-64,Software Applications Engineer,Computer Sci,Computer Sci Software Applications Engineer,20,1
-65,Computer Systems Software Architect,Computer Sci,Computer Sci Computer Systems Software Architect,59,1
-66,Computer Systems Software Engineer,Computer Sci,Computer Sci Computer Systems Software Engineer,48,0
-67,Embedded Systems Software Developer,Computer Sci,Computer Sci Embedded Systems Software Developer,85,1
-68,Enterprise Systems Engineer,Computer Sci,Computer Sci Enterprise Systems Engineer,74,0
-69,Software Systems Engineer,Computer Sci,Computer Sci Software Systems Engineer,15,1
-70,Systems Software Designer,Computer Sci,Computer Sci Systems Software Designer,25,0
-71,Systems Software Specialist,Computer Sci,Computer Sci Systems Software Specialist,7,1
-72,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,51,1
-73,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,91,0
-74,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,76,1
-75,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,22,1
-76,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,72,1
-77,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,56,0
-78,Internet Application Developer,Computer Sci,Computer Sci Internet Application Developer,87,1
-79,Internet Developer,Computer Sci,Computer Sci Internet Developer,27,0
-80,Intranet Developer,Computer Sci,Computer Sci Intranet Developer,47,1
-81,Web Content Developer,Computer Sci,Computer Sci Web Content Developer,69,0
-82,Web Designer,Computer Sci,Computer Sci Web Designer,37,0
-83,Web Developer,Computer Sci,Computer Sci Web Developer,92,1
-84,Systems Software Specialist,Computer Sci,Computer Sci Systems Software Specialist,57,1
-85,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,2,0
-86,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,44,1
-87,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,61,0
-88,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,73,1
-89,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,45,0
-90,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,100,0
-91,Internet Application Developer,Computer Sci,Computer Sci Internet Application Developer,51,1
-92,Internet Developer,Computer Sci,Computer Sci Internet Developer,45,0
-93,Intranet Developer,Computer Sci,Computer Sci Intranet Developer,42,0
-94,Web Content Developer,Computer Sci,Computer Sci Web Content Developer,64,1
-95,Web Designer,Computer Sci,Computer Sci Web Designer,34,1
-96,Web Developer,Computer Sci,Computer Sci Web Developer,79,1
-97,Aerodynamics Engineer,Engineering,Engineering Aerodynamics Engineer,34,1
-98,Aeronautical Engineer,Engineering,Engineering Aeronautical Engineer,7,1
-99,Aerospace Engineer,Engineering,Engineering Aerospace Engineer,85,0
-100,Aircraft Design Engineer,Engineering,Engineering Aircraft Design Engineer,79,1
-101,Aircraft Designer,Engineering,Engineering Aircraft Designer,80,0
-102,Aircraft Engineer,Engineering,Engineering Aircraft Engineer,98,0
-103,Astronautical Engineer,Engineering,Engineering Astronautical Engineer,62,1
-104,Flight Systems Test Engineer,Engineering,Engineering Flight Systems Test Engineer,70,0
-105,Flight Test Engineer,Engineering,Engineering Flight Test Engineer,98,1
-106,Wind Tunnel Engineer,Engineering,Engineering Wind Tunnel Engineer,74,1
-107,Electrical Design Engineer,Engineering,Engineering Electrical Design Engineer,99,0
-108,Electrical Engineer,Engineering,Engineering Electrical Engineer,94,1
-109,Electrical Systems Engineer,Engineering,Engineering Electrical Systems Engineer,72,1
-110,Illuminating Engineer,Engineering,Engineering Illuminating Engineer,16,0
-111,Power Distribution Engineer,Engineering,Engineering Power Distribution Engineer,51,1
-112,Electrical Design Engineer,Engineering,Engineering Electrical Design Engineer,64,1
-113,Electrical Engineer,Engineering,Engineering Electrical Engineer,60,1
-114,Electrical Systems Engineer,Engineering,Engineering Electrical Systems Engineer,59,0
-115,Illuminating Engineer,Engineering,Engineering Illuminating Engineer,97,1
-116,Power Distribution Engineer,Engineering,Engineering Power Distribution Engineer,25,1
-117,Absorption and Adsorption Engineer,Engineering,Engineering Absorption and Adsorption Engineer,100,1
-118,Chemical Process Engineer,Engineering,Engineering Chemical Process Engineer,12,1
-119,Chemical Research Engineer,Engineering,Engineering Chemical Research Engineer,52,0
-120,Fuels Engineer,Engineering,Engineering Fuels Engineer,49,1
-121,Oxidation Engineer,Engineering,Engineering Oxidation Engineer,63,1
-122,Plastics Engineer,Engineering,Engineering Plastics Engineer,95,0
-123,Polymerization Engineer,Engineering,Engineering Polymerization Engineer,30,1
-124,Refinery Process Engineer,Engineering,Engineering Refinery Process Engineer,36,1
-125,Auto Research Engineer,Engineering,Engineering Auto Research Engineer,51,0
-126,Combustion Engineer,Engineering,Engineering Combustion Engineer,21,0
-127,Engine Designer,Engineering,Engineering Engine Designer,82,0
-128,Heating and Cooling Systems Engineer,Engineering,Engineering Heating and Cooling Systems Engineer,31,0
-129,Mechanical Engineer,Engineering,Engineering Mechanical Engineer,35,1
-130,Tool and Die Engineer,Engineering,Engineering Tool and Die Engineer,36,1
-131,Tool Engineer,Engineering,Engineering Tool Engineer,88,0
-132,Corrosion Control Engineer,Engineering,Engineering Corrosion Control Engineer,85,1
-133,Mathematical Engineer,Engineering,Engineering Mathematical Engineer,8,1
-134,Optical Engineer,Engineering,Engineering Optical Engineer,24,0
-135,Ordnance Engineer,Engineering,Engineering Ordnance Engineer,89,1
-136,Photonics Engineer,Engineering,Engineering Photonics Engineer,72,0
-137,Salvage Engineer,Engineering,Engineering Salvage Engineer,50,1
-138,Dairy Bacteriologist,Biology,Biology Dairy Bacteriologist,71,1
-139,Enologist,Biology,Biology Enologist,8,0
-140,Food Preservation Scientist,Biology,Biology Food Preservation Scientist,68,1
-141,Food Processing Scientist,Biology,Biology Food Processing Scientist,56,1
-142,Food Safety Scientist,Biology,Biology Food Safety Scientist,60,1
-143,Food Scientist,Biology,Biology Food Scientist,27,0
-144,Food Technologist,Biology,Biology Food Technologist,49,1
-145,Biochemist,Biology,Biology Biochemist,87,1
-146,Biological Chemist,Biology,Biology Biological Chemist,24,1
-147,Biophysicist,Biology,Biology Biophysicist,69,0
-148,Clinical Biochemist,Biology,Biology Clinical Biochemist,23,1
-149,Physical Biochemist,Biology,Biology Physical Biochemist,85,0
-150,Bacteriologist,Biology,Biology Bacteriologist,84,1
-151,Clinical Microbiologist,Biology,Biology Clinical Microbiologist,26,0
-152,Medical Microbiologist,Biology,Biology Medical Microbiologist,27,1
-153,Microbiological Analyst,Biology,Biology Microbiological Analyst,46,1
-154,Public Health Microbiologist,Biology,Biology Public Health Microbiologist,25,0
-155,Quality Control Microbiologist,Biology,Biology Quality Control Microbiologist,95,0
-156,Virologist,Biology,Biology Virologist,16,1
-157,Agricultural Chemist,Chemistry,Chemistry Agricultural Chemist,28,0
-158,Analytical Chemist,Chemistry,Chemistry Analytical Chemist,13,0
-159,Bench Chemist,Chemistry,Chemistry Bench Chemist,26,0
-160,Food Chemist,Chemistry,Chemistry Food Chemist,32,0
-161,Formulary Chemist,Chemistry,Chemistry Formulary Chemist,68,0
-162,Industrial Chemist,Chemistry,Chemistry Industrial Chemist,53,0
-163,Inorganic Chemist,Chemistry,Chemistry Inorganic Chemist,27,1
-164,Laboratory Chemist,Chemistry,Chemistry Laboratory Chemist,1,0
-165,Nuclear Chemist,Chemistry,Chemistry Nuclear Chemist,93,0
-166,Organic Chemist,Chemistry,Chemistry Organic Chemist,28,0
-167,Quality Control Chemist,Chemistry,Chemistry Quality Control Chemist,93,0
-168,Research and Development Chemist,Chemistry,Chemistry Research and Development Chemist,95,1
-169,Agency Legal Counsel,Law,Law Agency Legal Counsel,30,1
-170,Assistant Attorney General,Law,Law Assistant Attorney General,82,0
-171,Assistant Corporation Counsel,Law,Law Assistant Corporation Counsel,11,1
-172,Assistant Counsel,Law,Law Assistant Counsel,85,0
-173,Associate Attorney,Law,Law Associate Attorney,32,1
-174,Attorney,Law,Law Attorney,96,1
-175,Attorney At Law,Law,Law Attorney At Law,75,0
-176,Attorney General,Law,Law Attorney General,66,0
-177,Brief Writer,Law,Law Brief Writer,98,1
-178,City Attorney,Law,Law City Attorney,3,1
-179,Civil Lawyer,Law,Law Civil Lawyer,53,0
-180,Commonwealth Attorney,Law,Law Commonwealth Attorney,64,0
-181,Corporate Attorney,Law,Law Corporate Attorney,45,0
-182,Corporate Counsel,Law,Law Corporate Counsel,24,1
-183,Corporate Counselor,Law,Law Corporate Counselor,69,1
-184,County Attorney,Law,Law County Attorney,29,1
-185,Defense Attorney,Law,Law Defense Attorney,33,1
-186,Deputy Attorney General,Law,Law Deputy Attorney General,81,0
-187,Deputy Chief Counsel,Law,Law Deputy Chief Counsel,80,0
-188,District Attorney,Law,Law District Attorney,10,1
-189,Environmental Attorney,Law,Law Environmental Attorney,55,0
-190,Estate Conservator,Law,Law Estate Conservator,2,0
-191,General Counsel,Law,Law General Counsel,63,1
-192,Insurance Attorney,Law,Law Insurance Attorney,47,0
-193,Lawyer,Law,Law Lawyer,51,1
-194,Legal Counsel,Law,Law Legal Counsel,78,1
-195,Probate Lawyer,Law,Law Probate Lawyer,35,1
-196,Prosecutor,Law,Law Prosecutor,27,1
-197,Public Defender,Law,Law Public Defender,59,1
-198,Real Estate Attorney,Law,Law Real Estate Attorney,59,1
-199,Sports Attorney,Law,Law Sports Attorney,85,0
-200,Tax Attorney,Law,Law Tax Attorney,7,1
-201,Trial Attorney,Law,Law Trial Attorney,81,0
-202,Trial Lawyer,Law,Law Trial Lawyer,30,1
-203,Assistant Paralegal,Law,Law Assistant Paralegal,93,0
-204,Legal Aide,Law,Law Legal Aide,26,0
-205,Legal Assistant,Law,Law Legal Assistant,78,0
-206,Paralegal,Law,Law Paralegal,56,0
-207,Summer Associate,Law,Law Summer Associate,84,1
-208,Summer Law Clerk,Law,Law Summer Law Clerk,68,0
-209,Automatic Data Processing Planner,Computer Sci,Computer Sci Automatic Data Processing Planner,70,0
-210,Database Administration Manager,Computer Sci,Computer Sci Database Administration Manager,28,0
-211,Database Coordinator,Computer Sci,Computer Sci Database Coordinator,26,1
-212,Database Management System Specialist,Computer Sci,Computer Sci Database Management System Specialist,34,0
-213,Database Security Administrator,Computer Sci,Computer Sci Database Security Administrator,36,0
-214,DBMS Specialist,Computer Sci,Computer Sci DBMS Specialist,87,0
-215,Computer Network Engineer,Computer Sci,Computer Sci Computer Network Engineer,81,1
-216,Network Designer,Computer Sci,Computer Sci Network Designer,48,1
-217,Network Developer,Computer Sci,Computer Sci Network Developer,87,1
-218,Network Engineer,Computer Sci,Computer Sci Network Engineer,71,0
-219,Computer Network Engineer,Computer Sci,Computer Sci Computer Network Engineer,12,0
-220,Network Designer,Computer Sci,Computer Sci Network Designer,43,0
-221,Network Developer,Computer Sci,Computer Sci Network Developer,47,0
-222,Network Engineer,Computer Sci,Computer Sci Network Engineer,85,1
-223,Applications Analyst,Computer Sci,Computer Sci Applications Analyst,52,1
-224,Computer Systems Analyst,Computer Sci,Computer Sci Computer Systems Analyst,21,0
-225,Computer Systems Consultant,Computer Sci,Computer Sci Computer Systems Consultant,51,1
-226,Data Processing Systems Analyst,Computer Sci,Computer Sci Data Processing Systems Analyst,75,0
-227,Information Systems Analyst,Computer Sci,Computer Sci Information Systems Analyst,48,1
-228,Information Systems Planner,Computer Sci,Computer Sci Information Systems Planner,4,1
-229,Programmer Analyst,Computer Sci,Computer Sci Programmer Analyst,27,1
-230,Systems Architect,Computer Sci,Computer Sci Systems Architect,23,1
-231,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,79,0
-232,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,49,0
-233,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,97,0
-234,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,67,0
-235,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,65,0
-236,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,62,1
-237,3rd Grade Reading Teacher,Education,Education 3rd Grade Reading Teacher,95,1
-238,4th Grade Math Teacher,Education,Education 4th Grade Math Teacher,47,1
-239,Elementary School Band Director,Education,Education Elementary School Band Director,58,1
-240,Elementary School Teacher,Education,Education Elementary School Teacher,20,0
-241,Grades 1 Thru 5 Teacher,Education,Education Grades 1 Thru 5 Teacher,2,0
-242,7th Grade Social Studies Teacher,Education,Education 7th Grade Social Studies Teacher,64,1
-243,Junior High School Teacher,Education,Education Junior High School Teacher,51,0
-244,Middle School PE Teacher,Education,Education Middle School PE Teacher,78,1
-245,Middle School Science Teacher,Education,Education Middle School Science Teacher,15,0
-246,High School Biology Teacher,Education,Education High School Biology Teacher,79,0
-247,High School English Teacher,Education,Education High School English Teacher,77,1
-248,High School French Teacher,Education,Education High School French Teacher,41,1
-249,High School History Teacher,Education,Education High School History Teacher,77,1
-250,High School Math Teacher,Education,Education High School Math Teacher,70,0
-251,High School Music Director,Education,Education High School Music Director,63,1
-252,High School Teacher,Education,Education High School Teacher,80,1
-253,Substitute Teacher,Education,Education Substitute Teacher,43,0
-254,Tutor,Education,Education Tutor,32,0
-255,Substitute Teacher,Education,Education Substitute Teacher,40,1
-256,Tutor,Education,Education Tutor,62,1
-257,Business Analyst,Finance,Finance Business Analyst,84,1
-258,Business Consultant,Finance,Finance Business Consultant,24,1
-259,Business Management Analyst,Finance,Finance Business Management Analyst,56,1
-260,Business Process Consultant,Finance,Finance Business Process Consultant,58,0
-261,Clerical Methods Analyst,Finance,Finance Clerical Methods Analyst,12,1
-262,Commercial Specialist,Finance,Finance Commercial Specialist,3,1
-263,Industrial Analyst,Finance,Finance Industrial Analyst,46,1
-264,Management Analyst,Finance,Finance Management Analyst,35,0
-265,Management Consultant,Finance,Finance Management Consultant,2,0
-266,Records Management Analyst,Finance,Finance Records Management Analyst,57,1
-267,Corporate Recruiter,Finance,Finance Corporate Recruiter,78,0
-268,Credentialing Coordinator,Finance,Finance Credentialing Coordinator,3,1
-269,Employee Placement Specialist,Finance,Finance Employee Placement Specialist,38,1
-270,Human Resources Generalist,Finance,Finance Human Resources Generalist,38,1
-271,Job Placement Officer,Finance,Finance Job Placement Officer,54,1
-272,Job Placement Specialist,Finance,Finance Job Placement Specialist,37,1
-273,Job Recruiter,Finance,Finance Job Recruiter,93,0
-274,Personnel Coordinator,Finance,Finance Personnel Coordinator,27,1
-275,Personnel Officer,Finance,Finance Personnel Officer,65,1
-276,Personnel Recruiter,Finance,Finance Personnel Recruiter,76,0
-277,Personnel Specialist,Finance,Finance Personnel Specialist,80,1
-278,Staffing Coordinator,Finance,Finance Staffing Coordinator,65,0
-279,Construction Estimator,Finance,Finance Construction Estimator,85,0
-280,Construction Job Cost Estimator,Finance,Finance Construction Job Cost Estimator,29,0
-281,Crating and Moving Estimator,Finance,Finance Crating and Moving Estimator,24,0
-282,Electrical Estimator,Finance,Finance Electrical Estimator,4,1
-283,Job Estimator,Finance,Finance Job Estimator,37,0
-284,Production Cost Estimator,Finance,Finance Production Cost Estimator,28,1
-285,Budget Analyst,Finance,Finance Budget Analyst,30,0
-286,Budget Coordinator,Finance,Finance Budget Coordinator,51,1
-287,Budget Examiner,Finance,Finance Budget Examiner,81,0
-288,Budget Officer,Finance,Finance Budget Officer,65,0
-289,Cost Analyst,Finance,Finance Cost Analyst,47,1
-290,Market Research Analyst,Finance,Finance Market Research Analyst,75,1
-291,Market Research Specialist,Finance,Finance Market Research Specialist,15,0
-292,Marketing Analyst,Finance,Finance Marketing Analyst,28,1
-293,Marketing Consultant,Finance,Finance Marketing Consultant,26,0
+Job ID,Job Title,Industry,Description,Company ID,Is Internship
+1,SDE Intern,Computer Sci,Computer Sci SDE Intern,1,0
+2,SWE Intern,Computer Sci,Computer Sci SWE Intern,2,0
+3,Business Unit Manager,Management,Management Business Unit Manager,72,0
+4,Facilities Manager,Management,Management Facilities Manager,90,0
+5,Records Management Director,Management,Management Records Management Director,61,0
+6,Records and Information Manager,Management,Management Records and Information Manager,3,0
+7,Child Welfare Director,Management,Management Child Welfare Director,87,0
+8,Community Service Director,Management,Management Community Service Director,80,0
+9,Community Service Organization Director,Management,Management Community Service Organization Director,69,0
+10,Family Service Center Director,Management,Management Family Service Center Director,73,0
+11,Neighborhood Service Center Director,Management,Management Neighborhood Service Center Director,4,0
+12,Social Service Director,Management,Management Social Service Director,69,0
+13,Social Services Director,Management,Management Social Services Director,64,0
+14,Youth Program Director,Management,Management Youth Program Director,12,0
+15,Logistician,Finance,Finance Logistician,39,0
+16,Logistics Analyst,Finance,Finance Logistics Analyst,13,0
+17,Logistics Coordinator,Finance,Finance Logistics Coordinator,62,0
+18,Logistics Planner,Finance,Finance Logistics Planner,28,0
+19,Logistics Specialist,Finance,Finance Logistics Specialist,51,0
+20,Account Auditor,Finance,Finance Account Auditor,67,0
+21,Accountant,Finance,Finance Accountant,49,0
+22,Auditor,Finance,Finance Auditor,94,0
+23,Auditor-In-Charge,Finance,Finance Auditor-In-Charge,48,0
+24,Certified Public Accountant,Finance,Finance Certified Public Accountant,9,0
+25,Cost Accountant,Finance,Finance Cost Accountant,82,0
+26,CPA,Finance,Finance CPA,38,0
+27,Field Auditor,Finance,Finance Field Auditor,57,0
+28,Financial Accountant,Finance,Finance Financial Accountant,51,0
+29,Financial Auditor,Finance,Finance Financial Auditor,90,0
+30,Fund Accountant,Finance,Finance Fund Accountant,46,0
+31,Internal Auditor,Finance,Finance Internal Auditor,10,0
+32,Payroll Auditor,Finance,Finance Payroll Auditor,17,0
+33,Tax Accountant,Finance,Finance Tax Accountant,34,0
+34,Chief Credit Analyst,Finance,Finance Chief Credit Analyst,20,0
+35,Credit Analyst,Finance,Finance Credit Analyst,20,0
+36,Credit Assessment Analyst,Finance,Finance Credit Assessment Analyst,100,0
+37,Credit Risk Analyst,Finance,Finance Credit Risk Analyst,39,0
+38,Factorer,Finance,Finance Factorer,86,0
+39,Auto Damage Insurance Appraiser,Finance,Finance Auto Damage Insurance Appraiser,26,0
+40,Auto Damage Appraiser,Finance,Finance Auto Damage Appraiser,77,0
+41,Automobile Damage Appraiser,Finance,Finance Automobile Damage Appraiser,11,0
+42,Vehicle Damage Appraiser,Finance,Finance Vehicle Damage Appraiser,1,0
+43,Applications Analyst,Computer Sci,Computer Sci Applications Analyst,87,0
+44,Computer Systems Analyst,Computer Sci,Computer Sci Computer Systems Analyst,44,0
+45,Computer Systems Consultant,Computer Sci,Computer Sci Computer Systems Consultant,94,0
+46,Data Processing Systems Analyst,Computer Sci,Computer Sci Data Processing Systems Analyst,51,0
+47,Information Systems Analyst,Computer Sci,Computer Sci Information Systems Analyst,17,0
+48,Information Systems Planner,Computer Sci,Computer Sci Information Systems Planner,53,0
+49,Programmer Analyst,Computer Sci,Computer Sci Programmer Analyst,11,0
+50,Systems Architect,Computer Sci,Computer Sci Systems Architect,53,0
+51,Applications Programmer,Computer Sci,Computer Sci Applications Programmer,63,0
+52,Computer Language Coder,Computer Sci,Computer Sci Computer Language Coder,36,0
+53,Computer Programmer,Computer Sci,Computer Sci Computer Programmer,2,0
+54,Junior Software Developer,Computer Sci,Computer Sci Junior Software Developer,75,0
+55,Mainframe Programmer,Computer Sci,Computer Sci Mainframe Programmer,53,0
+56,Systems Programmer,Computer Sci,Computer Sci Systems Programmer,47,0
+57,Application Integration Engineer,Computer Sci,Computer Sci Application Integration Engineer,17,0
+58,Applications Developer,Computer Sci,Computer Sci Applications Developer,64,0
+59,Computer Applications Developer,Computer Sci,Computer Sci Computer Applications Developer,62,0
+60,Computer Applications Engineer,Computer Sci,Computer Sci Computer Applications Engineer,9,0
+61,Database Developer,Computer Sci,Computer Sci Database Developer,92,0
+62,Software Applications Architect,Computer Sci,Computer Sci Software Applications Architect,99,0
+63,Software Applications Designer,Computer Sci,Computer Sci Software Applications Designer,27,0
+64,Software Applications Engineer,Computer Sci,Computer Sci Software Applications Engineer,79,0
+65,Computer Systems Software Architect,Computer Sci,Computer Sci Computer Systems Software Architect,62,0
+66,Computer Systems Software Engineer,Computer Sci,Computer Sci Computer Systems Software Engineer,2,0
+67,Embedded Systems Software Developer,Computer Sci,Computer Sci Embedded Systems Software Developer,77,0
+68,Enterprise Systems Engineer,Computer Sci,Computer Sci Enterprise Systems Engineer,23,0
+69,Software Systems Engineer,Computer Sci,Computer Sci Software Systems Engineer,60,0
+70,Systems Software Designer,Computer Sci,Computer Sci Systems Software Designer,60,0
+71,Systems Software Specialist,Computer Sci,Computer Sci Systems Software Specialist,70,0
+72,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,33,0
+73,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,34,0
+74,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,78,0
+75,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,71,0
+76,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,42,0
+77,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,28,0
+78,Internet Application Developer,Computer Sci,Computer Sci Internet Application Developer,88,0
+79,Internet Developer,Computer Sci,Computer Sci Internet Developer,99,0
+80,Internet Dev,Computer Sci,Computer Sci Intranet Developer,9,0
+81,Web Content Developer,Computer Sci,Computer Sci Web Content Developer,2,0
+82,Internet Designer,Computer Sci,Computer Sci Web Designer,72,0
+83,Web Developer,Computer Sci,Computer Sci Web Developer,64,0
+84,Systems Software Specialist,Computer Sci,Computer Sci Systems Software Specialist,20,0
+85,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,46,0
+86,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,6,0
+87,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,58,0
+88,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,64,0
+89,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,86,0
+90,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,50,0
+91,Internet Application Developer,Computer Sci,Computer Sci Internet Application Developer,44,0
+92,Internet Developer,Computer Sci,Computer Sci Internet Developer,1,0
+93,Intranet Developer,Computer Sci,Computer Sci Intranet Developer,65,0
+94,Web Content Developer,Computer Sci,Computer Sci Web Content Developer,5,0
+95,Web Designer,Computer Sci,Computer Sci Web Designer,44,0
+96,Web Developer,Computer Sci,Computer Sci Web Developer,66,0
+97,Aerodynamics Engineer,Engineering,Engineering Aerodynamics Engineer,92,0
+98,Aeronautical Engineer,Engineering,Engineering Aeronautical Engineer,68,0
+100,Aircraft Design Engineer,Engineering,Engineering Aircraft Design Engineer,79,0
+101,Aircraft Designer,Engineering,Engineering Aircraft Designer,47,0
+102,Aircraft Engineer,Engineering,Engineering Aircraft Engineer,93,0
+103,Astronautical Engineer,Engineering,Engineering Astronautical Engineer,37,0
+104,Flight Systems Test Engineer,Engineering,Engineering Flight Systems Test Engineer,40,0
+105,Flight Test Engineer,Engineering,Engineering Flight Test Engineer,96,0
+106,Wind Tunnel Engineer,Engineering,Engineering Wind Tunnel Engineer,17,0
+107,Electrical Design Engineer,Engineering,Engineering Electrical Design Engineer,28,0
+108,Electrical Engineer,Engineering,Engineering Electrical Engineer,15,0
+109,Electrical Systems Engineer,Engineering,Engineering Electrical Systems Engineer,37,0
+110,Illuminating Engineer,Engineering,Engineering Illuminating Engineer,25,0
+111,Power Distribution Engineer,Engineering,Engineering Power Distribution Engineer,40,0
+112,Electrical Design Engineer,Engineering,Engineering Electrical Design Engineer,50,0
+113,Electrical Engineer,Engineering,Engineering Electrical Engineer,2,0
+114,Electrical Systems Engineer,Engineering,Engineering Electrical Systems Engineer,93,0
+115,Illuminating Engineer,Engineering,Engineering Illuminating Engineer,9,0
+116,Power Distribution Engineer,Engineering,Engineering Power Distribution Engineer,22,0
+117,Absorption and Adsorption Engineer,Engineering,Engineering Absorption and Adsorption Engineer,95,0
+118,Chemical Process Engineer,Engineering,Engineering Chemical Process Engineer,37,0
+119,Chemical Research Engineer,Engineering,Engineering Chemical Research Engineer,11,0
+120,Fuels Engineer,Engineering,Engineering Fuels Engineer,78,0
+121,Oxidation Engineer,Engineering,Engineering Oxidation Engineer,9,0
+122,Plastics Engineer,Engineering,Engineering Plastics Engineer,91,0
+123,Polymerization Engineer,Engineering,Engineering Polymerization Engineer,90,0
+124,Refinery Process Engineer,Engineering,Engineering Refinery Process Engineer,18,0
+125,Auto Research Engineer,Engineering,Engineering Auto Research Engineer,60,0
+126,Combustion Engineer,Engineering,Engineering Combustion Engineer,84,0
+127,Engine Designer,Engineering,Engineering Engine Designer,13,0
+128,Heating and Cooling Systems Engineer,Engineering,Engineering Heating and Cooling Systems Engineer,40,0
+129,Mechanical Engineer,Engineering,Engineering Mechanical Engineer,91,0
+130,Tool and Die Engineer,Engineering,Engineering Tool and Die Engineer,44,0
+131,Tool Engineer,Engineering,Engineering Tool Engineer,19,0
+132,Corrosion Control Engineer,Engineering,Engineering Corrosion Control Engineer,97,0
+133,Mathematical Engineer,Engineering,Engineering Mathematical Engineer,86,0
+134,Optical Engineer,Engineering,Engineering Optical Engineer,28,0
+135,Ordnance Engineer,Engineering,Engineering Ordnance Engineer,29,0
+136,Photonics Engineer,Engineering,Engineering Photonics Engineer,2,0
+137,Salvage Engineer,Engineering,Engineering Salvage Engineer,20,0
+138,Dairy Bacteriologist,Biology,Biology Dairy Bacteriologist,97,0
+139,Enologist,Biology,Biology Enologist,39,0
+140,Food Preservation Scientist,Biology,Biology Food Preservation Scientist,62,0
+141,Food Processing Scientist,Biology,Biology Food Processing Scientist,43,0
+142,Food Safety Scientist,Biology,Biology Food Safety Scientist,61,0
+143,Food Scientist,Biology,Biology Food Scientist,30,0
+144,Food Technologist,Biology,Biology Food Technologist,50,0
+145,Biochemist,Biology,Biology Biochemist,28,0
+146,Biological Chemist,Biology,Biology Biological Chemist,39,0
+147,Biophysicist,Biology,Biology Biophysicist,61,0
+148,Clinical Biochemist,Biology,Biology Clinical Biochemist,67,0
+149,Physical Biochemist,Biology,Biology Physical Biochemist,37,0
+150,Bacteriologist,Biology,Biology Bacteriologist,13,0
+151,Clinical Microbiologist,Biology,Biology Clinical Microbiologist,57,1
+152,Medical Microbiologist,Biology,Biology Medical Microbiologist,60,1
+153,Microbiological Analyst,Biology,Biology Microbiological Analyst,63,1
+154,Public Health Microbiologist,Biology,Biology Public Health Microbiologist,43,1
+155,Quality Control Microbiologist,Biology,Biology Quality Control Microbiologist,80,1
+156,Virologist,Biology,Biology Virologist,3,1
+157,Agricultural Chemist,Chemistry,Chemistry Agricultural Chemist,74,1
+158,Analytical Chemist,Chemistry,Chemistry Analytical Chemist,46,1
+159,Bench Chemist,Chemistry,Chemistry Bench Chemist,8,1
+160,Food Chemist,Chemistry,Chemistry Food Chemist,18,1
+161,Formulary Chemist,Chemistry,Chemistry Formulary Chemist,78,1
+162,Industrial Chemist,Chemistry,Chemistry Industrial Chemist,39,1
+163,Inorganic Chemist,Chemistry,Chemistry Inorganic Chemist,16,1
+164,Laboratory Chemist,Chemistry,Chemistry Laboratory Chemist,64,1
+165,Nuclear Chemist,Chemistry,Chemistry Nuclear Chemist,73,1
+166,Organic Chemist,Chemistry,Chemistry Organic Chemist,20,1
+167,Quality Control Chemist,Chemistry,Chemistry Quality Control Chemist,80,1
+168,Research and Development Chemist,Chemistry,Chemistry Research and Development Chemist,84,1
+169,Agency Legal Counsel,Law,Law Agency Legal Counsel,89,1
+170,Assistant Attorney General,Law,Law Assistant Attorney General,22,1
+171,Assistant Corporation Counsel,Law,Law Assistant Corporation Counsel,57,1
+172,Assistant Counsel,Law,Law Assistant Counsel,28,1
+173,Associate Attorney,Law,Law Associate Attorney,7,1
+174,Attorney,Law,Law Attorney,1,1
+175,Attorney At Law,Law,Law Attorney At Law,8,1
+176,Attorney General,Law,Law Attorney General,43,1
+177,Brief Writer,Law,Law Brief Writer,58,1
+178,City Attorney,Law,Law City Attorney,80,1
+179,Civil Lawyer,Law,Law Civil Lawyer,56,1
+180,Commonwealth Attorney,Law,Law Commonwealth Attorney,27,1
+181,Corporate Attorney,Law,Law Corporate Attorney,23,1
+182,Corporate Counsel,Law,Law Corporate Counsel,94,1
+183,Corporate Counselor,Law,Law Corporate Counselor,87,1
+184,County Attorney,Law,Law County Attorney,76,1
+185,Defense Attorney,Law,Law Defense Attorney,32,1
+186,Deputy Attorney General,Law,Law Deputy Attorney General,83,1
+187,Deputy Chief Counsel,Law,Law Deputy Chief Counsel,33,1
+188,District Attorney,Law,Law District Attorney,32,1
+189,Environmental Attorney,Law,Law Environmental Attorney,28,1
+190,Estate Conservator,Law,Law Estate Conservator,93,1
+191,General Counsel,Law,Law General Counsel,7,1
+192,Insurance Attorney,Law,Law Insurance Attorney,52,1
+193,Lawyer,Law,Law Lawyer,56,1
+194,Legal Counsel,Law,Law Legal Counsel,92,1
+195,Probate Lawyer,Law,Law Probate Lawyer,92,1
+196,Prosecutor,Law,Law Prosecutor,58,1
+197,Public Defender,Law,Law Public Defender,90,1
+198,Real Estate Attorney,Law,Law Real Estate Attorney,5,1
+199,Sports Attorney,Law,Law Sports Attorney,37,1
+200,Tax Attorney,Law,Law Tax Attorney,28,1
+201,Trial Attorney,Law,Law Trial Attorney,19,1
+202,Trial Lawyer,Law,Law Trial Lawyer,56,1
+203,Assistant Paralegal,Law,Law Assistant Paralegal,99,1
+204,Legal Aide,Law,Law Legal Aide,63,1
+205,Legal Assistant,Law,Law Legal Assistant,46,1
+206,Paralegal,Law,Law Paralegal,36,1
+207,Summer Associate,Law,Law Summer Associate,4,1
+208,Summer Law Clerk,Law,Law Summer Law Clerk,29,1
+209,Automatic Data Processing Planner,Computer Sci,Computer Sci Automatic Data Processing Planner,38,1
+210,Database Administration Manager,Computer Sci,Computer Sci Database Administration Manager,21,1
+211,Database Coordinator,Computer Sci,Computer Sci Database Coordinator,8,1
+212,Database Management System Specialist,Computer Sci,Computer Sci Database Management System Specialist,88,1
+213,Database Security Administrator,Computer Sci,Computer Sci Database Security Administrator,33,1
+214,DBMS Specialist,Computer Sci,Computer Sci DBMS Specialist,26,1
+215,Computer Network Engineer,Computer Sci,Computer Sci Computer Network Engineer,65,1
+216,Network Designer,Computer Sci,Computer Sci Network Designer,99,1
+217,Network Developer,Computer Sci,Computer Sci Network Developer,35,1
+218,Network Engineer,Computer Sci,Computer Sci Network Engineer,97,1
+219,Computer Network Engineer,Computer Sci,Computer Sci Computer Network Engineer,81,1
+220,Network Designer,Computer Sci,Computer Sci Network Designer,17,1
+221,Network Developer,Computer Sci,Computer Sci Network Developer,24,1
+222,Network Engineer,Computer Sci,Computer Sci Network Engineer,9,1
+223,Applications Analyst,Computer Sci,Computer Sci Applications Analyst,27,1
+224,Computer Systems Analyst,Computer Sci,Computer Sci Computer Systems Analyst,9,1
+225,Computer Systems Consultant,Computer Sci,Computer Sci Computer Systems Consultant,34,1
+226,Data Processing Systems Analyst,Computer Sci,Computer Sci Data Processing Systems Analyst,49,1
+227,Information Systems Analyst,Computer Sci,Computer Sci Information Systems Analyst,57,1
+228,Information Systems Planner,Computer Sci,Computer Sci Information Systems Planner,54,1
+229,Programmer Analyst,Computer Sci,Computer Sci Programmer Analyst,80,1
+230,Systems Architect,Computer Sci,Computer Sci Systems Architect,54,1
+231,Computer Security Specialist,Computer Sci,Computer Sci Computer Security Specialist,63,1
+232,Computer Systems Security Analyst,Computer Sci,Computer Sci Computer Systems Security Analyst,69,1
+233,Information Security Analyst,Computer Sci,Computer Sci Information Security Analyst,93,1
+234,Information Systems Security Analyst,Computer Sci,Computer Sci Information Systems Security Analyst,22,1
+235,Internet Security Specialist,Computer Sci,Computer Sci Internet Security Specialist,18,1
+236,Network Security Analyst,Computer Sci,Computer Sci Network Security Analyst,42,1
+237,3rd Grade Reading Teacher,Education,Education 3rd Grade Reading Teacher,4,1
+238,4th Grade Math Teacher,Education,Education 4th Grade Math Teacher,56,1
+239,Elementary School Band Director,Education,Education Elementary School Band Director,51,1
+240,Elementary School Teacher,Education,Education Elementary School Teacher,41,1
+241,Grades 1 Thru 5 Teacher,Education,Education Grades 1 Thru 5 Teacher,75,1
+242,7th Grade Social Studies Teacher,Education,Education 7th Grade Social Studies Teacher,47,1
+243,Junior High School Teacher,Education,Education Junior High School Teacher,34,1
+244,Middle School PE Teacher,Education,Education Middle School PE Teacher,96,1
+245,Middle School Science Teacher,Education,Education Middle School Science Teacher,42,1
+246,High School Biology Teacher,Education,Education High School Biology Teacher,35,1
+247,High School English Teacher,Education,Education High School English Teacher,43,1
+248,High School French Teacher,Education,Education High School French Teacher,11,1
+249,High School History Teacher,Education,Education High School History Teacher,88,1
+250,High School Math Teacher,Education,Education High School Math Teacher,27,1
+251,High School Music Director,Education,Education High School Music Director,93,1
+252,High School Teacher,Education,Education High School Teacher,87,1
+253,Substitute Teacher,Education,Education Substitute Teacher,11,1
+254,Tutor,Education,Education Tutor,9,1
+255,Substitute Teacher,Education,Education Substitute Teacher,54,1
+256,Tutor,Education,Education Tutor,13,1
+257,Business Analyst,Finance,Finance Business Analyst,5,1
+258,Business Consultant,Finance,Finance Business Consultant,79,1
+259,Business Management Analyst,Finance,Finance Business Management Analyst,34,1
+260,Business Process Consultant,Finance,Finance Business Process Consultant,38,1
+261,Clerical Methods Analyst,Finance,Finance Clerical Methods Analyst,59,1
+262,Commercial Specialist,Finance,Finance Commercial Specialist,94,1
+263,Industrial Analyst,Finance,Finance Industrial Analyst,77,1
+264,Management Analyst,Finance,Finance Management Analyst,74,1
+265,Management Consultant,Finance,Finance Management Consultant,22,1
+266,Records Management Analyst,Finance,Finance Records Management Analyst,36,1
+267,Corporate Recruiter,Finance,Finance Corporate Recruiter,68,1
+268,Credentialing Coordinator,Finance,Finance Credentialing Coordinator,21,1
+269,Employee Placement Specialist,Finance,Finance Employee Placement Specialist,26,1
+270,Human Resources Generalist,Finance,Finance Human Resources Generalist,47,1
+271,Job Placement Officer,Finance,Finance Job Placement Officer,64,1
+272,Job Placement Specialist,Finance,Finance Job Placement Specialist,65,1
+273,Job Recruiter,Finance,Finance Job Recruiter,15,1
+274,Personnel Coordinator,Finance,Finance Personnel Coordinator,82,1
+275,Personnel Officer,Finance,Finance Personnel Officer,30,1
+276,Personnel Recruiter,Finance,Finance Personnel Recruiter,80,1
+277,Personnel Specialist,Finance,Finance Personnel Specialist,26,1
+278,Staffing Coordinator,Finance,Finance Staffing Coordinator,63,1
+279,Construction Estimator,Finance,Finance Construction Estimator,69,1
+280,Construction Job Cost Estimator,Finance,Finance Construction Job Cost Estimator,2,1
+281,Crating and Moving Estimator,Finance,Finance Crating and Moving Estimator,40,1
+282,Electrical Estimator,Finance,Finance Electrical Estimator,31,1
+283,Job Estimator,Finance,Finance Job Estimator,31,1
+284,Production Cost Estimator,Finance,Finance Production Cost Estimator,34,1
+285,Budget Analyst,Finance,Finance Budget Analyst,30,1
+287,Budget Examiner,Finance,Finance Budget Examiner,94,1
+288,Budget Officer,Finance,Finance Budget Officer,57,1
+289,Cost Analyst,Finance,Finance Cost Analyst,32,1
+290,Market Research Analyst,Finance,Finance Market Research Analyst,17,1
+291,Market Research Specialist,Finance,Finance Market Research Specialist,7,1
+292,Marketing Analyst,Finance,Finance Marketing Analyst,69,1
+293,Marketing Consultant,Finance,Finance Marketing Consultant,83,1
 294,Marketing Forecaster,Finance,Finance Marketing Forecaster,84,1
-295,Marketing Specialist,Finance,Finance Marketing Specialist,32,1
-296,Business Analyst,Finance,Finance Business Analyst,29,0
-297,Business Consultant,Finance,Finance Business Consultant,83,1
-298,Business Management Analyst,Finance,Finance Business Management Analyst,2,1
-299,Business Process Consultant,Finance,Finance Business Process Consultant,49,0
-300,Management Analyst,Finance,Finance Management Analyst,70,0
+295,Marketing Specialist,Finance,Finance Marketing Specialist,49,1
+296,Business Analyst,Finance,Finance Business Analyst,33,1
+297,Business Consultant,Finance,Finance Business Consultant,9,1
+298,Business Management Analyst,Finance,Finance Business Management Analyst,57,1
+299,Business Process Consultant,Finance,Finance Business Process Consultant,33,1
+300,Application analyst,Computer Sci,Computer Sci Application analyst,4,1
+301,Applications developer,Computer Sci,Computer Sci Applications developer,84,0
+302,CAD technician,Computer Sci,Computer Sci CAD technician,54,0
+303,Cyber security analyst,Computer Sci,Computer Sci Cyber security analyst,79,0
+304,Data analyst,Computer Sci,Computer Sci Data analyst,14,0
+305,Database administrator,Computer Sci,Computer Sci Database administrator,9,0
+306,Forensic computer analyst,Computer Sci,Computer Sci Forensic computer analyst,2,0
+307,Game designer,Computer Sci,Computer Sci Game designer,25,0
+308,Games developer,Computer Sci,Computer Sci Games developer,61,0
+309,Information systems manager,Computer Sci,Computer Sci Information systems manager,43,0
+310,IT consultant,Computer Sci,Computer Sci IT consultant,77,0
+311,Machine learning engineer,Computer Sci,Computer Sci Machine learning engineer,28,0
+312,Multimedia programmer,Computer Sci,Computer Sci Multimedia programmer,60,0
+313,Penetration tester,Computer Sci,Computer Sci Penetration tester,38,0/
+314,SEO specialist,Computer Sci,Computer Sci SEO specialist,2,0
+315,Software engineer,Computer Sci,Computer Sci Software engineer,28,0
+316,Systems analyst,Computer Sci,Computer Sci Systems analyst,67,0
+317,UX designer,Computer Sci,Computer Sci UX designer,35,0
+318,Web designer,Computer Sci,Computer Sci Web designer,7,0
+319,Web developer,Computer Sci,Computer Sci Web developer,90,0
