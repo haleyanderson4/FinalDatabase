@@ -7,7 +7,8 @@ Sarah Lasman and Haley Anderson
 
 # How To Run
 
-Use Schema.sql to generate the database schema, and then use the other files in Data Files to generate some data.
+Use Schema.sql to generate the database schema, and then use the other files in Data Files to generate some data. 
+Please generate the data in the order listed in Schema.sql.
 The files under Data Files are either in SQL format or CSV.
 
 Then, compile all the .java files and run Main.
@@ -18,8 +19,8 @@ Then, compile all the .java files and run Main.
   CompanyData.sql
   CompetitonData.sql
   FullTimeData.sql
-  Internship.csv
-  Job.csv
+  InternshipData.csv
+  JobData.csv
   LocationData.sql
   Manager.sql
   RelatedJobs.sql
